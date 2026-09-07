@@ -50,7 +50,7 @@ targets:
       properties:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
-        CFBundleDisplayName: "Fróði"
+        CFBundleDisplayName: "Fróði vit"
         CFBundleLocalizations:
           - nb
         UIAppFonts:

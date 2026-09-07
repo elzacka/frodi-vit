@@ -1,4 +1,4 @@
-# Fróði
+# Fróði vit
 
 Norsk kunnskapsassistent for iPhone. Du skriver eller limer inn, og Fróði
 svarer. Alt skjer på telefonen.
@@ -29,10 +29,10 @@ Dette er den ene av to:
 
 | App | Gjør |
 |---|---|
-| **Fróði** — tale til tekst | Tar opp lyd og gjør det om til tekst |
-| **Fróði** — kunnskapsassistent | Denne. Svarer på det du spør om |
+| **Fróði røst** | Tar opp lyd og gjør det om til tekst |
+| **Fróði vit** | Denne. Svarer på det du spør om |
 
-De deler navn, design og løftet om at ingenting forlater telefonen. De deler
+De deler fornavn, design og løftet om at ingenting forlater telefonen. De deler
 ikke kode.
 
 ## Modeller
