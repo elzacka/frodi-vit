@@ -31,12 +31,21 @@ målt vesentlig svakere på lang kontekst, som er nettopp det denne appen trenge
 
 ## Kode
 
-| Pakke | Opphav | Lisens |
-|---|---|---|
-| mlx-swift | Apple | MIT |
-| mlx-swift-lm | Apple | MIT |
+Løst 8. september 2026, `mlx-swift-lm` pinnet til 3.31.4. Fem pakker i alt,
+alle fra Apple eller Apples egne prosjekter.
 
-Listen fylles ut med transitive pakker når avhengigheten er lagt inn.
+| Pakke | Versjon | Opphav | Lisens |
+|---|---|---|---|
+| mlx-swift-lm | 3.31.4 | Apple | MIT |
+| mlx-swift | 0.31.6 | Apple | MIT |
+| swift-numerics | 1.1.1 | Apple | Apache 2.0 |
+| swift-argument-parser | 1.8.2 | Apple | Apache 2.0 |
+| swift-syntax | 603.0.2 | Apple / Swift | Apache 2.0 |
+
+Tre produkter kobles inn: `MLXLLM`, `MLXLMCommon` og `MLXEmbedders`.
+**`MLXHuggingFace` ligger i samme pakke og kobles bevisst ikke inn.** Det er den
+eneste veien MLX har ut på nettet. En pakke som ikke er lenket kan ikke kalles
+ved et uhell, og det er billigere enn å slå av nedlasting hvert sted den brukes.
 
 ## Skrifter
 

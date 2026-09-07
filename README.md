@@ -49,10 +49,19 @@ Begge er åpne modeller fra Nasjonalbiblioteket. Se `TREDJEPART.md`.
 
 ```bash
 brew install xcodegen
+xcodebuild -downloadComponent MetalToolchain   # én gang per maskin
 xcodegen generate
 ./Scripts/fetch-model.sh
 xcodebuild -project FrodiKunnskap.xcodeproj -scheme FrodiKunnskap \
-  -destination 'platform=iOS Simulator,name=Frodi-Test' build
+  -destination 'platform=iOS Simulator,name=Frodi-Test' \
+  -skipPackagePluginValidation -skipMacroValidation build
 ```
+
+MLX kompilerer egne Metal-kjerner, og fra Xcode 26 følger ikke
+Metal-verktøykjeden med i grunninstallasjonen. Uten den stopper bygget med
+`cannot execute tool 'metal'`, som ikke nevner MLX med et ord.
+
+De to `-skip`-flaggene trengs fordi `mlx-swift` har en byggeplugin for CUDA.
+Den gjør ingenting på iOS, men Xcode kjører ingen plugin uten godkjenning.
 
 Uten `fetch-model.sh` bygger appen, men kan ikke svare.

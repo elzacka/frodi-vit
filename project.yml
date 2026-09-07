@@ -19,6 +19,16 @@ settings:
     SWIFT_STRICT_CONCURRENCY: complete
     SWIFT_APPROACHABLE_CONCURRENCY: true
     ENABLE_USER_SCRIPT_SANDBOXING: true
+packages:
+  # Apples egen Swift-pakke for MLX. MIT.
+  #
+  # Bare tre produkter kobles inn. MLXHuggingFace, som ligger i samme pakke,
+  # kobles bevisst ikke inn: det er den eneste veien MLX har ut på nettet, og
+  # en pakke som ikke er lenket kan ikke kalles ved et uhell. Modellene lastes
+  # fra en lokal mappe.
+  MLXLM:
+    url: https://github.com/ml-explore/mlx-swift-lm
+    exactVersion: "3.31.4"
 targets:
   FrodiKunnskap:
     type: application
@@ -32,6 +42,13 @@ targets:
           # og config.json-filene kolliderer i app-pakken. Samme felle som i
           # tale til tekst-appen, løst på samme måte.
           - "Resources/Model"
+    dependencies:
+      - package: MLXLM
+        product: MLXLLM
+      - package: MLXLM
+        product: MLXLMCommon
+      - package: MLXLM
+        product: MLXEmbedders
     resources:
       - path: FrodiKunnskap/Resources/Assets.xcassets
       - path: FrodiKunnskap/Resources/Fonts
