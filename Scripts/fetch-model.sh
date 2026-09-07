@@ -1,5 +1,5 @@
 #!/bin/bash
-# Henter og konverterer språkmodellene Fróði svarer med.
+# Henter og konverterer språkmodellene Fróði vit svarer med.
 #
 # Modellene ligger ikke i git — de er over en halv gigabyte til sammen. Kjør
 # dette skriptet én gang etter kloning, før du bygger.

@@ -58,14 +58,18 @@ struct ChatView: View {
                     .font(.Frodi.display)
                     .foregroundStyle(Color.Frodi.textPrimary)
 
-                Text("kunnskapsassistent")
+                // Andre halvdel av appnavnet, ikke en undertittel. Sammen
+                // leser hodet «fróði vit», som er navnet på appen.
+                Text("vit")
                     .font(.Frodi.eyebrow)
                     .eyebrowTracking()
                     .foregroundStyle(Color.Frodi.textSecondary)
             }
             .frame(maxWidth: .infinity)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Fróði, kunnskapsassistent")
+            // Navnet uttalt, ikke ordmerket. Små bokstaver er en grafisk form,
+            // ikke måten navnet sies på.
+            .accessibilityLabel("Fróði vit")
             .accessibilityAddTraits(.isHeader)
 
             HStack {

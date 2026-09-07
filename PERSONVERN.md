@@ -1,6 +1,6 @@
-# Personvern
+# Personvern i Fróði vit
 
-Fróði samler ikke inn noe om deg. Det er ikke en policy — det er at appen ikke
+Fróði vit samler ikke inn noe om deg. Det er ikke en policy — det er at appen ikke
 har kode som kan gjøre det.
 
 ## Hva som skjer med det du skriver

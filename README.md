@@ -1,9 +1,10 @@
 # Fróði vit
 
-Norsk kunnskapsassistent for iPhone. Du skriver eller limer inn, og Fróði
+Norsk kunnskapsassistent for iPhone. Du skriver eller limer inn, og Fróði vit
 svarer. Alt skjer på telefonen.
 
-Navnet er norrønt og betyr «den kunnskapsrike».
+«Fróði» er norrønt for «den kunnskapsrike». «Vit» er forstand. Søsterappen
+heter Fróði røst og hører etter i stedet.
 
 ## Hva appen gjør
 
@@ -14,7 +15,7 @@ Navnet er norrønt og betyr «den kunnskapsrike».
 
 ## Hva appen ikke gjør
 
-Fróði har **ingen nettverkskode**. Ikke noe `URLSession`, ingen analyse, ingen
+Fróði vit har **ingen nettverkskode**. Ikke noe `URLSession`, ingen analyse, ingen
 kræsjrapportering, ingen tredjepartstjenester. Språkmodellen følger med appen,
 så det finnes ikke engang en nedlasting.
 

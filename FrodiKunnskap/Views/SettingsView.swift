@@ -38,7 +38,7 @@ struct SettingsView: View {
     }
 
     private var about: some View {
-        card(title: "Om fróði") {
+        card(title: "Om Fróði vit") {
             Text("Fróði svarer på det du spør om, og gjør det på telefonen. Navnet er norrønt og betyr «den kunnskapsrike».")
                 .font(.Frodi.caption)
                 .foregroundStyle(Color.Frodi.textSecondary)

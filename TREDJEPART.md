@@ -21,7 +21,7 @@ gjelde en app er:
 - Modellen skal ikke brukes til tjenester som først og fremst erstatter tilgang
   til pressestoffet som er brukt i treningen
 
-Fróði gjør ingen av delene. Appen søker i dokumenter du selv har lastet opp fra
+Fróði vit gjør ingen av delene. Appen søker i dokumenter du selv har lastet opp fra
 din egen telefon, og har ingen forbindelse til pressestoff.
 
 Det finnes ingen åpen variant av denne modellen. Alternativet, `nb-sbert`, er

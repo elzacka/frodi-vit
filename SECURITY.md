@@ -1,12 +1,12 @@
 # Security Policy
 
-Fróði answers questions on the device. Nothing is transmitted.
+Fróði vit answers questions on the device. Nothing is transmitted.
 
 Last reviewed 08.09.26.
 
 ## Reporting a vulnerability
 
-Email **hei@tazk.no**, subject `[SECURITY] Frodi Kunnskap iOS - <description>`.
+Email **hei@tazk.no**, subject `[SECURITY] Frodi vit - <description>`.
 Include reproduction steps and impact. Acknowledgement within 48 hours,
 assessment within 7 days. Do not open public GitHub issues.
 
