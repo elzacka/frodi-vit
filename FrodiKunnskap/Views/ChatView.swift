@@ -9,7 +9,11 @@ struct ChatView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \ChatMessage.createdAt) private var messages: [ChatMessage]
 
-    @State private var conversation = Conversation(assistant: MissingModelAssistant())
+    // Er modellen ikke i pakken, sier stubben fra om nettopp det, i stedet for
+    // at MLX feiler med noe uleselig langt inne i lastingen.
+    @State private var conversation = Conversation(
+        assistant: BorealisAssistant.isBundled ? BorealisAssistant() : MissingModelAssistant()
+    )
     @State private var draft = ""
     @State private var showingSettings = false
     @FocusState private var writing: Bool

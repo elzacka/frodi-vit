@@ -44,13 +44,25 @@ a document is being read, and while the conversation is on screen.
 
 ## No network
 
-The app contains no `URLSession`, no sockets, no telemetry. Tests fail if an ATS
-exception appears, if any background mode is declared at all, or if the privacy
-manifest declares collected data.
+The app makes no network requests. Tests fail if an ATS exception appears, if
+any background mode is declared at all, or if the privacy manifest declares
+collected data.
 
-The language model is bundled. `MLXHuggingFace` — the product that would give
-MLX a network path — is deliberately not linked, and models are loaded from a
-local directory. A missing file fails rather than fetching.
+The language model is bundled and loaded from a local directory. A missing file
+fails rather than fetching. `MLXHuggingFace` — the MLX product whose macros
+expand into Hugging Face hub calls — is deliberately not linked.
+
+**One honest qualification.** The tokenizer comes from `swift-transformers`,
+whose `Tokenizers` target depends on its `Hub` target, which depends on
+`swift-huggingface`. So HTTP client code is *linked into the binary* even
+though nothing in this app calls it: the only tokenizer entry point used is
+`AutoTokenizer.from(modelFolder:)`, which reads local files.
+
+The precise claim is therefore "this app makes no network requests", not "this
+binary contains no networking code". The second would be stronger and is not
+true. Making it true would mean writing a BPE tokenizer and a Jinja chat-template
+renderer by hand, which is a real cost for a guarantee the sandbox, the absent
+ATS exceptions and the absent background modes already carry in practice.
 
 `PrivacyInfo.xcprivacy` declares no tracking, no tracking domains, no collected
 data types. The only accessed-API declaration is file timestamps (C617.1).

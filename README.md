@@ -15,8 +15,8 @@ heter Fróði røst og hører etter i stedet.
 
 ## Hva appen ikke gjør
 
-Fróði vit har **ingen nettverkskode**. Ikke noe `URLSession`, ingen analyse, ingen
-kræsjrapportering, ingen tredjepartstjenester. Språkmodellen følger med appen,
+Fróði vit **sender ingenting og henter ingenting**. Ingen analyse, ingen
+krasjrapportering, ingen tredjepartstjenester. Språkmodellen følger med appen,
 så det finnes ikke engang en nedlasting.
 
 Det du skriver og laster opp ligger kryptert på telefonen, med en nøkkel som

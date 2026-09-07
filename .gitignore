@@ -32,3 +32,6 @@ CLAUDE.md
 
 # Språkmodellen. Hentes av Scripts/fetch-model.sh
 FrodiKunnskap/Resources/Model/
+
+# Python-venv for modellkonvertering. Se Scripts/fetch-model.sh
+.venv/
