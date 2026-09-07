@@ -1,0 +1,106 @@
+name: FrodiKunnskap
+options:
+  bundleIdPrefix: com.Tazk
+  deploymentTarget:
+    iOS: "26.5"
+  xcodeVersion: "26.6"
+  developmentLanguage: nb
+  generateEmptyDirectories: true
+settings:
+  base:
+    # Language mode, not toolchain version. Valid values: 4, 4.2, 5, 6.
+    SWIFT_VERSION: "6"
+    TARGETED_DEVICE_FAMILY: "1"
+    INFOPLIST_FILE: FrodiKunnskap/Info.plist
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    PRODUCT_BUNDLE_IDENTIFIER: com.Tazk.FrodiKunnskap
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_APPROACHABLE_CONCURRENCY: true
+    ENABLE_USER_SCRIPT_SANDBOXING: true
+targets:
+  FrodiKunnskap:
+    type: application
+    platform: iOS
+    sources:
+      - path: FrodiKunnskap
+        excludes:
+          - "**/.DS_Store"
+          # Språkmodellen legges til som mappereferanse under resources når den
+          # kommer. Uten denne ekskluderingen fanger sources den opp i tillegg,
+          # og config.json-filene kolliderer i app-pakken. Samme felle som i
+          # tale til tekst-appen, løst på samme måte.
+          - "Resources/Model"
+    resources:
+      - path: FrodiKunnskap/Resources/Assets.xcassets
+      - path: FrodiKunnskap/Resources/Fonts
+        buildPhase: resources
+    settings:
+      base:
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: 8NW62A7PRA
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTED_PLATFORMS: "iphonesimulator iphoneos"
+        SUPPORTS_MACCATALYST: false
+        SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: false
+    info:
+      path: FrodiKunnskap/Info.plist
+      properties:
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        CFBundleDisplayName: "Fróði"
+        CFBundleLocalizations:
+          - nb
+        UIAppFonts:
+          - Inter-Regular.ttf
+          - Inter-Medium.ttf
+          - Inter-SemiBold.ttf
+          - Skranji-Bold.ttf
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        # Ingen UIBackgroundModes. Denne appen gjør ingenting i bakgrunnen, og
+        # en tom liste er lettere å forsvare enn en med én ting i. En test
+        # vokter at nøkkelen holder seg borte.
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        ITSAppUsesNonExemptEncryption: false
+        UIAccessibilityPerformEscapeEnabled: true
+  FrodiKunnskapTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: FrodiKunnskapTests
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - target: FrodiKunnskap
+  FrodiKunnskapUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: FrodiKunnskapUITests
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: "1"
+    dependencies:
+      - target: FrodiKunnskap
+schemes:
+  FrodiKunnskap:
+    build:
+      targets:
+        FrodiKunnskap: all
+    run:
+      config: Debug
+    test:
+      targets:
+        - FrodiKunnskapTests
+        - FrodiKunnskapUITests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
