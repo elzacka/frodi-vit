@@ -5,7 +5,7 @@ har kode som kan gjøre det.
 
 ## Hva som skjer med det du skriver
 
-Alt du skriver, limer inn og laster opp blir liggende på telefonen din. Appen
+Det du skriver, limer inn og laster opp blir liggende på enheten. Appen
 sender det ingen steder. Den har ingen adresse å sende til, og ingen tjeneste å
 spørre.
 
@@ -16,18 +16,18 @@ server, og det finnes ingen server å snakke med.
 
 | Lag | Hva det gjør |
 |---|---|
-| Sandkassen | Ingen andre apper på telefonen kan lese mappen |
-| Filbeskyttelse | Innholdet er ulesbart mens telefonen er låst |
+| Sandkassen | Ingen andre apper på enheten kan lese mappen |
+| Filbeskyttelse | Innholdet er ulesbart mens enheten er låst |
 | Utenfor sikkerhetskopi | Innholdet følger ikke med i iCloud |
 | Kryptering per melding og dokument | AES-GCM, med en nøkkel som pakkes inn av en nøkkel i Secure Enclave |
 
-Nøkkelen i Secure Enclave lages på telefonen din og forlater den aldri. Den er
-merket `whenUnlockedThisDeviceOnly`: den er bare tilgjengelig mens telefonen er
-låst opp, og den kopieres ikke til en ny telefon.
+Nøkkelen i Secure Enclave lages på enheten og forlater den aldri. Den er
+merket `whenUnlockedThisDeviceOnly`: den er bare tilgjengelig mens enheten er
+låst opp, og den kopieres ikke til en ny enhet.
 
 Det har en pris, og den er med vilje: **innholdet kan ikke leses av en annen
-telefon.** Bytter du telefon, følger det ikke med. Vil du ta vare på et svar,
-henter du det ut selv mens du har telefonen.
+enhet.** Bytter du enhet, følger det ikke med. Vil du ta vare på et svar,
+henter du det ut selv mens du har enheten.
 
 ## Rettighetene dine
 

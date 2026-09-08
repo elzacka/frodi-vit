@@ -2,8 +2,8 @@ import CryptoKit
 import Foundation
 import Security
 
-/// Krypterer det du skriver og laster opp, med en nøkkel som aldri forlater
-/// denne telefonen.
+/// Krypterer det du skriver, limer inn og laster opp, med en nøkkel som aldri
+/// forlater denne enheten.
 ///
 /// Hvorfor dette i tillegg til iOS' egen filbeskyttelse: Apple beskriver
 /// `isExcludedFromBackup` som veiledning til systemet, ikke en garanti. Slipper
@@ -20,15 +20,15 @@ import Security
 /// og lesbare på et blikk. Derfor ligger både dem og samtalen forseglet, ikke
 /// bare bak sandkassen.
 ///
-/// Prisen er at innholdet ikke kan leses av en annen telefon. Det er meningen,
+/// Prisen er at innholdet ikke kan leses av en annen enhet. Det er meningen,
 /// men det gjør uthenting nødvendig: et svar du vil ta vare på må kunne låses
-/// opp og deles mens du har telefonen. Den delen er ikke bygd ennå.
+/// opp og deles mens du har enheten. Den delen er ikke bygd ennå.
 enum Vault {
     // Navnet er fra før appen het Fróði vit, og prefikset er `no.` mens
     // bundle-ID-en er `com.Tazk.FrodiVit`. Begge deler blir stående:
     // merkelappen er adressen til nøkkelen i Secure Enclave, ikke en
     // identifikator iOS bryr seg om. Endrer vi den, finner appen ikke igjen
-    // nøkkelen, og alt som allerede er forseglet på telefonen blir uleselig.
+    // nøkkelen, og alt som allerede er forseglet på enheten blir uleselig.
     // Den er privat og vises ingen steder.
     private static let keyTag = "no.Tazk.FrodiKunnskap.vault.v1".data(using: .utf8)!
 
@@ -149,7 +149,7 @@ enum Vault {
         // appen. Der måtte nøkkelen være tilgjengelig med skjermen låst, fordi
         // handlingsknappen kan stoppe et opptak i bakgrunnen. Denne appen gjør
         // ingenting i bakgrunnen: du skriver, laster opp og leser, alt med
-        // telefonen i hånden og skjermen på. Da skal nøkkelen heller ikke være
+        // enheten i hånden og skjermen på. Da skal nøkkelen heller ikke være
         // tilgjengelig når den er låst.
         //
         // Får appen senere arbeid som skal gå i bakgrunnen, er det denne linjen

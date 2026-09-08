@@ -47,7 +47,7 @@ struct MessageBubble: View {
     }
 
     /// Teksten ligger forseglet. Får vi den ikke opp, er meldingen kryptert på
-    /// en annen telefon, og da sier vi det i stedet for å vise en tom boble.
+    /// en annen enhet, og da sier vi det i stedet for å vise en tom boble.
     private var text: String {
         (try? message.text()) ?? String(localized: "Denne meldingen kan ikke låses opp.")
     }

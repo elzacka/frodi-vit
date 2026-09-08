@@ -37,7 +37,7 @@ final class ChatMessage {
         Role(rawValue: roleValue) ?? .user
     }
 
-    /// Åpner teksten. Kaster om meldingen ble forseglet på en annen telefon.
+    /// Åpner teksten. Kaster om meldingen ble forseglet på en annen enhet.
     func text() throws -> String {
         guard !sealedText.isEmpty else { return "" }
         return try Vault.openText(sealedText)

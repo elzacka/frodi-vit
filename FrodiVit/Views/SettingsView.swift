@@ -43,7 +43,7 @@ struct SettingsView: View {
 
     private var about: some View {
         card(title: "Om Fróði vit") {
-            Text("Fróði svarer på det du spør om, og gjør det på telefonen. Navnet er norrønt og betyr «den kunnskapsrike».")
+            Text("Fróði svarer på det du spør om, og gjør det på enheten. Navnet er norrønt og betyr «den kunnskapsrike».")
                 .font(.Frodi.caption)
                 .foregroundStyle(Color.Frodi.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -53,12 +53,12 @@ struct SettingsView: View {
     private var privacy: some View {
         card(title: "Personvern") {
             VStack(alignment: .leading, spacing: Space.s2) {
-                Text("Fróði sender ingenting og henter ingenting. Det du skriver og laster opp blir liggende på denne telefonen, kryptert med en nøkkel som ligger i maskinvaren og aldri forlater den.")
+                Text("Fróði sender ingenting og henter ingenting. Det du skriver, limer inn og laster opp blir liggende på enheten, kryptert med en nøkkel som ligger i maskinvaren og aldri forlater den.")
                     .font(.Frodi.caption)
                     .foregroundStyle(Color.Frodi.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text("Det betyr også at innholdet ikke kan leses av en annen telefon, og ikke følger med i en sikkerhetskopi.")
+                Text("Det betyr også at innholdet ikke kan leses av en annen enhet, og ikke følger med i en sikkerhetskopi.")
                     .font(.Frodi.caption)
                     .foregroundStyle(Color.Frodi.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

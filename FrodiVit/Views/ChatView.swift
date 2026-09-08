@@ -153,7 +153,7 @@ struct ChatView: View {
                 .font(.Frodi.bodyMedium)
                 .foregroundStyle(Color.Frodi.textPrimary)
 
-            Text("Fróði får ikke åpnet basen på telefonen. Du kan spørre som vanlig, men alt forsvinner når du lukker appen. Installer appen på nytt for å rette det.")
+            Text("Fróði får ikke åpnet basen på enheten. Du kan spørre som vanlig, men alt forsvinner når du lukker appen. Installer appen på nytt for å rette det.")
                 .font(.Frodi.caption)
                 .foregroundStyle(Color.Frodi.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -179,7 +179,7 @@ struct ChatView: View {
                 .font(.Frodi.title)
                 .foregroundStyle(Color.Frodi.textPrimary)
 
-            Text("Skriv, lim inn eller last opp et dokument, så svarer Fróði. Det du skriver og laster opp blir liggende på telefonen.")
+            Text("Skriv, lim inn eller last opp et dokument, så svarer Fróði. Alt blir liggende på enheten.")
                 .font(.Frodi.caption)
                 .foregroundStyle(Color.Frodi.textSecondary)
                 .multilineTextAlignment(.center)

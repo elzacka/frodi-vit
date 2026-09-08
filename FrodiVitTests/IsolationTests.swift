@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import FrodiVit
 
-/// Appens løfte er at ingenting forlater telefonen. Disse testene vokter det
+/// Appens løfte er at ingenting forlater enheten. Disse testene vokter det
 /// løftet i koden, ikke i dokumentasjonen.
 ///
 /// Løftet er strengere her enn i Fróði røst: den har lyd i

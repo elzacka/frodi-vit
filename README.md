@@ -1,7 +1,7 @@
 # Fróði vit
 
-Norsk kunnskapsassistent for iPhone. Du skriver eller limer inn, og Fróði vit
-svarer. Alt skjer på telefonen.
+Norsk kunnskapsassistent. Du skriver, limer inn eller laster opp, og Fróði vit
+svarer. Alt skjer på enheten.
 
 «Fróði» er norrønt for «den kunnskapsrike». «Vit» er forstand. Søsterappen
 heter Fróði røst og hører etter i stedet.
@@ -19,10 +19,10 @@ Fróði vit **sender ingenting og henter ingenting**. Ingen analyse, ingen
 krasjrapportering, ingen tredjepartstjenester. Språkmodellen følger med appen,
 så det finnes ikke engang en nedlasting.
 
-Det du skriver og laster opp ligger kryptert på telefonen, med en nøkkel som
-lages i maskinvaren og aldri forlater den. Det betyr også at innholdet ikke kan
-leses av en annen telefon, og ikke følger med i en sikkerhetskopi. Vil du ta
-vare på et svar, henter du det ut selv.
+Det du skriver, limer inn og laster opp ligger kryptert på enheten, med en
+nøkkel som lages i maskinvaren og aldri forlater den. Det betyr også at
+innholdet ikke kan leses av en annen enhet, og ikke følger med i en
+sikkerhetskopi. Vil du ta vare på et svar, henter du det ut selv.
 
 ## To apper
 
@@ -30,10 +30,10 @@ Dette er den ene av to:
 
 | App | Gjør |
 |---|---|
-| **Fróði røst** | Tar opp lyd og gjør det om til tekst |
+| **Fróði røst** | Tar opp lyd og gjør den om til tekst |
 | **Fróði vit** | Denne. Svarer på det du spør om |
 
-De deler fornavn, design og løftet om at ingenting forlater telefonen. De deler
+De deler fornavn, design og løftet om at ingenting forlater enheten. De deler
 ikke kode.
 
 ## Modeller
@@ -44,6 +44,10 @@ ikke kode.
 | Gjenfinning | `NbAiLab/borealis-embed-212m` | NB-lisens 1.0 |
 
 Begge er åpne modeller fra Nasjonalbiblioteket. Se `TREDJEPART.md`.
+
+## Krav
+
+- iPhone med iOS 26.5 eller nyere
 
 ## Bygge
 
