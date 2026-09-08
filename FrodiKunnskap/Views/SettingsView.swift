@@ -49,7 +49,7 @@ struct SettingsView: View {
     private var privacy: some View {
         card(title: "Personvern") {
             VStack(alignment: .leading, spacing: Space.s2) {
-                Text("Fróði har ingen nettverkskode. Det du skriver og laster opp blir liggende på denne telefonen, kryptert med en nøkkel som ligger i maskinvaren og aldri forlater den.")
+                Text("Fróði sender ingenting og henter ingenting. Det du skriver og laster opp blir liggende på denne telefonen, kryptert med en nøkkel som ligger i maskinvaren og aldri forlater den.")
                     .font(.Frodi.caption)
                     .foregroundStyle(Color.Frodi.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
