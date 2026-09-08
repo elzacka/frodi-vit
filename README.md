@@ -1,7 +1,7 @@
 # Fróði vit
 
-Norsk kunnskapsassistent. Du skriver, limer inn eller laster opp, og Fróði vit
-svarer. Alt skjer på enheten.
+Norsk kunnskapsassistent for iPhone. Du skriver, limer inn eller laster opp,
+og Fróði vit svarer. Alt skjer på enheten.
 
 «Fróði» er norrønt for «den kunnskapsrike». «Vit» er forstand. Søsterappen
 heter Fróði røst og hører etter i stedet.
