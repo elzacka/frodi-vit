@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import FrodiKunnskap
+@testable import FrodiVit
 
 /// Modellen legges inn som mappereferanse. Går den referansen tapt, bygger
 /// appen fint og feiler først når noen stiller et spørsmål — og feilen ser da

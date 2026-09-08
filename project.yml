@@ -1,4 +1,4 @@
-name: FrodiKunnskap
+name: FrodiVit
 options:
   bundleIdPrefix: com.Tazk
   deploymentTarget:
@@ -11,9 +11,9 @@ settings:
     # Language mode, not toolchain version. Valid values: 4, 4.2, 5, 6.
     SWIFT_VERSION: "6"
     TARGETED_DEVICE_FAMILY: "1"
-    INFOPLIST_FILE: FrodiKunnskap/Info.plist
+    INFOPLIST_FILE: FrodiVit/Info.plist
     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-    PRODUCT_BUNDLE_IDENTIFIER: com.Tazk.FrodiKunnskap
+    PRODUCT_BUNDLE_IDENTIFIER: com.Tazk.FrodiVit
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_STRICT_CONCURRENCY: complete
@@ -41,11 +41,11 @@ packages:
     url: https://github.com/huggingface/swift-transformers
     exactVersion: "1.3.4"
 targets:
-  FrodiKunnskap:
+  FrodiVit:
     type: application
     platform: iOS
     sources:
-      - path: FrodiKunnskap
+      - path: FrodiVit
         excludes:
           - "**/.DS_Store"
           # Språkmodellen legges til som mappereferanse under resources når den
@@ -58,7 +58,7 @@ targets:
       # kolliderer i bunnen av app-pakken. Må stå under sources med
       # buildPhase: resources — en oppføring under `resources:` tar ikke
       # `type: folder`, og da havner ingenting i pakken.
-      - path: FrodiKunnskap/Resources/Model
+      - path: FrodiVit/Resources/Model
         type: folder
         buildPhase: resources
     dependencies:
@@ -71,8 +71,8 @@ targets:
       - package: Transformers
         product: Tokenizers
     resources:
-      - path: FrodiKunnskap/Resources/Assets.xcassets
-      - path: FrodiKunnskap/Resources/Fonts
+      - path: FrodiVit/Resources/Assets.xcassets
+      - path: FrodiVit/Resources/Fonts
         buildPhase: resources
     settings:
       base:
@@ -84,7 +84,7 @@ targets:
         SUPPORTS_MACCATALYST: false
         SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD: false
     info:
-      path: FrodiKunnskap/Info.plist
+      path: FrodiVit/Info.plist
       properties:
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
@@ -105,37 +105,37 @@ targets:
           - UIInterfaceOrientationPortrait
         ITSAppUsesNonExemptEncryption: false
         UIAccessibilityPerformEscapeEnabled: true
-  FrodiKunnskapTests:
+  FrodiVitTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: FrodiKunnskapTests
+      - path: FrodiVitTests
     settings:
       base:
         TARGETED_DEVICE_FAMILY: "1"
     dependencies:
-      - target: FrodiKunnskap
-  FrodiKunnskapUITests:
+      - target: FrodiVit
+  FrodiVitUITests:
     type: bundle.ui-testing
     platform: iOS
     sources:
-      - path: FrodiKunnskapUITests
+      - path: FrodiVitUITests
     settings:
       base:
         TARGETED_DEVICE_FAMILY: "1"
     dependencies:
-      - target: FrodiKunnskap
+      - target: FrodiVit
 schemes:
-  FrodiKunnskap:
+  FrodiVit:
     build:
       targets:
-        FrodiKunnskap: all
+        FrodiVit: all
     run:
       config: Debug
     test:
       targets:
-        - FrodiKunnskapTests
-        - FrodiKunnskapUITests
+        - FrodiVitTests
+        - FrodiVitUITests
     profile:
       config: Release
     analyze:

@@ -29,7 +29,7 @@ EMBEDDER_REVISION="2ae20a7ca72bbfaf526d9b1b371c6b326ccfc7f2"
 MLX_LM_VERSION="0.31.3"
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DEST="$ROOT/FrodiKunnskap/Resources/Model"
+DEST="$ROOT/FrodiVit/Resources/Model"
 
 VENV="$ROOT/.venv"
 PY="$VENV/bin/python"

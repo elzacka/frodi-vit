@@ -1,0 +1,747 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		073F5B7284463BD86A65DB53 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0931CAC585D9AFA2C2033B5 /* Document.swift */; };
+		08E7EE2EA630D69125B14C27 /* CaptureGuard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAD9A2C8916EACBA4E40152 /* CaptureGuard.swift */; };
+		19E3DCDD000A696EACFCF5B7 /* Model in Resources */ = {isa = PBXBuildFile; fileRef = DE9372BB68E2C3AE83E1EDFC /* Model */; };
+		2234A77A1604C199ED298A57 /* FrodiKunnskapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9499E2162CB5E5F5B530F3A /* FrodiKunnskapApp.swift */; };
+		2845F05ED256015BAF4DC10B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01388CE2352178DDB5A58FE0 /* SettingsView.swift */; };
+		2B90E96FD8120F7EBD166720 /* LocalTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D385EF567DD316225358BCE /* LocalTokenizer.swift */; };
+		370A376ABE1954A85508BA7C /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 4B2299F936994644ED79938A /* MLXLLM */; };
+		3A0FE147EADF8037C0EA176C /* DocumentBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA10D866B7EDBDC99BDCC2A3 /* DocumentBar.swift */; };
+		41AB9CA89382FEE27F3B75A6 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DE17A5AB3A7EA755C9B760 /* ChatView.swift */; };
+		440AEC8C5A352349F5712FFB /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E05BD78004A66245F7E09DA7 /* PrivacyInfo.xcprivacy */; };
+		4DCE26796CD2E09EB0CA0651 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DCCF941C5CF61C247F163A0A /* Inter-Medium.ttf */; };
+		55498AF6C503F74A12F03FD7 /* BundledModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC0CB183C4ACFC1C2A67EDD8 /* BundledModelTests.swift */; };
+		63D2556C12EB5119DA98D0E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CB9369D0D3DFC99A4FA98EBB /* Assets.xcassets */; };
+		6A5F5CB092BA596BBE103452 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252A059FC17DDB13D537A5AA /* Storage.swift */; };
+		7BD0E5445AB25242D7BC228B /* IsolationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6CAE4A4DAD020799A4E75C /* IsolationTests.swift */; };
+		807D6843F93F4FF56197AF77 /* DocumentImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABED245274C27BC3CB90CCC /* DocumentImport.swift */; };
+		81D1A672DF406656D3805356 /* MLXEmbedders in Frameworks */ = {isa = PBXBuildFile; productRef = F12017C0CE77EAB87A3CAE66 /* MLXEmbedders */; };
+		860C9698717D1B1E302B1F5A /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 4DA9A112572247B6EFD939AA /* MLXLMCommon */; };
+		909CAD87CD929245EC75ABCE /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10EDE8D2894C5B4DAC9150A2 /* Inter-Regular.ttf */; };
+		955D2EE2E61083A391E57834 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BEB4B691D679C4FCA607798 /* Conversation.swift */; };
+		97C8D60375E432A838E850D5 /* FrodiKunnskapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35826035061245F49E3DB85D /* FrodiKunnskapUITests.swift */; };
+		99B04CC137A054FB87DF1988 /* VaultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF72D95EEFC338B53FEC6B0 /* VaultTests.swift */; };
+		AB63EAA21A89D04ACEE6D939 /* BorealisAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806BA1191073D020A5A7C4A1 /* BorealisAssistant.swift */; };
+		AECDF92C5320FF403C5289B6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC72C7FECE3B5FDCF62F18F /* Theme.swift */; };
+		B1210B075DE37B0E516125B9 /* ThemeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90F14875195A90013C45E85 /* ThemeTests.swift */; };
+		B2574408D79CEA77BE225C82 /* Vault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D1EBF7C3A314ABE8FDAFBE /* Vault.swift */; };
+		BDC8724D95CB03F1B5440E6C /* ChatMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0DA8B5277879B80A93052D /* ChatMessageTests.swift */; };
+		CFDBCA1C2B05383690D9F6BA /* Skranji-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8CAD05C28A0993C3F3B07F6A /* Skranji-Bold.ttf */; };
+		D754737AFCDBC2EF41A0D518 /* MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC72CBA6A7DEBA01C01E595E /* MessageBubble.swift */; };
+		DB344217CD454FB607B03A92 /* Skranji-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95D0122459D37EA224C41A59 /* Skranji-OFL.txt */; };
+		E24DB18CE004362FB773553A /* Assistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA07B13BF8FABFD262C0838 /* Assistant.swift */; };
+		EAD00978F355FA40129E7912 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = FBEBC701B102F0560E6227D5 /* Localizable.xcstrings */; };
+		ED8D4496612C8B2E0C6559F5 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = EF9B4A4C2638943FADAC9898 /* Tokenizers */; };
+		EEDD991AC0E924E9A71E6208 /* DocumentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16804AD6F556FB57BA4E452D /* DocumentTests.swift */; };
+		F8A8D46F6A0EB2B94ECE3A42 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C2564E548E2B513E5E8C5D5 /* Inter-SemiBold.ttf */; };
+		FB1111DB792E43F54A2A991F /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B887E08630874F75DAB3BEF /* ChatMessage.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5B97D4485FB9FA297559EDE8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D391D4CCBFEA700018D7FE81 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22E39D914C210E49A9592174;
+			remoteInfo = FrodiKunnskap;
+		};
+		9084B51E8914B095EDBB40E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D391D4CCBFEA700018D7FE81 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22E39D914C210E49A9592174;
+			remoteInfo = FrodiKunnskap;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		01388CE2352178DDB5A58FE0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		10EDE8D2894C5B4DAC9150A2 /* Inter-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Regular.ttf"; sourceTree = "<group>"; };
+		12AEEFC3611E0778EE52DF0A /* FrodiKunnskapTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FrodiKunnskapTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1674E48628EAEC1FAD09D94F /* FrodiKunnskapUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FrodiKunnskapUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		16804AD6F556FB57BA4E452D /* DocumentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentTests.swift; sourceTree = "<group>"; };
+		1C2564E548E2B513E5E8C5D5 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-SemiBold.ttf"; sourceTree = "<group>"; };
+		252A059FC17DDB13D537A5AA /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		35826035061245F49E3DB85D /* FrodiKunnskapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrodiKunnskapUITests.swift; sourceTree = "<group>"; };
+		40D1EBF7C3A314ABE8FDAFBE /* Vault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vault.swift; sourceTree = "<group>"; };
+		4B887E08630874F75DAB3BEF /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		5AC72C7FECE3B5FDCF62F18F /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		5DF72D95EEFC338B53FEC6B0 /* VaultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultTests.swift; sourceTree = "<group>"; };
+		6ABED245274C27BC3CB90CCC /* DocumentImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentImport.swift; sourceTree = "<group>"; };
+		7D385EF567DD316225358BCE /* LocalTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalTokenizer.swift; sourceTree = "<group>"; };
+		806BA1191073D020A5A7C4A1 /* BorealisAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BorealisAssistant.swift; sourceTree = "<group>"; };
+		8CAD05C28A0993C3F3B07F6A /* Skranji-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Skranji-Bold.ttf"; sourceTree = "<group>"; };
+		8EAD9A2C8916EACBA4E40152 /* CaptureGuard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureGuard.swift; sourceTree = "<group>"; };
+		95D0122459D37EA224C41A59 /* Skranji-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Skranji-OFL.txt"; sourceTree = "<group>"; };
+		9BEB4B691D679C4FCA607798 /* Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Conversation.swift; sourceTree = "<group>"; };
+		A0931CAC585D9AFA2C2033B5 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
+		AB0DA8B5277879B80A93052D /* ChatMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTests.swift; sourceTree = "<group>"; };
+		AC0CB183C4ACFC1C2A67EDD8 /* BundledModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundledModelTests.swift; sourceTree = "<group>"; };
+		B6DE17A5AB3A7EA755C9B760 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		BD6CAE4A4DAD020799A4E75C /* IsolationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsolationTests.swift; sourceTree = "<group>"; };
+		C9499E2162CB5E5F5B530F3A /* FrodiKunnskapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrodiKunnskapApp.swift; sourceTree = "<group>"; };
+		CB9369D0D3DFC99A4FA98EBB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D99EC4FB5362AE65C04497C0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		DA10D866B7EDBDC99BDCC2A3 /* DocumentBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentBar.swift; sourceTree = "<group>"; };
+		DCCF941C5CF61C247F163A0A /* Inter-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Medium.ttf"; sourceTree = "<group>"; };
+		DE9372BB68E2C3AE83E1EDFC /* Model */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Model; path = FrodiKunnskap/Resources/Model; sourceTree = SOURCE_ROOT; };
+		DFA07B13BF8FABFD262C0838 /* Assistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assistant.swift; sourceTree = "<group>"; };
+		E05BD78004A66245F7E09DA7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		ED0538F44DB70078A66B3B12 /* FrodiKunnskap.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = FrodiKunnskap.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F90F14875195A90013C45E85 /* ThemeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeTests.swift; sourceTree = "<group>"; };
+		FBEBC701B102F0560E6227D5 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		FC72CBA6A7DEBA01C01E595E /* MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubble.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6515BA2B32C25F401A59821A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				370A376ABE1954A85508BA7C /* MLXLLM in Frameworks */,
+				860C9698717D1B1E302B1F5A /* MLXLMCommon in Frameworks */,
+				81D1A672DF406656D3805356 /* MLXEmbedders in Frameworks */,
+				ED8D4496612C8B2E0C6559F5 /* Tokenizers in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01B9F1BBF0859A3B9A0DB61F /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				5AC72C7FECE3B5FDCF62F18F /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		0A97546B1641ACA60129F761 /* FrodiKunnskapTests */ = {
+			isa = PBXGroup;
+			children = (
+				AC0CB183C4ACFC1C2A67EDD8 /* BundledModelTests.swift */,
+				AB0DA8B5277879B80A93052D /* ChatMessageTests.swift */,
+				16804AD6F556FB57BA4E452D /* DocumentTests.swift */,
+				BD6CAE4A4DAD020799A4E75C /* IsolationTests.swift */,
+				F90F14875195A90013C45E85 /* ThemeTests.swift */,
+				5DF72D95EEFC338B53FEC6B0 /* VaultTests.swift */,
+			);
+			path = FrodiKunnskapTests;
+			sourceTree = "<group>";
+		};
+		12FA8BCEC1BCFEA7EB85C11F /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				DCCF941C5CF61C247F163A0A /* Inter-Medium.ttf */,
+				10EDE8D2894C5B4DAC9150A2 /* Inter-Regular.ttf */,
+				1C2564E548E2B513E5E8C5D5 /* Inter-SemiBold.ttf */,
+				8CAD05C28A0993C3F3B07F6A /* Skranji-Bold.ttf */,
+				95D0122459D37EA224C41A59 /* Skranji-OFL.txt */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		444C0D5BBA8E6C18A29EE458 /* FrodiKunnskapUITests */ = {
+			isa = PBXGroup;
+			children = (
+				35826035061245F49E3DB85D /* FrodiKunnskapUITests.swift */,
+			);
+			path = FrodiKunnskapUITests;
+			sourceTree = "<group>";
+		};
+		5855CB7B06D67039CA7EFA99 /* FrodiKunnskap */ = {
+			isa = PBXGroup;
+			children = (
+				C9499E2162CB5E5F5B530F3A /* FrodiKunnskapApp.swift */,
+				D99EC4FB5362AE65C04497C0 /* Info.plist */,
+				E05BD78004A66245F7E09DA7 /* PrivacyInfo.xcprivacy */,
+				D082779436BD7C5F76F0214E /* Models */,
+				EFF00950FE4859863FB55E35 /* Resources */,
+				CAB70C980B683E166D2C9BA2 /* Services */,
+				01B9F1BBF0859A3B9A0DB61F /* Theme */,
+				D902BFD06B80B1419422AF0D /* Views */,
+			);
+			path = FrodiKunnskap;
+			sourceTree = "<group>";
+		};
+		7492297CEDFFBFF85DF126C1 = {
+			isa = PBXGroup;
+			children = (
+				DE9372BB68E2C3AE83E1EDFC /* Model */,
+				5855CB7B06D67039CA7EFA99 /* FrodiKunnskap */,
+				0A97546B1641ACA60129F761 /* FrodiKunnskapTests */,
+				444C0D5BBA8E6C18A29EE458 /* FrodiKunnskapUITests */,
+				90EA8CD39845B69EF8E3F6F8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		90EA8CD39845B69EF8E3F6F8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ED0538F44DB70078A66B3B12 /* FrodiKunnskap.app */,
+				12AEEFC3611E0778EE52DF0A /* FrodiKunnskapTests.xctest */,
+				1674E48628EAEC1FAD09D94F /* FrodiKunnskapUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CAB70C980B683E166D2C9BA2 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				DFA07B13BF8FABFD262C0838 /* Assistant.swift */,
+				806BA1191073D020A5A7C4A1 /* BorealisAssistant.swift */,
+				9BEB4B691D679C4FCA607798 /* Conversation.swift */,
+				6ABED245274C27BC3CB90CCC /* DocumentImport.swift */,
+				7D385EF567DD316225358BCE /* LocalTokenizer.swift */,
+				252A059FC17DDB13D537A5AA /* Storage.swift */,
+				40D1EBF7C3A314ABE8FDAFBE /* Vault.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D082779436BD7C5F76F0214E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4B887E08630874F75DAB3BEF /* ChatMessage.swift */,
+				A0931CAC585D9AFA2C2033B5 /* Document.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D902BFD06B80B1419422AF0D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				8EAD9A2C8916EACBA4E40152 /* CaptureGuard.swift */,
+				B6DE17A5AB3A7EA755C9B760 /* ChatView.swift */,
+				DA10D866B7EDBDC99BDCC2A3 /* DocumentBar.swift */,
+				FC72CBA6A7DEBA01C01E595E /* MessageBubble.swift */,
+				01388CE2352178DDB5A58FE0 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		EFF00950FE4859863FB55E35 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CB9369D0D3DFC99A4FA98EBB /* Assets.xcassets */,
+				FBEBC701B102F0560E6227D5 /* Localizable.xcstrings */,
+				12FA8BCEC1BCFEA7EB85C11F /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		08B4C12A40B455F7DF3AD903 /* FrodiKunnskapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB0F9801BF5554A21E9546AF /* Build configuration list for PBXNativeTarget "FrodiKunnskapUITests" */;
+			buildPhases = (
+				1ED45E7175DC8B61E1A6302C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8C53E0A3F8FBA4DF4198A57B /* PBXTargetDependency */,
+			);
+			name = FrodiKunnskapUITests;
+			packageProductDependencies = (
+			);
+			productName = FrodiKunnskapUITests;
+			productReference = 1674E48628EAEC1FAD09D94F /* FrodiKunnskapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		22E39D914C210E49A9592174 /* FrodiKunnskap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BACCA6F86742FBD18D8EF91F /* Build configuration list for PBXNativeTarget "FrodiKunnskap" */;
+			buildPhases = (
+				3CDD4EF265A21126DC2325C1 /* Sources */,
+				F8AB099CBE1E2768B5A4E4E2 /* Resources */,
+				6515BA2B32C25F401A59821A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FrodiKunnskap;
+			packageProductDependencies = (
+				4B2299F936994644ED79938A /* MLXLLM */,
+				4DA9A112572247B6EFD939AA /* MLXLMCommon */,
+				F12017C0CE77EAB87A3CAE66 /* MLXEmbedders */,
+				EF9B4A4C2638943FADAC9898 /* Tokenizers */,
+			);
+			productName = FrodiKunnskap;
+			productReference = ED0538F44DB70078A66B3B12 /* FrodiKunnskap.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FA9CC62F12AE05941CC9B605 /* FrodiKunnskapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 496816EEF65579BD9DA2B4EB /* Build configuration list for PBXNativeTarget "FrodiKunnskapTests" */;
+			buildPhases = (
+				9AB2EB152EBAE5F06C35C2A1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2ACB750151979923B7C3EC9 /* PBXTargetDependency */,
+			);
+			name = FrodiKunnskapTests;
+			packageProductDependencies = (
+			);
+			productName = FrodiKunnskapTests;
+			productReference = 12AEEFC3611E0778EE52DF0A /* FrodiKunnskapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D391D4CCBFEA700018D7FE81 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					08B4C12A40B455F7DF3AD903 = {
+						TestTargetID = 22E39D914C210E49A9592174;
+					};
+					22E39D914C210E49A9592174 = {
+						DevelopmentTeam = 8NW62A7PRA;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = DD88C9072AFD513276F1C467 /* Build configuration list for PBXProject "FrodiKunnskap" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = nb;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				nb,
+			);
+			mainGroup = 7492297CEDFFBFF85DF126C1;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				14E5B104A6B4C05D3A9AC9B4 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				7051DFB23FA7822C93E39A88 /* XCRemoteSwiftPackageReference "swift-transformers" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				22E39D914C210E49A9592174 /* FrodiKunnskap */,
+				FA9CC62F12AE05941CC9B605 /* FrodiKunnskapTests */,
+				08B4C12A40B455F7DF3AD903 /* FrodiKunnskapUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F8AB099CBE1E2768B5A4E4E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63D2556C12EB5119DA98D0E9 /* Assets.xcassets in Resources */,
+				4DCE26796CD2E09EB0CA0651 /* Inter-Medium.ttf in Resources */,
+				909CAD87CD929245EC75ABCE /* Inter-Regular.ttf in Resources */,
+				F8A8D46F6A0EB2B94ECE3A42 /* Inter-SemiBold.ttf in Resources */,
+				EAD00978F355FA40129E7912 /* Localizable.xcstrings in Resources */,
+				19E3DCDD000A696EACFCF5B7 /* Model in Resources */,
+				440AEC8C5A352349F5712FFB /* PrivacyInfo.xcprivacy in Resources */,
+				CFDBCA1C2B05383690D9F6BA /* Skranji-Bold.ttf in Resources */,
+				DB344217CD454FB607B03A92 /* Skranji-OFL.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1ED45E7175DC8B61E1A6302C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				97C8D60375E432A838E850D5 /* FrodiKunnskapUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3CDD4EF265A21126DC2325C1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E24DB18CE004362FB773553A /* Assistant.swift in Sources */,
+				AB63EAA21A89D04ACEE6D939 /* BorealisAssistant.swift in Sources */,
+				08E7EE2EA630D69125B14C27 /* CaptureGuard.swift in Sources */,
+				FB1111DB792E43F54A2A991F /* ChatMessage.swift in Sources */,
+				41AB9CA89382FEE27F3B75A6 /* ChatView.swift in Sources */,
+				955D2EE2E61083A391E57834 /* Conversation.swift in Sources */,
+				073F5B7284463BD86A65DB53 /* Document.swift in Sources */,
+				3A0FE147EADF8037C0EA176C /* DocumentBar.swift in Sources */,
+				807D6843F93F4FF56197AF77 /* DocumentImport.swift in Sources */,
+				2234A77A1604C199ED298A57 /* FrodiKunnskapApp.swift in Sources */,
+				2B90E96FD8120F7EBD166720 /* LocalTokenizer.swift in Sources */,
+				D754737AFCDBC2EF41A0D518 /* MessageBubble.swift in Sources */,
+				2845F05ED256015BAF4DC10B /* SettingsView.swift in Sources */,
+				6A5F5CB092BA596BBE103452 /* Storage.swift in Sources */,
+				AECDF92C5320FF403C5289B6 /* Theme.swift in Sources */,
+				B2574408D79CEA77BE225C82 /* Vault.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AB2EB152EBAE5F06C35C2A1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55498AF6C503F74A12F03FD7 /* BundledModelTests.swift in Sources */,
+				BDC8724D95CB03F1B5440E6C /* ChatMessageTests.swift in Sources */,
+				EEDD991AC0E924E9A71E6208 /* DocumentTests.swift in Sources */,
+				7BD0E5445AB25242D7BC228B /* IsolationTests.swift in Sources */,
+				B1210B075DE37B0E516125B9 /* ThemeTests.swift in Sources */,
+				99B04CC137A054FB87DF1988 /* VaultTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8C53E0A3F8FBA4DF4198A57B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22E39D914C210E49A9592174 /* FrodiKunnskap */;
+			targetProxy = 5B97D4485FB9FA297559EDE8 /* PBXContainerItemProxy */;
+		};
+		C2ACB750151979923B7C3EC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22E39D914C210E49A9592174 /* FrodiKunnskap */;
+			targetProxy = 9084B51E8914B095EDBB40E4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		12CF7B6DFD0D498CCD05CC99 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = FrodiKunnskap/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Tazk.FrodiKunnskap;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		519789B83EA3B7460039ACA9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = FrodiKunnskap;
+			};
+			name = Debug;
+		};
+		5F3B1CC23B67EE5C40CCC415 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8NW62A7PRA;
+				INFOPLIST_FILE = FrodiKunnskap/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		616231C45535E99860DED9A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FrodiKunnskap.app/FrodiKunnskap";
+			};
+			name = Release;
+		};
+		71092CA40F96F4D536D7EB3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FrodiKunnskap.app/FrodiKunnskap";
+			};
+			name = Debug;
+		};
+		9A58D60D78D0F4BBE4994F58 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = FrodiKunnskap;
+			};
+			name = Release;
+		};
+		EC25F4C8DA85BA2E10FAE5F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8NW62A7PRA;
+				INFOPLIST_FILE = FrodiKunnskap/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		F5C70C65E501A0400CAD6017 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = FrodiKunnskap/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Tazk.FrodiKunnskap;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		496816EEF65579BD9DA2B4EB /* Build configuration list for PBXNativeTarget "FrodiKunnskapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71092CA40F96F4D536D7EB3F /* Debug */,
+				616231C45535E99860DED9A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BACCA6F86742FBD18D8EF91F /* Build configuration list for PBXNativeTarget "FrodiKunnskap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F3B1CC23B67EE5C40CCC415 /* Debug */,
+				EC25F4C8DA85BA2E10FAE5F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DD88C9072AFD513276F1C467 /* Build configuration list for PBXProject "FrodiKunnskap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F5C70C65E501A0400CAD6017 /* Debug */,
+				12CF7B6DFD0D498CCD05CC99 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FB0F9801BF5554A21E9546AF /* Build configuration list for PBXNativeTarget "FrodiKunnskapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				519789B83EA3B7460039ACA9 /* Debug */,
+				9A58D60D78D0F4BBE4994F58 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		14E5B104A6B4C05D3A9AC9B4 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
+			requirement = {
+				kind = exactVersion;
+				version = 3.31.4;
+			};
+		};
+		7051DFB23FA7822C93E39A88 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = exactVersion;
+				version = 1.3.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B2299F936994644ED79938A /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14E5B104A6B4C05D3A9AC9B4 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLLM;
+		};
+		4DA9A112572247B6EFD939AA /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14E5B104A6B4C05D3A9AC9B4 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLMCommon;
+		};
+		EF9B4A4C2638943FADAC9898 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7051DFB23FA7822C93E39A88 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+		F12017C0CE77EAB87A3CAE66 /* MLXEmbedders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14E5B104A6B4C05D3A9AC9B4 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXEmbedders;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = D391D4CCBFEA700018D7FE81 /* Project object */;
+}

@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 @main
-struct FrodiKunnskapApp: App {
+struct FrodiVitApp: App {
     private let container: ModelContainer
 
     init() {

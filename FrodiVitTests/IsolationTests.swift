@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import FrodiKunnskap
+@testable import FrodiVit
 
 /// Appens løfte er at ingenting forlater telefonen. Disse testene vokter det
 /// løftet i koden, ikke i dokumentasjonen.

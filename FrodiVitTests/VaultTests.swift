@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 import Testing
-@testable import FrodiKunnskap
+@testable import FrodiVit
 
 @Suite("Kryptering")
 struct VaultTests {

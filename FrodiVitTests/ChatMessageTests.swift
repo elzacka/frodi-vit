@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import FrodiKunnskap
+@testable import FrodiVit
 
 @Suite("Melding")
 struct ChatMessageTests {

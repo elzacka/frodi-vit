@@ -1,6 +1,6 @@
 import Testing
 import UIKit
-@testable import FrodiKunnskap
+@testable import FrodiVit
 
 @Suite("Designsystem")
 struct ThemeTests {

@@ -52,7 +52,7 @@ brew install xcodegen
 xcodebuild -downloadComponent MetalToolchain   # én gang per maskin
 xcodegen generate
 ./Scripts/fetch-model.sh
-xcodebuild -project FrodiKunnskap.xcodeproj -scheme FrodiKunnskap \
+xcodebuild -project FrodiVit.xcodeproj -scheme FrodiVit \
   -destination 'platform=iOS Simulator,name=Frodi-Test' \
   -skipPackagePluginValidation -skipMacroValidation build
 ```

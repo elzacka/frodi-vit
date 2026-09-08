@@ -1,6 +1,6 @@
 import XCTest
 
-final class FrodiKunnskapUITests: XCTestCase {
+final class FrodiVitUITests: XCTestCase {
     /// Røyktest. Sjekker det som alltid er der, uansett om appen har en
     /// samtale fra før.
     @MainActor
