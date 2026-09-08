@@ -47,9 +47,13 @@ struct ContrastTests {
         )
     }
 
-    /// Sendeknappen er den eneste fylte flaten, og må skille seg fra bunnen.
+    /// Sendeknappen er den eneste fylte flaten og må skille seg fra bunnen.
+    /// Kanten er grensen rundt kort, bobler og brikker, og skillelinjene i
+    /// hodet og over skrivefeltet.
     @Test("Grafiske element når 3:1", arguments: [
-        ("AccentKnowledge", "Background")
+        ("AccentKnowledge", "Background"),
+        ("BorderNeutral", "Background"),
+        ("BorderNeutral", "Surface")
     ])
     func graphicsMeetAA(pair: (foreground: String, background: String)) throws {
         let measured = try Self.ratio(pair.foreground, on: pair.background)
