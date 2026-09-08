@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// Kunnskapsassistenten. Skriv eller lim inn, få svar.
+/// Kunnskapsassistenten. Skriv, lim inn eller last opp, få svar.
 ///
 /// Skjermen følger skissen: svarene øverst, skrivefeltet nederst, last opp til
 /// venstre for det, og innstillinger øverst til høyre.
@@ -179,7 +179,7 @@ struct ChatView: View {
                 .font(.Frodi.title)
                 .foregroundStyle(Color.Frodi.textPrimary)
 
-            Text("Skriv eller lim inn en tekst, så svarer Fróði. Alt du skriver blir liggende på telefonen.")
+            Text("Skriv, lim inn eller last opp et dokument, så svarer Fróði. Det du skriver og laster opp blir liggende på telefonen.")
                 .font(.Frodi.caption)
                 .foregroundStyle(Color.Frodi.textSecondary)
                 .multilineTextAlignment(.center)
