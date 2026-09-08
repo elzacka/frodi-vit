@@ -1,5 +1,45 @@
 {
   "sourceLanguage" : "nb",
-  "strings" : {},
+  "strings" : {
+    "Det betyr også at innholdet ikke kan leses av en annen telefon, og ikke følger med i en sikkerhetskopi." : {
+
+    },
+    "fróði" : {
+
+    },
+    "Fróði får ikke åpnet basen på telefonen. Du kan spørre som vanlig, men alt forsvinner når du lukker appen. Installer appen på nytt for å rette det." : {
+
+    },
+    "Fróði har ingen nettverkskode. Det du skriver og laster opp blir liggende på denne telefonen, kryptert med en nøkkel som ligger i maskinvaren og aldri forlater den." : {
+
+    },
+    "Fróði svarer på det du spør om, og gjør det på telefonen. Navnet er norrønt og betyr «den kunnskapsrike»." : {
+
+    },
+    "Meldingene blir borte for godt. Dette kan ikke angres." : {
+
+    },
+    "Samtalen er skjult mens skjermen tas opp." : {
+
+    },
+    "Samtalen lagres ikke" : {
+
+    },
+    "Skriv eller lim inn en tekst, så svarer Fróði. Alt du skriver blir liggende på telefonen." : {
+
+    },
+    "Spør om noe" : {
+
+    },
+    "Svaret ble avbrutt" : {
+
+    },
+    "Tenker …" : {
+
+    },
+    "vit" : {
+
+    }
+  },
   "version" : "1.0"
 }

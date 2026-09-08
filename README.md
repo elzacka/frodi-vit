@@ -10,7 +10,7 @@ heter Fróði røst og hører etter i stedet.
 
 - Du skriver et spørsmål, eller limer inn en tekst
 - Du kan laste opp et dokument og få svar som bygger på det
-- Svaret lages av en språkmodell som ligger i appen
+- En språkmodell inni appen lager svaret
 - Du kan laste ned svaret
 
 ## Hva appen ikke gjør

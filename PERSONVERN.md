@@ -1,16 +1,16 @@
 # Personvern i Fróði vit
 
-Fróði vit samler ikke inn noe om deg. Det er ikke en policy — det er at appen ikke
+Fróði vit samler ikke inn noe om deg. Det er ikke en policy – det er at appen ikke
 har kode som kan gjøre det.
 
 ## Hva som skjer med det du skriver
 
-Alt du skriver, limer inn og laster opp blir liggende på telefonen din. Det
-sendes ingen steder, fordi appen ikke har noen måte å sende noe på: den har
-ingen nettverkskode.
+Alt du skriver, limer inn og laster opp blir liggende på telefonen din. Appen
+sender det ingen steder. Den har ingen adresse å sende til, og ingen tjeneste å
+spørre.
 
 Språkmodellen som lager svarene ligger inne i appen. Den snakker ikke med en
-tjener, og det finnes ingen tjener å snakke med.
+server, og det finnes ingen server å snakke med.
 
 ## Hvordan innholdet er beskyttet
 
@@ -29,11 +29,10 @@ Det har en pris, og den er med vilje: **innholdet kan ikke leses av en annen
 telefon.** Bytter du telefon, følger det ikke med. Vil du ta vare på et svar,
 henter du det ut selv mens du har telefonen.
 
-## Dine rettigheter
+## Rettighetene dine
 
-Innsyn, sletting og uttrekk er alle noe du gjør selv i appen, uten å spørre
-noen. Det finnes ingen konto, ingen innlogging og ingen som sitter på dataene
-dine.
+Du gjør alt selv i appen, uten å spørre noen. Det finnes ingen konto, ingen
+innlogging og ingen som sitter på dataene dine.
 
 - **Innsyn:** alt du har skrevet står i samtalen
 - **Uttrekk:** last ned svaret du vil ta vare på
@@ -44,5 +43,5 @@ Sletter du appen, følger alt med. Det finnes ingen kopi noe annet sted.
 ## Sporing
 
 Ingen. `NSPrivacyTracking` er `false`, listen over innsamlede datatyper er tom,
-og listen over sporingsdomener er tom. En test i bygget vokter at det holder
-seg slik.
+og listen over sporingsdomener er tom. En test i bygget passer på at det blir
+stående slik.

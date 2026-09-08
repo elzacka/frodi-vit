@@ -2,7 +2,7 @@
 
 Lisensene under krever at opphavet oppgis. Dette er den attribusjonen.
 
-Sist gjennomgått 08.09.26.
+Sist gjennomgått 8. september 2026.
 
 ## Modeller
 
@@ -13,16 +13,16 @@ Sist gjennomgått 08.09.26.
 
 ### Om NB-lisensen
 
-`borealis-embed-212m` er ikke en åpen lisens i OSI-forstand. Den er fritt
-tilgjengelig og kan videreformidles, men har bruksbegrensninger. De to som kan
-gjelde en app er:
+Lisensen på `borealis-embed-212m` er ikke åpen i OSI-forstand. Modellen er
+fritt tilgjengelig og kan videreformidles, men lisensen setter grenser for
+bruken. To av dem kan gjelde en app:
 
 - Modellen skal ikke brukes til bevisst å gjenskape materiale fra treningsdataene
 - Modellen skal ikke brukes til tjenester som først og fremst erstatter tilgang
   til pressestoffet som er brukt i treningen
 
-Fróði vit gjør ingen av delene. Appen søker i dokumenter du selv har lastet opp fra
-din egen telefon, og har ingen forbindelse til pressestoff.
+Fróði vit gjør ingen av delene. Appen søker i dokumenter du selv har lastet
+opp, og har ingen forbindelse til pressestoff.
 
 Det finnes ingen åpen variant av denne modellen. Alternativet, `nb-sbert`, er
 målt vesentlig svakere på lang kontekst, som er nettopp det denne appen trenger.
