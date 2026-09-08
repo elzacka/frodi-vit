@@ -71,12 +71,45 @@ final class BorealisAssistant: Assistant {
         return p
     }
 
-    /// Så mye av et dokument som blir med i ledeteksten.
+    /// Så mye dokumenttekst som får plass i én ledetekst, til sammen.
     ///
-    /// Modellen har 32k kontekst på papiret, men glidende vindu på 512 i de
-    /// fleste lagene, og hvert tegn koster minne på telefonen. Dette er nok
-    /// til et notat eller et brev, ikke til en bok.
-    nonisolated static let contextCharacterLimit = 8000
+    /// Modellen har 32k tokens kontekst. 48 000 tegn norsk er rundt 15 000
+    /// tokens — under halve vinduet, med god plass til spørsmålet og svaret.
+    /// NSM-veilederen i risikostyring er 18 sider og 41 191 tegn og går inn
+    /// hel. Med den gamle grensen på 8 000 stoppet den på side 5 av 18, og
+    /// forside, kolofon og innholdsfortegnelse hadde spist 40 prosent av
+    /// budsjettet før veilederen i det hele tatt begynte.
+    ///
+    /// Grensen gjelder alle dokumentene til sammen, ikke hvert enkelt. Var
+    /// den per dokument, ville to opplastinger sprengt vinduet.
+    ///
+    /// **Ikke målt på enhet:** hvor lenge MLX bruker på å lese 15 000 tokens
+    /// før det første ordet kommer, og hvor godt en 1B-modell med glidende
+    /// vindu på 512 husker på tvers av så mye tekst. Blir ventetiden for
+    /// lang, er svaret å velge ut de relevante delene av dokumentet — ikke å
+    /// sette grensen ned igjen.
+    nonisolated static let contextCharacterLimit = 48_000
+
+    /// Hvor mange tegn hvert dokument får av budsjettet.
+    ///
+    /// Korteste dokument først, og hvert av dem får enten det det trenger
+    /// eller sin andel av det som er igjen. Et kort notat ved siden av en
+    /// lang rapport legger dermed ikke beslag på halve budsjettet uten å
+    /// bruke det.
+    nonisolated static func allowances(
+        for lengths: [Int], within budget: Int = contextCharacterLimit
+    ) -> [Int] {
+        var allowances = [Int](repeating: 0, count: lengths.count)
+        var remaining = budget
+        var left = lengths.count
+        for index in lengths.indices.sorted(by: { lengths[$0] < lengths[$1] }) {
+            let take = min(lengths[index], remaining / left)
+            allowances[index] = take
+            remaining -= take
+            left -= 1
+        }
+        return allowances
+    }
 
     func answer(to question: String, given context: [String]) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
@@ -101,12 +134,14 @@ final class BorealisAssistant: Assistant {
     /// svare på det siste som ble sagt. Står spørsmålet øverst, svarer den
     /// gjerne på dokumentet i stedet.
     ///
-    /// Dette er ikke gjenfinning. Hele teksten blir med, avkortet ved
-    /// ``contextCharacterLimit``. Når `borealis-embed-212m` lar seg konvertere,
-    /// er det her utvalget skal skje i stedet.
+    /// Dette er ikke gjenfinning. Hele teksten blir med, avkortet mot
+    /// ``contextCharacterLimit``, som deles mellom dokumentene. Når
+    /// `borealis-embed-212m` lar seg konvertere, er det her utvalget skal
+    /// skje i stedet.
     nonisolated static func prompt(for question: String, given context: [String]) -> String {
-        let documents = context
-            .map { String($0.prefix(contextCharacterLimit)) }
+        let texts = context.filter { !$0.isEmpty }
+        let documents = zip(texts, allowances(for: texts.map(\.count)))
+            .map { String($0.prefix($1)) }
             .filter { !$0.isEmpty }
 
         guard !documents.isEmpty else { return question }

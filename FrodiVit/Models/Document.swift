@@ -36,9 +36,4 @@ final class Document {
         guard !sealedText.isEmpty else { return "" }
         return try Vault.openText(sealedText)
     }
-
-    /// Sier fra når dokumentet er større enn det som får plass i ledeteksten.
-    var isTruncatedInPrompt: Bool {
-        characterCount > BorealisAssistant.contextCharacterLimit
-    }
 }

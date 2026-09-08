@@ -9,11 +9,22 @@ struct DocumentBar: View {
     let documents: [Document]
     let onRemove: (Document) -> Void
 
+    /// Hvilke dokumenter som ikke blir med i sin helhet.
+    ///
+    /// Regnes ut over hele raden, ikke per brikke: budsjettet deles mellom
+    /// dokumentene, så om ett av dem avkortes avhenger av hva annet som
+    /// ligger der.
+    private var truncated: [Bool] {
+        let lengths = documents.map(\.characterCount)
+        return zip(lengths, BorealisAssistant.allowances(for: lengths)).map { $1 < $0 }
+    }
+
     var body: some View {
+        let truncated = truncated
         ScrollView(.horizontal) {
             HStack(spacing: Space.s2) {
-                ForEach(documents) { document in
-                    chip(for: document)
+                ForEach(Array(documents.enumerated()), id: \.element.id) { index, document in
+                    chip(for: document, isTruncated: truncated[index])
                 }
             }
             .padding(.horizontal, Space.s4)
@@ -22,7 +33,7 @@ struct DocumentBar: View {
         .scrollIndicators(.hidden)
     }
 
-    private func chip(for document: Document) -> some View {
+    private func chip(for document: Document, isTruncated: Bool) -> some View {
         HStack(spacing: Space.s2) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(document.name)
@@ -30,7 +41,7 @@ struct DocumentBar: View {
                     .foregroundStyle(Color.Frodi.textPrimary)
                     .lineLimit(1)
 
-                if document.isTruncatedInPrompt {
+                if isTruncated {
                     // Sier fra framfor å late som hele teksten er med.
                     Text("bare starten er med")
                         .font(.Frodi.meta)
@@ -57,11 +68,11 @@ struct DocumentBar: View {
                 .overlay(Capsule().strokeBorder(Color.Frodi.border, lineWidth: 1))
         )
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(spokenLabel(for: document))
+        .accessibilityLabel(spokenLabel(for: document, isTruncated: isTruncated))
     }
 
-    private func spokenLabel(for document: Document) -> String {
-        document.isTruncatedInPrompt
+    private func spokenLabel(for document: Document, isTruncated: Bool) -> String {
+        isTruncated
             ? String(localized: "\(document.name), bare starten er med i svaret")
             : document.name
     }
