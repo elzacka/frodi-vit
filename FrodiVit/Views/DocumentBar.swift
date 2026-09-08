@@ -20,11 +20,11 @@ struct DocumentBar: View {
     }
 
     var body: some View {
-        let truncated = truncated
+        let flags = truncated
         ScrollView(.horizontal) {
             HStack(spacing: Space.s2) {
                 ForEach(Array(documents.enumerated()), id: \.element.id) { index, document in
-                    chip(for: document, isTruncated: truncated[index])
+                    chip(for: document, isTruncated: flags[index])
                 }
             }
             .padding(.horizontal, Space.s4)
