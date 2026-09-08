@@ -30,8 +30,12 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
+                    // Ingen egen font. Navigasjonslinjen er systemets, og
+                    // tittelen ved siden av står i systemfonten uansett hva vi
+                    // ber om. Inter bare på knappen ville gitt to skrifter i
+                    // samme linje. Logohodet finnes nettopp fordi vi ikke ville
+                    // ha systemfonten på merkevaren — her er den riktig.
                     Button("Ferdig") { dismiss() }
-                        .font(.Frodi.bodyMedium)
                 }
             }
         }
