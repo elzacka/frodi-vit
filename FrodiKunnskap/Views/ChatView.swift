@@ -8,6 +8,7 @@ import SwiftUI
 struct ChatView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \ChatMessage.createdAt) private var messages: [ChatMessage]
+    @Query(sort: \Document.createdAt) private var documents: [Document]
 
     // Er modellen ikke i pakken, sier stubben fra om nettopp det, i stedet for
     // at MLX feiler med noe uleselig langt inne i lastingen.
@@ -16,6 +17,8 @@ struct ChatView: View {
     )
     @State private var draft = ""
     @State private var showingSettings = false
+    @State private var showingImporter = false
+    @State private var importError: String?
     @FocusState private var writing: Bool
 
     var body: some View {
@@ -37,6 +40,10 @@ struct ChatView: View {
                     transcript
                 }
 
+                if !documents.isEmpty {
+                    DocumentBar(documents: documents, onRemove: remove)
+                }
+
                 inputBar
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -45,12 +52,49 @@ struct ChatView: View {
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
+            .fileImporter(
+                isPresented: $showingImporter,
+                allowedContentTypes: DocumentImport.allowedTypes
+            ) { result in
+                importDocument(result)
+            }
+            .alert("Kunne ikke laste opp", isPresented: .constant(importError != nil)) {
+                Button("Greit") { importError = nil }
+            } message: {
+                Text(importError ?? "").font(.Frodi.body)
+            }
             .alert("Noe gikk galt", isPresented: .constant(conversation.errorMessage != nil)) {
                 Button("Greit") { conversation.dismissError() }
             } message: {
                 Text(conversation.errorMessage ?? "").font(.Frodi.body)
             }
         }
+    }
+
+    // MARK: - Dokumenter
+
+    /// Teksten som blir med i ledeteksten. Et dokument som ikke lar seg låse
+    /// opp hoppes over i stedet for å stoppe spørsmålet.
+    private var documentTexts: [String] {
+        documents.compactMap { try? $0.text() }
+    }
+
+    private func importDocument(_ result: Result<URL, Error>) {
+        do {
+            let url = try result.get()
+            let text = try DocumentImport.text(from: url)
+            context.insert(try Document(name: url.lastPathComponent, text: text))
+            try context.save()
+        } catch let error as DocumentImport.ImportError {
+            importError = "\(error.localizedDescription) \(error.guidance)"
+        } catch {
+            importError = error.localizedDescription
+        }
+    }
+
+    private func remove(_ document: Document) {
+        context.delete(document)
+        try? context.save()
     }
 
     // MARK: - Hode
@@ -191,7 +235,7 @@ struct ChatView: View {
     private var inputBar: some View {
         HStack(alignment: .bottom, spacing: Space.s2) {
             Button {
-                // Opplasting kommer med kunnskapsbasen.
+                showingImporter = true
             } label: {
                 Image(systemName: "arrow.up.doc")
                     .font(.system(size: ChatControl.actionIcon))
@@ -199,7 +243,6 @@ struct ChatView: View {
                     .frame(width: ChatControl.action, height: ChatControl.action)
             }
             .accessibilityLabel("Last opp dokument")
-            .disabled(true)
 
             TextField("Skriv eller lim inn her", text: $draft, axis: .vertical)
                 .font(.Frodi.body)
@@ -221,7 +264,7 @@ struct ChatView: View {
                 if conversation.isAnswering {
                     conversation.stop()
                 } else {
-                    conversation.send(draft, context: context)
+                    conversation.send(draft, documents: documentTexts, context: context)
                     draft = ""
                     writing = false
                 }

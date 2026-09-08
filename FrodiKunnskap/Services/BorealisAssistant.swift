@@ -23,10 +23,10 @@ final class BorealisAssistant: Assistant {
 
     /// Finnes modellen i pakken i det hele tatt?
     ///
-    /// Uten dette faller appen tilbake på en uforståelig feil fra MLX når
-    /// noen har hoppet over `fetch-model.sh`.
-    /// Ren filsjekk, uten tilstand, så den kan leses fra hvor som helst —
-    /// blant annet fra testene, som ikke kjører på hovedaktøren.
+    /// Uten dette faller appen tilbake på en uforståelig feil fra MLX når noen
+    /// har hoppet over `fetch-model.sh`. Ren filsjekk, uten tilstand, så den
+    /// kan leses fra hvor som helst — blant annet fra testene, som ikke kjører
+    /// på hovedaktøren.
     nonisolated static var isBundled: Bool {
         modelDirectory != nil
     }
@@ -44,23 +44,47 @@ final class BorealisAssistant: Assistant {
         ) ? url : nil
     }
 
-    /// Systemledetekst. Norsk, og på bokmål.
+    // Ingen systemledetekst, med vilje.
+    //
+    // Gemma-malen har ingen system-rolle. Sender du en, limer malen den inn
+    // først i den første *bruker*-meldingen. Modellen leste da «Du er Fróði,
+    // en hjelpsom assistent …» som noe brukeren hadde skrevet, og svarte på
+    // påstanden: «Du er en person som svarer på en robot, og du er Fróði.»
+    // Målt på enhet 8. september 2026.
+    //
+    // Nasjonalbiblioteket har dessuten bakt oppførselen inn i vektene med
+    // «prompt baking», nettopp for at ledeteksten ikke skal trenge å stå i
+    // konteksten. Deres eget eksempel sender bare en brukermelding.
+    //
+    // Legg ikke inn en systemledetekst igjen uten å lese malen først.
+
+    /// Strammere enn standard, som er `topP 1.0` — altså ingen filtrering av
+    /// halen i det hele tatt. En 1B-modell henter mye tull derfra.
+    private static var parameters: GenerateParameters {
+        var p = GenerateParameters()
+        p.temperature = 0.6
+        p.topP = 0.9
+        // Uten straff gjentar små modeller gjerne samme setning til taket.
+        p.repetitionPenalty = 1.1
+        // Et tak, slik at et svar som sporer av tar slutt av seg selv.
+        p.maxTokens = 800
+        return p
+    }
+
+    /// Så mye av et dokument som blir med i ledeteksten.
     ///
-    /// Modellen er norskspreget fra før, så dette er en dytt, ikke en garanti.
-    /// Vi avviser ikke svar som kommer på feil språk, slik tale til tekst-appen
-    /// avviser feil språkmodell: der gir feil språk uforståelig tekst, her ville
-    /// et avvist svar bare etterlate deg med ingenting.
-    private static let instructions = """
-        Du er Fróði, en hjelpsom assistent som svarer på norsk bokmål.
-        Svar kort og klart. Er du usikker, si det heller enn å gjette.
-        """
+    /// Modellen har 32k kontekst på papiret, men glidende vindu på 512 i de
+    /// fleste lagene, og hvert tegn koster minne på telefonen. Dette er nok
+    /// til et notat eller et brev, ikke til en bok.
+    nonisolated static let contextCharacterLimit = 8000
 
     func answer(to question: String, given context: [String]) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             Task { @MainActor in
                 do {
-                    let session = try await session(for: context)
-                    for try await piece in session.streamResponse(to: question) {
+                    let session = try await session()
+                    let prompt = Self.prompt(for: question, given: context)
+                    for try await piece in session.streamResponse(to: prompt) {
                         continuation.yield(piece)
                     }
                     continuation.finish()
@@ -71,9 +95,37 @@ final class BorealisAssistant: Assistant {
         }
     }
 
+    /// Setter sammen spørsmålet med teksten fra dokumentene du har lastet opp.
+    ///
+    /// Dokumentet står først og spørsmålet sist, fordi modellen er trent på å
+    /// svare på det siste som ble sagt. Står spørsmålet øverst, svarer den
+    /// gjerne på dokumentet i stedet.
+    ///
+    /// Dette er ikke gjenfinning. Hele teksten blir med, avkortet ved
+    /// ``contextCharacterLimit``. Når `borealis-embed-212m` lar seg konvertere,
+    /// er det her utvalget skal skje i stedet.
+    nonisolated static func prompt(for question: String, given context: [String]) -> String {
+        let documents = context
+            .map { String($0.prefix(contextCharacterLimit)) }
+            .filter { !$0.isEmpty }
+
+        guard !documents.isEmpty else { return question }
+
+        let joined = documents.joined(separator: "\n\n---\n\n")
+        return """
+            Her er teksten du skal svare ut fra:
+
+            \(joined)
+
+            Svar på dette ut fra teksten over. Står ikke svaret der, si det.
+
+            \(question)
+            """
+    }
+
     /// Én økt gjenbrukes på tvers av spørsmål, slik at MLX beholder KV-bufferet
     /// og ikke leser hele samtalen om igjen for hvert svar.
-    private func session(for context: [String]) async throws -> ChatSession {
+    private func session() async throws -> ChatSession {
         if let session { return session }
 
         guard let directory = Self.modelDirectory else {
@@ -83,7 +135,7 @@ final class BorealisAssistant: Assistant {
         let model = try await loadModelContainer(
             from: directory, using: LocalTokenizerLoader()
         )
-        let session = ChatSession(model, instructions: Self.instructions)
+        let session = ChatSession(model, generateParameters: Self.parameters)
         self.session = session
         return session
     }

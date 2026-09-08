@@ -27,7 +27,17 @@ opp, og har ingen forbindelse til pressestoff.
 Det finnes ingen åpen variant av denne modellen. Alternativet, `nb-sbert`, er
 målt vesentlig svakere på lang kontekst, som er nettopp det denne appen trenger.
 
-`borealis-open-1b` er på Gemma-lisensen og har ingen slike begrensninger.
+`borealis-open-1b` er merket med Gemma-lisensen i metadataene på Hugging Face,
+og har ingen av begrensningene over: den åpne serien er trent uten pressestoffet.
+
+**Men modellkortet motsier seg selv her.** Lisensavsnittet i kortet beskriver en
+tilpasset Apache 2.0 med bruksbegrensninger, og lenker til en `LICENSE`-fil som
+ikke finnes i dette repoet. Teksten ser ut til å være arvet fra den fulle serien.
+Den sikreste lesningen er at metadataene gjelder, men uklarheten står her framfor
+å bli glemt.
+
+Gemma-lisensen har uansett sine egne bruksbegrensninger, gjennom Googles
+Prohibited Use Policy. «Ingen begrensninger» er ikke riktig om noen av modellene.
 
 ## Kode
 
