@@ -24,10 +24,12 @@ import Security
 /// men det gjør uthenting nødvendig: et svar du vil ta vare på må kunne låses
 /// opp og deles mens du har telefonen. Den delen er ikke bygd ennå.
 enum Vault {
-    // Navnet er fra før appen het Fróði vit, og blir stående. Merkelappen er
-    // adressen til nøkkelen i Secure Enclave: endrer vi den, finner appen ikke
-    // igjen nøkkelen, og alt som allerede er forseglet på telefonen blir
-    // uleselig. Den er privat og vises ingen steder.
+    // Navnet er fra før appen het Fróði vit, og prefikset er `no.` mens
+    // bundle-ID-en er `com.Tazk.FrodiVit`. Begge deler blir stående:
+    // merkelappen er adressen til nøkkelen i Secure Enclave, ikke en
+    // identifikator iOS bryr seg om. Endrer vi den, finner appen ikke igjen
+    // nøkkelen, og alt som allerede er forseglet på telefonen blir uleselig.
+    // Den er privat og vises ingen steder.
     private static let keyTag = "no.Tazk.FrodiKunnskap.vault.v1".data(using: .utf8)!
 
     enum VaultError: LocalizedError {

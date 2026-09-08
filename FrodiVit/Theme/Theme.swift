@@ -3,11 +3,12 @@ import SwiftUI
 /// Designsystemet i kode. Verdiene her er de eneste som skal brukes —
 /// ingen egendefinerte farger, avstander eller radiuser ute i viewene.
 ///
-/// Kilde: dev_only/designsystem/frodi-designsystem-v1.0.html
+/// Kilde: `~/dev/frodi/dev_only/designsystem/frodi-designsystem-v1.0.html`.
+/// Designsystemet er delt med Fróði røst og ligger i det repoet.
 ///
-/// Delt med tale til tekst-appen, men ikke identisk: opptaksfargene finnes
-/// ikke her, og `accentKnowledge` er tatt i bruk i stedet. Det er den samme
-/// merkevaren, ikke den samme appen.
+/// Delt, men ikke identisk: opptaksfargene finnes ikke her, og
+/// `accentKnowledge` er tatt i bruk i stedet. Det er den samme merkevaren,
+/// ikke den samme appen.
 
 // MARK: - Farger
 

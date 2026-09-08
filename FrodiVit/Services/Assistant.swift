@@ -3,7 +3,7 @@ import Foundation
 /// Porten mot språkmodellen. Alt som lager tekst går gjennom denne, slik at
 /// modellen kan byttes uten at viewene merker det.
 ///
-/// Samme grep som `Transcriber` i tale til tekst-appen, og av samme grunn:
+/// Samme grep som `Transcriber` i Fróði røst, og av samme grunn:
 /// den modellen ble byttet én gang allerede, fra Apples motor til nb-whisper,
 /// uten at et eneste view ble rørt.
 ///

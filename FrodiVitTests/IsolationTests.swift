@@ -5,7 +5,7 @@ import Testing
 /// Appens løfte er at ingenting forlater telefonen. Disse testene vokter det
 /// løftet i koden, ikke i dokumentasjonen.
 ///
-/// Løftet er strengere her enn i tale til tekst-appen: den har lyd i
+/// Løftet er strengere her enn i Fróði røst: den har lyd i
 /// bakgrunnen fordi et opptak må overleve at skjermen låses. Denne appen gjør
 /// ingenting i bakgrunnen i det hele tatt.
 @Suite("Isolasjon")
@@ -30,7 +30,7 @@ struct IsolationTests {
     @Test("Appen ber ikke om mikrofon")
     func doesNotRequestMicrophone() {
         let value = Bundle.main.object(forInfoDictionaryKey: "NSMicrophoneUsageDescription")
-        #expect(value == nil, "NSMicrophoneUsageDescription hører til tale til tekst-appen")
+        #expect(value == nil, "NSMicrophoneUsageDescription hører til Fróði røst")
     }
 
     /// Talegjenkjenning hører heller ikke hjemme her. Nøkkelen tvinger fram

@@ -51,7 +51,7 @@ targets:
           # Språkmodellen legges til som mappereferanse under resources når den
           # kommer. Uten denne ekskluderingen fanger sources den opp i tillegg,
           # og config.json-filene kolliderer i app-pakken. Samme felle som i
-          # tale til tekst-appen, løst på samme måte.
+          # Fróði røst, løst på samme måte.
           - "Resources/Model"
       # Mappereferanse, ikke enkeltfiler. Beholder katalogstrukturen, som
       # tokenizeren og vektene leses ut fra, og hindrer at config.json-filene

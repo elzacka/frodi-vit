@@ -27,7 +27,7 @@ struct ThemeTests {
         "AccentRecord", "AccentRecordOn", "RecordingActive"
     ])
     func recordingColorsAreAbsent(name: String) {
-        #expect(UIColor(named: name) == nil, "\(name) hører til tale til tekst-appen")
+        #expect(UIColor(named: name) == nil, "\(name) hører til Fróði røst")
     }
 
     /// accent-knowledge er #2E9C82 i designsystemet. En farge som er nesten
