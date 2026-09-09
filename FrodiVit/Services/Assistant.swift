@@ -30,7 +30,7 @@ enum AssistantError: LocalizedError {
         case .modelMissing:
             String(localized: "Språkmodellen mangler i appen.")
         case .outOfMemory:
-            String(localized: "Telefonen hadde ikke nok minne til å svare.")
+            String(localized: "Enheten hadde ikke nok minne til å svare.")
         case .underlying(let message):
             message
         }
@@ -43,7 +43,7 @@ enum AssistantError: LocalizedError {
         case .modelMissing:
             String(localized: "Fróði fant ikke språkmodellen. Den følger med appen, så dette betyr som regel at installasjonen er ufullstendig. Installer appen på nytt.")
         case .outOfMemory:
-            String(localized: "Telefonen hadde ikke nok minne. Lukk noen andre apper og prøv igjen.")
+            String(localized: "Enheten hadde ikke nok minne. Lukk noen andre apper og prøv igjen.")
         case .underlying:
             String(localized: "Svaret ble ikke ferdig denne gangen. Prøv igjen.")
         }
