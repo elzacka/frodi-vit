@@ -11,7 +11,6 @@ heter Fróði røst og hører etter i stedet.
 - Du skriver et spørsmål, eller limer inn en tekst
 - Du kan laste opp et dokument og få svar som bygger på det
 - En språkmodell inni appen lager svaret
-- Du kan laste ned svaret
 
 ## Hva appen ikke gjør
 
@@ -22,7 +21,7 @@ så det finnes ikke engang en nedlasting.
 Det du skriver, limer inn og laster opp ligger kryptert på enheten, med en
 nøkkel som lages i maskinvaren og aldri forlater den. Det betyr også at
 innholdet ikke kan leses av en annen enhet, og ikke følger med i en
-sikkerhetskopi. Vil du ta vare på et svar, henter du det ut selv.
+sikkerhetskopi.
 
 ## To apper
 

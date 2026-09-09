@@ -14,13 +14,13 @@ assessment within 7 days. Do not open public GitHub issues.
 
 | Scenario | Result |
 |---|---|
-| Phone lost or stolen, locked | Messages and documents unreadable |
-| Backup copied, or restored to another phone | Unreadable. The key is device-bound |
+| Device lost or stolen, locked | Messages and documents unreadable |
+| Backup copied, or restored to another device | Unreadable. The key is device-bound |
 | Another app reads the app container | Finds encrypted data it cannot decrypt |
 | Network interception | Nothing to intercept. The app has no networking code |
 | Screen recording or mirroring while the conversation is open | Conversation hidden until capture stops |
 | Screenshot | Captured. iOS offers no supported way to prevent one |
-| Phone unlocked, app open, in someone else's hands | Readable, as with any app |
+| Device unlocked, app open, in someone else's hands | Readable, as with any app |
 
 ## Encryption
 

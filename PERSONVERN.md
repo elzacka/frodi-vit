@@ -26,8 +26,7 @@ merket `whenUnlockedThisDeviceOnly`: den er bare tilgjengelig mens enheten er
 låst opp, og den kopieres ikke til en ny enhet.
 
 Det har en pris, og den er med vilje: **innholdet kan ikke leses av en annen
-enhet.** Bytter du enhet, følger det ikke med. Vil du ta vare på et svar,
-henter du det ut selv mens du har enheten.
+enhet.** Bytter du enhet, følger det ikke med.
 
 ## Rettighetene dine
 
@@ -35,8 +34,11 @@ Du gjør alt selv i appen, uten å spørre noen. Det finnes ingen konto, ingen
 innlogging og ingen som sitter på dataene dine.
 
 - **Innsyn:** alt du har skrevet står i samtalen
-- **Uttrekk:** last ned svaret du vil ta vare på
-- **Sletting:** slett samtalen i innstillinger, eller slett appen
+- **Sletting:** slett samtalen i Innstillinger, eller slett appen
+
+**Du kan ennå ikke hente ut et svar fra appen.** Det kommer, men i denne
+versjonen finnes det ingen knapp for det. Trenger du å ta vare på et svar,
+må du skrive det av. Vi sier det her framfor å la deg oppdage det selv.
 
 Sletter du appen, følger alt med. Det finnes ingen kopi noe annet sted.
 
