@@ -29,13 +29,13 @@ struct SettingsView: View {
             .navigationTitle("Innstillinger")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    // Ingen egen font. Navigasjonslinjen er systemets, og
-                    // tittelen ved siden av står i systemfonten uansett hva vi
-                    // ber om. Inter bare på knappen ville gitt to skrifter i
-                    // samme linje. Logohodet finnes nettopp fordi vi ikke ville
-                    // ha systemfonten på merkevaren — her er den riktig.
-                    Button("Ferdig") { dismiss() }
+                ToolbarItem(placement: .topBarTrailing) {
+                    // Kryss, ikke «Ferdig»: her er det ingenting å bekrefte,
+                    // arket bare lukkes. Ikonet har heller ingen skrift, så
+                    // spørsmålet om Inter ved siden av systemtittelen faller
+                    // bort. VoiceOver trenger navnet knappen ikke skriver.
+                    Button { dismiss() } label: { Image(systemName: "xmark") }
+                        .accessibilityLabel("Lukk")
                 }
             }
         }
