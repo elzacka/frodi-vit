@@ -3,7 +3,7 @@ import SwiftUI
 /// Designsystemet i kode. Verdiene her er de eneste som skal brukes —
 /// ingen egendefinerte farger, avstander eller radiuser ute i viewene.
 ///
-/// Kilde: `~/dev/frodi/dev_only/designsystem/frodi-designsystem-v1.0.html`.
+/// Kilde: `~/dev/frodi/dev_only/designsystem/frodi-designsystem.html`.
 /// Designsystemet er delt med Fróði røst og ligger i det repoet.
 ///
 /// Delt, men ikke identisk: opptaksfargene finnes ikke her, og
