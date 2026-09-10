@@ -7,8 +7,7 @@ import SwiftUI
 /// venstre for det, og innstillinger øverst til høyre.
 struct ChatView: View {
     @Environment(\.modelContext) private var context
-    @Query(sort: \ChatMessage.createdAt) private var messages: [ChatMessage]
-    @Query(sort: \Document.createdAt) private var documents: [Document]
+    @Query(sort: \Chat.lastOpenedAt, order: .reverse) private var chats: [Chat]
 
     // Er modellen ikke i pakken, sier stubben fra om nettopp det, i stedet for
     // at MLX feiler med noe uleselig langt inne i lastingen.
@@ -16,6 +15,10 @@ struct ChatView: View {
         assistant: BorealisAssistant.isBundled ? BorealisAssistant() : MissingModelAssistant()
     )
     @State private var draft = ""
+
+    /// Samtalen skjermen står i. `nil` til den første er laget.
+    @State private var chat: Chat?
+    @State private var showingChats = false
     @State private var showingSettings = false
     @State private var showingImporter = false
     @State private var importError: String?
@@ -49,6 +52,15 @@ struct ChatView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.Frodi.background.ignoresSafeArea())
             .navigationBarHidden(true)
+            .task {
+                // Meldinger fra før appen fikk flere samtaler har ingen tråd.
+                // De samles opp her, ellers blir de liggende usynlig i basen.
+                ChatStore.adoptOrphans(in: context)
+                if chat == nil { chat = ChatStore.all(in: context).first }
+            }
+            .sheet(isPresented: $showingChats) {
+                ChatListView(chat: $chat)
+            }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
@@ -71,6 +83,33 @@ struct ChatView: View {
         }
     }
 
+    // MARK: - Samtalen skjermen står i
+
+    /// Samtalen som vises. Faller tilbake til den sist åpnede om den vi sto i
+    /// ble slettet fra listen.
+    private var activeChat: Chat? {
+        if let chat, !chat.isDeleted { return chat }
+        return chats.first
+    }
+
+    private var messages: [ChatMessage] {
+        activeChat?.messagesInOrder ?? []
+    }
+
+    private var documents: [Document] {
+        activeChat?.documentsInOrder ?? []
+    }
+
+    /// Samtalen du skriver i, laget først når du faktisk skriver eller laster
+    /// opp noe. En tom samtale per oppstart ville fylt listen med rader du
+    /// aldri brukte.
+    private func ensureChat() -> Chat {
+        if let activeChat { return activeChat }
+        let created = ChatStore.create(orReuse: nil, in: context)
+        chat = created
+        return created
+    }
+
     // MARK: - Dokumenter
 
     /// Teksten som blir med i ledeteksten. Et dokument som ikke lar seg låse
@@ -83,7 +122,9 @@ struct ChatView: View {
         do {
             let url = try result.get()
             let text = try DocumentImport.text(from: url)
-            context.insert(try Document(name: url.lastPathComponent, text: text))
+            let document = try Document(name: url.lastPathComponent, text: text)
+            document.chat = ensureChat()
+            context.insert(document)
             try context.save()
         } catch let error as DocumentImport.ImportError {
             importError = "\(error.localizedDescription) \(error.guidance)"
@@ -120,17 +161,23 @@ struct ChatView: View {
             .accessibilityLabel("Fróði vit")
             .accessibilityAddTraits(.isHeader)
 
-            HStack {
-                Spacer()
-                Button {
-                    showingSettings = true
-                } label: {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: ChatControl.actionIcon))
-                        .foregroundStyle(Color.Frodi.textSecondary)
-                        .frame(width: ChatControl.action, height: ChatControl.action)
+            // Samtalene til venstre, ny samtale og innstillinger til høyre.
+            // Ordmerket blir stående i midten fordi det ligger i sitt eget lag
+            // i stacken, ikke i raden med knapper.
+            HStack(spacing: 0) {
+                headerButton("list.bullet", label: "Samtaler") {
+                    showingChats = true
                 }
-                .accessibilityLabel("Innstillinger")
+
+                Spacer()
+
+                headerButton("square.and.pencil", label: "Ny samtale") {
+                    chat = ChatStore.create(orReuse: activeChat, in: context)
+                }
+
+                headerButton("gearshape", label: "Innstillinger") {
+                    showingSettings = true
+                }
             }
         }
         .padding(.horizontal, Space.s4)
@@ -141,6 +188,20 @@ struct ChatView: View {
                 .fill(Color.Frodi.border)
                 .frame(height: 1)
         }
+    }
+
+    private func headerButton(
+        _ symbol: String,
+        label: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: ChatControl.actionIcon))
+                .foregroundStyle(Color.Frodi.textSecondary)
+                .frame(width: ChatControl.action, height: ChatControl.action)
+        }
+        .accessibilityLabel(label)
     }
 
     /// Basen lot seg ikke åpne, så appen kjører på minnet.
@@ -264,7 +325,7 @@ struct ChatView: View {
                 if conversation.isAnswering {
                     conversation.stop()
                 } else {
-                    conversation.send(draft, documents: documentTexts, context: context)
+                    conversation.send(draft, in: ensureChat(), documents: documentTexts, context: context)
                     draft = ""
                     writing = false
                 }

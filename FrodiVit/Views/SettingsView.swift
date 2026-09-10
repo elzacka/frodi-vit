@@ -11,6 +11,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query private var messages: [ChatMessage]
+    @Query private var chats: [Chat]
 
     @State private var confirmingDelete = false
 
@@ -62,35 +63,44 @@ struct SettingsView: View {
     }
 
     private var conversation: some View {
-        card("Samtalen") {
-            paragraph(messageCount)
-            paragraph("Meldingene ligger kryptert på enheten til du sletter dem.")
+        card("Samtaler") {
+            paragraph(chatCount)
+            if !messages.isEmpty { paragraph(messageCount) }
+            paragraph("Alt ligger kryptert på enheten til du sletter det.")
+            paragraph("Vil du slette én eller noen få, gjør du det i listen over samtaler.")
 
-            Button("Slett samtalen", role: .destructive) {
+            Button("Slett alle samtaler", role: .destructive) {
                 confirmingDelete = true
             }
             .font(.Frodi.bodyMedium)
-            .disabled(messages.isEmpty)
+            .disabled(chats.isEmpty)
             .confirmationDialog(
-                "Slette hele samtalen?",
+                "Slette alle samtaler?",
                 isPresented: $confirmingDelete,
                 titleVisibility: .visible
             ) {
-                Button("Slett", role: .destructive) { deleteAll() }
+                Button("Slett alle", role: .destructive) { deleteAll() }
                 Button("Avbryt", role: .cancel) {}
             } message: {
-                Text("Meldingene blir borte for godt. Dette kan ikke angres.")
+                Text("Meldingene og dokumentene blir borte for godt. Dette kan ikke angres.")
                     .font(.Frodi.caption)
             }
         }
     }
 
-    /// «1 meldinger» er den feilen ingen leser forbi. Entall skrives ut.
+    /// «1 samtaler» er den feilen ingen leser forbi. Entall skrives ut.
+    private var chatCount: String {
+        switch chats.count {
+        case 0: String(localized: "Du har ingen samtaler.")
+        case 1: String(localized: "Du har én samtale.")
+        default: String(localized: "Du har \(chats.count) samtaler.")
+        }
+    }
+
     private var messageCount: String {
         switch messages.count {
-        case 0: String(localized: "Du har ingen meldinger.")
-        case 1: String(localized: "Du har én melding.")
-        default: String(localized: "Du har \(messages.count) meldinger.")
+        case 1: String(localized: "Til sammen én melding.")
+        default: String(localized: "Til sammen \(messages.count) meldinger.")
         }
     }
 
@@ -178,9 +188,13 @@ struct SettingsView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
+    /// Sletter alt. Meldingene og dokumentene følger med samtalene gjennom
+    /// `cascade`, så det er samtalene som slettes her.
     private func deleteAll() {
-        for message in messages { context.delete(message) }
-        try? context.save()
+        // Løse meldinger fra en eldre versjon hører ikke til noen samtale, og
+        // ville blitt stående igjen etter «slett alt».
+        for message in messages where message.chat == nil { context.delete(message) }
+        ChatStore.delete(chats, in: context)
     }
 }
 

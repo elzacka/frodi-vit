@@ -25,6 +25,9 @@ final class Document {
 
     var createdAt: Date = Date()
 
+    /// Samtalen dokumentet hører til. Se `ChatMessage.chat`.
+    var chat: Chat?
+
     init(name: String, text: String, createdAt: Date = Date()) throws {
         self.name = name
         self.sealedText = try Vault.seal(text)

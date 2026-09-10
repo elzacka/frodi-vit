@@ -11,6 +11,7 @@ heter Fróði røst og hører etter i stedet.
 - Du skriver et spørsmål, eller limer inn en tekst
 - Du kan laste opp et dokument og få svar som bygger på det
 - En språkmodell inni appen lager svaret
+- Du kan ha flere samtaler, bla i dem, og slette én, flere eller alle
 
 ## Hva appen ikke gjør
 

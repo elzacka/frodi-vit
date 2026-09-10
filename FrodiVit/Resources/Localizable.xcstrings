@@ -1,10 +1,17 @@
 {
   "sourceLanguage" : "nb",
   "strings" : {
-    "bare starten er med" : {
-
+    "%@ · %@" : {
+      "localizations" : {
+        "nb" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
     },
-    "Det betyr også at innholdet ikke kan leses av en annen enhet, og ikke følger med i en sikkerhetskopi." : {
+    "bare starten er med" : {
 
     },
     "fróði" : {
@@ -13,10 +20,7 @@
     "Fróði får ikke åpnet basen på enheten. Du kan spørre som vanlig, men alt forsvinner når du lukker appen. Installer appen på nytt for å rette det." : {
 
     },
-    "Fróði sender ingenting og henter ingenting. Det du skriver, limer inn og laster opp blir liggende på enheten, kryptert med en nøkkel som ligger i maskinvaren og aldri forlater den." : {
-
-    },
-    "Fróði svarer på det du spør om, og gjør det på enheten. Navnet er norrønt og betyr «den kunnskapsrike»." : {
+    "Lisensene under krever at opphavet oppgis. Dette er den attribusjonen." : {
 
     },
     "Meldingene blir borte for godt. Dette kan ikke angres." : {

@@ -18,6 +18,12 @@ final class ChatMessage {
 
     var createdAt: Date = Date()
 
+    /// Samtalen meldingen hører til.
+    ///
+    /// Valgfri fordi meldinger lagret før appen fikk flere samtaler ikke har
+    /// noen. `ChatStore.adoptOrphans` samler dem opp ved oppstart.
+    var chat: Chat?
+
     /// Modellen rakk ikke å svare ferdig. Da er teksten det den fikk sagt,
     /// og skjermen sier fra i stedet for å la et avkuttet svar se ferdig ut.
     var wasInterrupted: Bool = false

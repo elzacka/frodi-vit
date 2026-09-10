@@ -33,8 +33,9 @@ enhet.** Bytter du enhet, følger det ikke med.
 Du gjør alt selv i appen, uten å spørre noen. Det finnes ingen konto, ingen
 innlogging og ingen som sitter på dataene dine.
 
-- **Innsyn:** alt du har skrevet står i samtalen
-- **Sletting:** slett samtalen i Innstillinger, eller slett appen
+- **Innsyn:** alt du har skrevet står i samtalene dine
+- **Sletting:** sveip på en samtale i listen for å slette den, trykk «Velg» for
+  å ta flere eller alle på én gang, eller slett appen
 
 **Du kan ennå ikke hente ut et svar fra appen.** Det kommer, men i denne
 versjonen finnes det ingen knapp for det. Trenger du å ta vare på et svar,

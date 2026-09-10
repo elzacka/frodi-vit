@@ -21,10 +21,13 @@ final class Conversation {
 
     /// Sender spørsmålet og lagrer svaret etter hvert som det kommer.
     ///
+    /// Både spørsmålet og svaret legges i `chat`. Uten den ville meldingene
+    /// blitt liggende løst i basen, uten en tråd som kan slettes samlet.
+    ///
     /// Lagrer på hver oppdatering, ikke bare til slutt. Blir appen avbrutt
     /// midt i et svar, står det som kom fram igjen neste gang — avkortet, men
     /// merket som avkortet, i stedet for at hele svaret er borte.
-    func send(_ question: String, documents: [String] = [], context: ModelContext) {
+    func send(_ question: String, in chat: Chat, documents: [String] = [], context: ModelContext) {
         let trimmed = question.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isAnswering else { return }
 
@@ -36,9 +39,19 @@ final class Conversation {
 
             let reply: ChatMessage
             do {
-                context.insert(try ChatMessage(role: .user, text: trimmed))
+                let question = try ChatMessage(role: .user, text: trimmed)
+                question.chat = chat
+                context.insert(question)
+
                 reply = try ChatMessage(role: .assistant, text: "")
+                reply.chat = chat
                 context.insert(reply)
+
+                // Samtalen navngis etter det første spørsmålet, og flyttes
+                // øverst i listen fordi du nettopp brukte den.
+                try chat.nameIfUnnamed(from: trimmed)
+                chat.lastOpenedAt = Date()
+
                 try context.save()
             } catch {
                 errorMessage = error.localizedDescription
