@@ -20,10 +20,16 @@
     "Fróði får ikke åpnet basen på enheten. Du kan spørre som vanlig, men alt forsvinner når du lukker appen. Installer appen på nytt for å rette det." : {
 
     },
+    "Ingen samtaler ennå" : {
+
+    },
     "Lisensene under krever at opphavet oppgis. Dette er den attribusjonen." : {
 
     },
-    "Meldingene blir borte for godt. Dette kan ikke angres." : {
+    "Meldingene og dokumentene blir borte for godt. Dette kan ikke angres." : {
+
+    },
+    "Meldingene og dokumentene i dem blir borte for godt. Dette kan ikke angres." : {
 
     },
     "Samtalen er skjult mens skjermen tas opp." : {
@@ -33,6 +39,9 @@
 
     },
     "Skriv, lim inn eller last opp et dokument, så svarer Fróði. Alt blir liggende på enheten." : {
+
+    },
+    "Spør Fróði om noe, så havner samtalen her." : {
 
     },
     "Spør om noe" : {

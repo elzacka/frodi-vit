@@ -64,12 +64,25 @@ struct AllowanceTests {
         #expect(BorealisAssistant.allowances(for: [9_000, 9_000], within: 10_000) == [5_000, 5_000])
     }
 
-    /// Målt 8. september 2026: NSM sin veileder i risikostyring er 18 sider
-    /// og 41 191 tegn hentet ut med PDFKit. Den skal gå inn hel. Med den
-    /// gamle grensen på 8 000 stoppet den på side 5.
-    @Test("En veileder på atten sider går inn hel")
-    func aRealGuideFitsWhole() {
-        #expect(BorealisAssistant.allowances(for: [41_191]) == [41_191])
+    /// NSM sin veileder i risikostyring er 18 sider og 41 191 tegn hentet ut
+    /// med PDFKit. Den skal avkortes, ikke gå inn hel.
+    ///
+    /// Denne testen påsto det motsatte fra 8. september, da grensen ble satt
+    /// til 48 000 ut fra kontekstvinduet. Målt på iPhone 17 Pro
+    /// 11. september drepte den samme veilederen appen før første ord, hver
+    /// gang. Se `contextCharacterLimit` for tallene.
+    @Test("En veileder på atten sider avkortes")
+    func aRealGuideIsCut() {
+        let budget = BorealisAssistant.contextCharacterLimit
+        #expect(BorealisAssistant.allowances(for: [41_191]) == [budget])
+        #expect(budget < 41_191)
+    }
+
+    /// Grensen er målt, ikke resonnert fram. Sett den ikke opp uten å måle
+    /// på enhet igjen med `ContextProbe` — 16 000 tegn drepte appen.
+    @Test("Budsjettet holder seg under det målte taket")
+    func budgetStaysUnderTheMeasuredCeiling() {
+        #expect(BorealisAssistant.contextCharacterLimit <= 12_000)
     }
 
     @Test("Ingen dokumenter gir ingen andeler")

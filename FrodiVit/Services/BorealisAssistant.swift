@@ -73,22 +73,39 @@ final class BorealisAssistant: Assistant {
 
     /// Så mye dokumenttekst som får plass i én ledetekst, til sammen.
     ///
-    /// Modellen har 32k tokens kontekst. 48 000 tegn norsk er rundt 15 000
-    /// tokens — under halve vinduet, med god plass til spørsmålet og svaret.
-    /// NSM-veilederen i risikostyring er 18 sider og 41 191 tegn og går inn
-    /// hel. Med den gamle grensen på 8 000 stoppet den på side 5 av 18, og
-    /// forside, kolofon og innholdsfortegnelse hadde spist 40 prosent av
-    /// budsjettet før veilederen i det hele tatt begynte.
+    /// **Grensen er satt av minnet på enheten, ikke av kontekstvinduet.**
+    /// Modellen tåler 32k tokens. Enheten gjør det ikke: vektene og
+    /// KV-bufferet ligger i minnet samtidig, og jetsam tar appen lenge før
+    /// vinduet er fullt.
+    ///
+    /// Målt på iPhone 17 Pro 11. september 2026, med `ContextProbe`. Taket
+    /// enheten gir appen er rundt 3 376 MB:
+    ///
+    /// | Tegn | Topp | Ledig igjen | Utfall |
+    /// |---|---|---|---|
+    /// | 8 000 | 2 712 MB | 664 MB | Svarer |
+    /// | 10 000 | 2 868 MB | 508 MB | Svarer |
+    /// | 12 000 | 3 065 MB | 310 MB | Svarer, med lite igjen |
+    /// | 16 000 | – | – | Drept før første token |
+    /// | 41 000 | – | – | Drept før første token |
+    ///
+    /// Rundt 2 090 MB går med før første tegn dokumenttekst, og hver 1 000
+    /// tegn koster omtrent 78 MB til. Kurven er rett, og taket ligger like
+    /// over 14 000 tegn på denne enheten.
+    ///
+    /// Grensen sto på 48 000 i to dager. Det tallet kom fra kontekstvinduet
+    /// og var aldri målt: NSM-veilederen på 41 191 tegn drepte appen før
+    /// første ord, hver gang. 8 000 er verdien den hadde før, og den gir mest
+    /// margin til enheter med mindre minne enn denne.
+    ///
+    /// Prisen er at et langt dokument avkortes. `DocumentBar` sier fra med
+    /// «bare starten er med», så en avkortet tekst er synlig framfor stille.
+    /// Veien ut er å velge ut de relevante delene med `borealis-embed-212m`,
+    /// ikke å sette grensen opp igjen.
     ///
     /// Grensen gjelder alle dokumentene til sammen, ikke hvert enkelt. Var
     /// den per dokument, ville to opplastinger sprengt vinduet.
-    ///
-    /// **Ikke målt på enhet:** hvor lenge MLX bruker på å lese 15 000 tokens
-    /// før det første ordet kommer, og hvor godt en 1B-modell med glidende
-    /// vindu på 512 husker på tvers av så mye tekst. Blir ventetiden for
-    /// lang, er svaret å velge ut de relevante delene av dokumentet — ikke å
-    /// sette grensen ned igjen.
-    nonisolated static let contextCharacterLimit = 48_000
+    nonisolated static let contextCharacterLimit = 8_000
 
     /// Hvor mange tegn hvert dokument får av budsjettet.
     ///
