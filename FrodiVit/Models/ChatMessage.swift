@@ -53,4 +53,20 @@ final class ChatMessage {
     func replaceText(_ text: String) throws {
         sealedText = try Vault.seal(text)
     }
+
+    /// En tom svarboble som venter på det første ordet.
+    ///
+    /// Svaret opprettes i det spørsmålet sendes, slik at det som strømmer inn
+    /// har et sted å lagres underveis. Fram til første token er meldingen tom,
+    /// og skjermen har alt en «Tenker …» som sier det samme. To varsler om det
+    /// samme, der det ene er en tom form, sier mindre enn ett.
+    ///
+    /// Gjelder også etter en omstart: krasjer appen før første token, blir den
+    /// tomme meldingen liggende, og uten dette ville den stått som en tom
+    /// boble i samtalen for alltid. Et avbrutt svar er noe annet — det viser
+    /// «Svaret ble avbrutt», og skal bli stående.
+    var isAwaitingFirstToken: Bool {
+        guard role == .assistant, !wasInterrupted else { return false }
+        return ((try? text()) ?? "").isEmpty
+    }
 }

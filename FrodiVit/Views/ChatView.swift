@@ -96,6 +96,12 @@ struct ChatView: View {
         activeChat?.messagesInOrder ?? []
     }
 
+    /// Meldingene skjermen tegner. Den tomme svarboblen som venter på første
+    /// token hører ikke hjemme her — «Tenker …» dekker den tilstanden.
+    private var visibleMessages: [ChatMessage] {
+        messages.filter { !$0.isAwaitingFirstToken }
+    }
+
     private var documents: [Document] {
         activeChat?.documentsInOrder ?? []
     }
@@ -272,7 +278,7 @@ struct ChatView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: Space.s3) {
-                    ForEach(messages) { message in
+                    ForEach(visibleMessages) { message in
                         MessageBubble(message: message)
                             .id(message.id)
                     }
@@ -286,7 +292,7 @@ struct ChatView: View {
             }
             .scrollContentBackground(.hidden)
             .hiddenWhileScreenCaptured()
-            .onChange(of: messages.last?.id) { _, id in
+            .onChange(of: visibleMessages.last?.id) { _, id in
                 guard let id else { return }
                 withAnimation { proxy.scrollTo(id, anchor: .bottom) }
             }

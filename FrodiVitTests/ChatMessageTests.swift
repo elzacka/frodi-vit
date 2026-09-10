@@ -40,4 +40,33 @@ struct ChatMessageTests {
     func emptyMessageIsNotAnError() throws {
         #expect(try ChatMessage(role: .assistant, text: "").text() == "")
     }
+
+    // MARK: - Den tomme svarboblen
+
+    /// Skjermen har alt en «Tenker …». En tom boble ved siden av den sier
+    /// ingenting.
+    @Test("Et svar uten tekst venter på første token")
+    func emptyAnswerIsWaiting() throws {
+        #expect(try ChatMessage(role: .assistant, text: "").isAwaitingFirstToken)
+    }
+
+    @Test("Et svar med tekst venter ikke")
+    func answerWithTextIsNotWaiting() throws {
+        #expect(try !ChatMessage(role: .assistant, text: "Fróði").isAwaitingFirstToken)
+    }
+
+    /// Et avbrutt svar viser «Svaret ble avbrutt», og skal bli stående selv om
+    /// det aldri kom noe tekst.
+    @Test("Et avbrutt svar blir stående")
+    func interruptedAnswerStays() throws {
+        let message = try ChatMessage(role: .assistant, text: "")
+        message.wasInterrupted = true
+        #expect(!message.isAwaitingFirstToken)
+    }
+
+    /// Gjelder bare svar. Et tomt spørsmål kan uansett ikke sendes.
+    @Test("Et spørsmål venter aldri")
+    func questionsNeverWait() throws {
+        #expect(try !ChatMessage(role: .user, text: "").isAwaitingFirstToken)
+    }
 }
