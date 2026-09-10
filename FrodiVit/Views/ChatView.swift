@@ -171,7 +171,14 @@ struct ChatView: View {
 
                 Spacer()
 
-                headerButton("square.and.pencil", label: "Ny samtale") {
+                // Av når samtalen du står i allerede er tom. Da er det
+                // ingenting å starte på nytt fra, og knappen ville sett ut
+                // som om den var i stykker.
+                headerButton(
+                    "square.and.pencil",
+                    label: "Ny samtale",
+                    isEnabled: canStartNewChat
+                ) {
                     chat = ChatStore.create(orReuse: activeChat, in: context)
                 }
 
@@ -190,17 +197,24 @@ struct ChatView: View {
         }
     }
 
+    /// Det er noe å forlate: samtalen du står i har innhold.
+    private var canStartNewChat: Bool {
+        activeChat.map { !$0.isEmpty } ?? false
+    }
+
     private func headerButton(
         _ symbol: String,
         label: String,
+        isEnabled: Bool = true,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: ChatControl.actionIcon))
-                .foregroundStyle(Color.Frodi.textSecondary)
+                .foregroundStyle(Color.Frodi.textSecondary.opacity(isEnabled ? 1 : 0.35))
                 .frame(width: ChatControl.action, height: ChatControl.action)
         }
+        .disabled(!isEnabled)
         .accessibilityLabel(label)
     }
 
