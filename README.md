@@ -20,7 +20,7 @@ så det finnes ikke engang en nedlasting.
 
 Det du skriver, limer inn og laster opp ligger kryptert på enheten, med en
 nøkkel som lages i maskinvaren og aldri forlater den. Det betyr også at
-innholdet ikke kan leses av en annen enhet, og ikke følger med i en
+innholdet ikke kan leses av en annen enhet, og ikke kan leses fra en
 sikkerhetskopi.
 
 ## To apper

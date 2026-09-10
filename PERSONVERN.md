@@ -17,9 +17,9 @@ server, og det finnes ingen server å snakke med.
 | Lag | Hva det gjør |
 |---|---|
 | Sandkassen | Ingen andre apper på enheten kan lese mappen |
-| Filbeskyttelse | Innholdet er ulesbart mens enheten er låst |
-| Utenfor sikkerhetskopi | Innholdet følger ikke med i iCloud |
 | Kryptering per melding og dokument | AES-GCM, med en nøkkel som pakkes inn av en nøkkel i Secure Enclave |
+| Nøkkelen er låst mens enheten er låst | Innholdet kan ikke åpnes før du har låst opp |
+| Nøkkelen blir igjen her | En sikkerhetskopi kan inneholde innholdet, men det er uleselig uten nøkkelen |
 
 Nøkkelen i Secure Enclave lages på enheten og forlater den aldri. Den er
 merket `whenUnlockedThisDeviceOnly`: den er bare tilgjengelig mens enheten er
