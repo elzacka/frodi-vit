@@ -4,7 +4,7 @@
 
 Første versjon. Ikke sluppet.
 
-- Still spørsmål på en samtaleskjerm med skrivefelt, svarområde og innstillinger
+- Still spørsmål på en samtaleskjerm med skrivefelt, svarområde og en Info-side
 - Hold flere samtaler fra hverandre, og bla i dem i en egen liste
 - Start en ny samtale fra hodet på skjermen
 - Slett én samtale med et sveip, eller flere og alle med «Velg»

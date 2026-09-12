@@ -1,13 +1,13 @@
 import SwiftData
 import SwiftUI
 
-/// Innstillinger, som i skissen ligger bak tannhjulet øverst til høyre.
+/// Info-siden, bak i-en øverst til høyre.
 ///
 /// Skissen la Om fróði, Personvern og Versjonsinfo i en egen meny på
 /// startskjermen. Denne appen har ingen startskjerm — den åpner rett i
 /// samtalen — så de tre hører hjemme her i stedet for på en skjerm som bare
 /// ville eksistert for å holde dem.
-struct SettingsView: View {
+struct InfoView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query private var messages: [ChatMessage]
@@ -29,7 +29,7 @@ struct SettingsView: View {
                 .padding(Space.s4)
             }
             .background(Color.Frodi.background.ignoresSafeArea())
-            .navigationTitle("Innstillinger")
+            .navigationTitle("Info")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -47,18 +47,20 @@ struct SettingsView: View {
     // MARK: - Kort
 
     private var about: some View {
-        card("Om Fróði vit") {
+        card("Fróði vit") {
+            paragraph("Fróði er norrønt og betyr «den kunnskapsrike».")
             paragraph("Fróði svarer på det du spør om. Alt skjer på enheten.")
             paragraph("Skriv spørsmålet, eller lim inn en tekst. Vil du ha svar som bygger på et dokument, laster du det opp først.")
-            paragraph("Navnet er norrønt: Fróði betyr «den kunnskapsrike», og vit er forstand.")
         }
     }
 
     private var privacy: some View {
         card("Personvern") {
             paragraph("Alt skjer på enheten. Ingen datatrafikk ut eller inn.")
-            paragraph("Alt du skriver og laster opp krypteres med en nøkkel som lages i enheten og aldri forlater den. Ingen annen enhet kan lese det, og det følger ikke med i en sikkerhetskopi.")
+            paragraph("Alt du skriver og laster opp krypteres med en nøkkel som lages i enheten (Secure Enclave). Ingen annen enhet kan lese det, og det følger ikke med i en sikkerhetskopi.")
             paragraph("Bytter du enhet, følger ikke innholdet med. Sletter du appen, forsvinner alt med én gang.")
+            link("Mer om personvern", to: Self.privacyPolicy)
+            link("Mer om sikkerhet", to: Self.securityPolicy)
         }
     }
 
@@ -123,12 +125,12 @@ struct SettingsView: View {
             LicensesView()
         } label: {
             card("Lisenser", opensScreen: true) {
-                paragraph("Modellene, koden og skriftene appen bygger på, med opphav og lisens.")
+                paragraph("Modellene, koden og fontene appen bygger på, med opphav og lisens.")
             }
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Lisenser")
-        .accessibilityHint("Åpner listen over modeller, kode og skrifter")
+        .accessibilityHint("Åpner listen over modeller, kode og fonter")
     }
 
     private var version: some View {
@@ -137,6 +139,11 @@ struct SettingsView: View {
             paragraph("Spørsmål eller feil: hei@tazk.no")
         }
     }
+
+    // Lenkene åpner i Safari. Appen henter ingenting selv; det er nettleseren
+    // som går på nett, og bare når du trykker.
+    private static let privacyPolicy = URL(string: "https://github.com/elzacka/frodi-vit/blob/main/PERSONVERN.md")!
+    private static let securityPolicy = URL(string: "https://github.com/elzacka/frodi-vit/blob/main/SECURITY.md")!
 
     /// Versjon og byggenummer, slik de står i pakken.
     static var versionText: String {
@@ -188,6 +195,16 @@ struct SettingsView: View {
             .font(.Frodi.caption)
             .foregroundStyle(Color.Frodi.textSecondary)
             .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Lenke ut av appen, i samme størrelse som brødteksten. Understreket og i
+    /// text-primary, så den skiller seg fra teksten rundt på mer enn farge.
+    private func link(_ title: String, to url: URL) -> some View {
+        Link(title, destination: url)
+            .font(.Frodi.caption)
+            .underline()
+            .tint(Color.Frodi.textPrimary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -245,15 +262,9 @@ struct LicensesView: View {
 
             ScrollView {
                 VStack(spacing: Space.s4) {
-                    Text("Lisensene under krever at opphavet oppgis. Dette er den attribusjonen.")
-                        .font(.Frodi.caption)
-                        .foregroundStyle(Color.Frodi.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
                     group("Modeller", models)
                     group("Kode", code)
-                    group("Skrifter", fonts)
+                    group("Fonter", fonts)
                 }
                 .padding(Space.s4)
             }

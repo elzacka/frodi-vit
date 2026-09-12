@@ -1,7 +1,5 @@
 # Tredjepartslisenser
 
-Lisensene under krever at opphavet oppgis. Dette er den attribusjonen.
-
 Sist gjennomgått 8. september 2026.
 
 ## Modeller
@@ -71,7 +69,7 @@ oppdaget senere: `Tokenizers` avhenger av `Hub`, som avhenger av
 `swift-huggingface`. Appen kaller bare `AutoTokenizer.from(modelFolder:)`, som
 leser filer fra disk. Se `SECURITY.md` for hva løftet da presist er.
 
-## Skrifter
+## Fonter
 
 | Skrift | Opphav | Lisens |
 |---|---|---|

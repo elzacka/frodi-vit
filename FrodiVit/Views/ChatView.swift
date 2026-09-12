@@ -62,7 +62,7 @@ struct ChatView: View {
                 ChatListView(chat: $chat)
             }
             .sheet(isPresented: $showingSettings) {
-                SettingsView()
+                InfoView()
             }
             .fileImporter(
                 isPresented: $showingImporter,
@@ -187,7 +187,7 @@ struct ChatView: View {
                     chat = ChatStore.create(orReuse: activeChat, in: context)
                 }
 
-                headerButton("gearshape", label: "Innstillinger") {
+                headerButton("info.circle", label: "Info om appen") {
                     showingSettings = true
                 }
             }

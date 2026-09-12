@@ -17,8 +17,8 @@ final class FrodiVitUITests: XCTestCase {
             "Skrivefeltet mangler"
         )
         XCTAssertTrue(
-            app.buttons["Innstillinger"].waitForExistence(timeout: 5),
-            "Innstillinger-knappen mangler"
+            app.buttons["Info om appen"].waitForExistence(timeout: 5),
+            "Info-knappen mangler"
         )
         XCTAssertTrue(app.buttons["Samtaler"].exists, "Samtaler-knappen mangler")
         XCTAssertTrue(app.buttons["Ny samtale"].exists, "Ny samtale-knappen mangler")
