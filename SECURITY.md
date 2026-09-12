@@ -2,7 +2,7 @@
 
 Fróði vit answers questions on the device. Nothing is transmitted.
 
-Last reviewed 12.09.26.
+Last reviewed 13.09.26.
 
 ## Reporting a vulnerability
 
@@ -19,6 +19,7 @@ assessment within 7 days. Do not open public GitHub issues.
 | Another app reads the app container | Finds encrypted data it cannot decrypt |
 | Network interception | Nothing to intercept. The app has no networking code |
 | Screen recording or mirroring while the conversation is open | Conversation hidden until capture stops |
+| App switcher, or any other time the app is not in front | Conversation hidden before iOS takes the snapshot |
 | Screenshot | Captured. iOS offers no supported way to prevent one |
 | Device unlocked, app open, in someone else's hands | Readable, as with any app |
 
@@ -41,7 +42,7 @@ The sections below explain the choices.
 | Document upload | The system file picker, which grants access to the one file chosen. The text is sealed on import and the file is not kept | `DocumentImport` |
 | Language models | Both bundled and loaded from local directories. `MLXHuggingFace` is not linked, so no code path reaches the Hugging Face hub | `project.yml`, `BorealisAssistant`, `BorealisEmbedder` |
 | Privacy manifest | No tracking, no tracking domains, no collected data. One accessed API: file timestamps, C617.1 | `PrivacyInfo.xcprivacy`, `IsolationTests` |
-| Screen capture | Conversation hidden while `UIScreen.isCaptured` is true | `CaptureGuard` |
+| Screen capture | Conversation hidden while `UIScreen.isCaptured` is true, and while the scene is not active | `CaptureGuard` |
 | Export compliance | `ITSAppUsesNonExemptEncryption` is `false`. The only cryptography is Apple's CryptoKit and the Secure Enclave | `project.yml` |
 | Compiler | `SWIFT_STRICT_CONCURRENCY: complete`, `SWIFT_VERSION: 6`, `ENABLE_USER_SCRIPT_SANDBOXING: true` | `project.yml` |
 | Attack surface kept closed | No URL schemes, no document types, no `NSUserActivity` (Handoff), no Spotlight indexing, no extensions, no app group | `Info.plist` |
