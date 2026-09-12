@@ -11,5 +11,6 @@ Første versjon. Ikke sluppet.
 - Knytt opplastede dokumenter til den samtalen de hører til
 - Velg de delene av et dokument som gjelder spørsmålet, i stedet for starten av det
 - Se under svaret hvilke dokumenter det bygger på
+- Hold fingeren på et svar for å kopiere det, eller dele det som tekstfil
 - Lagre meldingene kryptert, med en nøkkel som ligger i Secure Enclave
 - Ingen nettverkskall, ingen bakgrunnsmoduser

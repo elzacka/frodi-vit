@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// En melding i samtalen.
 ///
@@ -7,6 +8,9 @@ import SwiftUI
 /// forskjellen — det kravet gjelder også her.
 struct MessageBubble: View {
     let message: ChatMessage
+
+    @State private var exportURLs: [URL] = []
+    @State private var exportError: String?
 
     var body: some View {
         HStack {
@@ -49,6 +53,48 @@ struct MessageBubble: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(spokenLabel)
+        // Veien ut av appen. Svaret er bundet til denne enheten, så dette er
+        // den eneste måten å ta det med seg på. Hold fingeren på boblen.
+        .contextMenu {
+            if !isFromUser {
+                Button("Kopier", systemImage: "doc.on.doc", action: copy)
+                Button("Del", systemImage: "square.and.arrow.up", action: share)
+            }
+        }
+        .accessibilityActions {
+            if !isFromUser {
+                Button("Kopier", action: copy)
+                Button("Del", action: share)
+            }
+        }
+        .sheet(isPresented: .constant(!exportURLs.isEmpty)) {
+            ShareSheet(urls: exportURLs) {
+                AnswerExport.cleanUp(exportURLs)
+                exportURLs = []
+            }
+        }
+        .alert("Kunne ikke dele", isPresented: .constant(exportError != nil)) {
+            Button("Greit") { exportError = nil }
+        } message: {
+            Text(exportError ?? "").font(.Frodi.body)
+        }
+    }
+
+    // MARK: - Ut av appen
+
+    /// Bare til denne enheten. Uten `localOnly` følger utklippstavlen med
+    /// til de andre enhetene dine gjennom iCloud, og det er en vei ut som
+    /// appen ellers ikke har.
+    private func copy() {
+        UIPasteboard.general.setItems([[UTType.utf8PlainText.identifier: text]], options: [.localOnly: true])
+    }
+
+    private func share() {
+        do {
+            exportURLs = try AnswerExport.prepare(text, createdAt: message.createdAt)
+        } catch {
+            exportError = error.localizedDescription
+        }
     }
 
     private var isFromUser: Bool {

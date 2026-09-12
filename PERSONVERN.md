@@ -45,10 +45,9 @@ innlogging og ingen som sitter på dataene dine.
 - **Innsyn:** alt du har skrevet står i samtalene dine
 - **Sletting:** sveip på en samtale i listen for å slette den, trykk «Velg» for
   å ta flere eller alle på én gang, eller slett appen
-
-**Du kan ennå ikke hente ut et svar fra appen.** Det kommer, men i denne
-versjonen finnes det ingen knapp for det. Trenger du å ta vare på et svar,
-må du skrive det av. Vi sier det her framfor å la deg oppdage det selv.
+- **Ta med deg et svar:** hold fingeren på svaret for å kopiere det, eller
+  dele det som tekstfil til Filer eller AirDrop. Kopien går bare til
+  utklippstavlen på denne enheten, ikke til de andre enhetene dine
 
 Sletter du appen, følger alt med. Det finnes ingen kopi noe annet sted.
 
