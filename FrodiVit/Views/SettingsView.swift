@@ -56,7 +56,7 @@ struct SettingsView: View {
 
     private var privacy: some View {
         card("Personvern") {
-            paragraph("Fróði sender ingenting og henter ingenting. Verken spørsmålene, svarene eller dokumentene forlater enheten.")
+            paragraph("Alt skjer på enheten. Ingen datatrafikk ut eller inn.")
             paragraph("Alt du skriver og laster opp krypteres med en nøkkel som lages i enheten og aldri forlater den. Ingen annen enhet kan lese det, og det følger ikke med i en sikkerhetskopi.")
             paragraph("Bytter du enhet, følger ikke innholdet med. Sletter du appen, forsvinner alt med én gang.")
         }
