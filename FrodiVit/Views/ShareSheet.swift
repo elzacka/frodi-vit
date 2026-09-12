@@ -1,8 +1,8 @@
 import SwiftUI
 import UIKit
 
-/// iOS' egen delingsmeny. Brukes bare til eksport, og lar deg velge Filer
-/// eller AirDrop – begge lokale.
+/// iOS' own share sheet. Used only for export, and lets you pick Files or
+/// AirDrop, both local.
 struct ShareSheet: UIViewControllerRepresentable {
     let urls: [URL]
     let onFinish: () -> Void

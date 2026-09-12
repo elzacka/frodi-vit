@@ -2,31 +2,31 @@ import Foundation
 import MLXLMCommon
 import MLXLLM
 
-/// Svarer med borealis-open-1b, kjørt i appen med MLX.
+/// Answers with borealis-open-1b, run in the app with MLX.
 ///
-/// Modellen ligger som mappereferanse i app-pakken og lastes derfra. Det
-/// finnes ingen nedlastingsvei: `MLXHuggingFace` er ikke lenket inn, så en
-/// manglende fil feiler i stedet for å hente.
+/// The model sits as a folder reference in the app bundle and is loaded from
+/// there. There is no download path: `MLXHuggingFace` is not linked in, so a
+/// missing file fails instead of fetching.
 @MainActor
 final class BorealisAssistant: Assistant {
-    /// Navnet på mappen `Scripts/fetch-model.sh` legger modellen i.
+    /// The name of the folder `Scripts/fetch-model.sh` puts the model in.
     ///
-    /// Mappereferansen i `project.yml` peker på `Resources/Model`, så hele den
-    /// mappen havner i app-pakken med navnet sitt i behold. Modellen ligger
-    /// altså under `Model/`, ikke i bunnen av pakken.
+    /// The folder reference in `project.yml` points at `Resources/Model`, so that
+    /// whole folder lands in the app bundle with its name intact. The model is
+    /// therefore under `Model/`, not at the root of the bundle.
     nonisolated static let modelDirectoryName = "borealis-open-1b"
     nonisolated static let modelParentName = "Model"
 
-    /// Lastes ved første spørsmål, ikke ved oppstart. En halv gigabyte vekter
-    /// skal ikke ligge i minnet mens du bare ser på en tom samtale.
+    /// Loaded at the first question, not at launch. Half a gigabyte of weights
+    /// should not sit in memory while you only look at an empty conversation.
     private var session: ChatSession?
 
-    /// Finnes modellen i pakken i det hele tatt?
+    /// Does the model exist in the bundle at all?
     ///
-    /// Uten dette faller appen tilbake på en uforståelig feil fra MLX når noen
-    /// har hoppet over `fetch-model.sh`. Ren filsjekk, uten tilstand, så den
-    /// kan leses fra hvor som helst — blant annet fra testene, som ikke kjører
-    /// på hovedaktøren.
+    /// Without this the app falls back on an incomprehensible error from MLX when
+    /// someone has skipped `fetch-model.sh`. A plain file check, without state, so
+    /// it can be read from anywhere, including the tests, which do not run on the
+    /// main actor.
     nonisolated static var isBundled: Bool {
         modelDirectory != nil
     }
@@ -37,82 +37,81 @@ final class BorealisAssistant: Assistant {
             withExtension: nil,
             subdirectory: modelParentName
         ) else { return nil }
-        // Mappen kan finnes uten å være komplett, om et skript ble avbrutt.
-        // Da er det ærligere å si at modellen mangler.
+        // The folder can exist without being complete, if a script was interrupted.
+        // Then it is more honest to say the model is missing.
         return FileManager.default.fileExists(
             atPath: url.appendingPathComponent("config.json").path
         ) ? url : nil
     }
 
-    // Ingen systemledetekst, med vilje.
+    // No system prompt, deliberately.
     //
-    // Gemma-malen har ingen system-rolle. Sender du en, limer malen den inn
-    // først i den første *bruker*-meldingen. Modellen leste da «Du er Fróði,
-    // en hjelpsom assistent …» som noe brukeren hadde skrevet, og svarte på
-    // påstanden: «Du er en person som svarer på en robot, og du er Fróði.»
-    // Målt på enhet 8. september 2026.
+    // The Gemma template has no system role. Send one and the template pastes it
+    // in at the front of the first *user* message. The model then read «Du er
+    // Fróði, en hjelpsom assistent …» as something the user had written, and
+    // answered the claim: «Du er en person som svarer på en robot, og du er
+    // Fróði.» Measured on a device 8 September 2026.
     //
-    // Nasjonalbiblioteket har dessuten bakt oppførselen inn i vektene med
-    // «prompt baking», nettopp for at ledeteksten ikke skal trenge å stå i
-    // konteksten. Deres eget eksempel sender bare en brukermelding.
+    // The National Library has moreover baked the behaviour into the weights with
+    // «prompt baking», precisely so the prompt does not need to sit in the
+    // context. Their own example sends only a user message.
     //
-    // Legg ikke inn en systemledetekst igjen uten å lese malen først.
+    // Do not add a system prompt again without reading the template first.
 
-    /// Strammere enn standard, som er `topP 1.0` — altså ingen filtrering av
-    /// halen i det hele tatt. En 1B-modell henter mye tull derfra.
+    /// Tighter than the default, which is `topP 1.0`, that is, no filtering of the
+    /// tail at all. A 1B model pulls a lot of nonsense from there.
     private static var parameters: GenerateParameters {
         var p = GenerateParameters()
         p.temperature = 0.6
         p.topP = 0.9
-        // Uten straff gjentar små modeller gjerne samme setning til taket.
+        // Without a penalty, small models tend to repeat the same sentence up to the cap.
         p.repetitionPenalty = 1.1
-        // Et tak, slik at et svar som sporer av tar slutt av seg selv.
+        // A cap, so an answer that goes off the rails ends by itself.
         p.maxTokens = 800
         return p
     }
 
-    /// Så mye dokumenttekst som får plass i én ledetekst, til sammen.
+    /// How much document text fits in one prompt, in total.
     ///
-    /// **Grensen er satt av minnet på enheten, ikke av kontekstvinduet.**
-    /// Modellen tåler 32k tokens. Enheten gjør det ikke: vektene og
-    /// KV-bufferet ligger i minnet samtidig, og jetsam tar appen lenge før
-    /// vinduet er fullt.
+    /// **The limit is set by the memory on the device, not by the context window.**
+    /// The model handles 32k tokens. The device does not: the weights and the KV
+    /// cache sit in memory at the same time, and jetsam takes the app long before
+    /// the window is full.
     ///
-    /// Målt på iPhone 17 Pro 11. september 2026, med `ContextProbe`. Taket
-    /// enheten gir appen er rundt 3 376 MB:
+    /// Measured on iPhone 17 Pro on 11 September 2026, with `ContextProbe`. The cap
+    /// the device gives the app is about 3 376 MB:
     ///
-    /// | Tegn | Topp | Ledig igjen | Utfall |
+    /// | Characters | Peak | Left | Outcome |
     /// |---|---|---|---|
-    /// | 8 000 | 2 712 MB | 664 MB | Svarer |
-    /// | 10 000 | 2 868 MB | 508 MB | Svarer |
-    /// | 12 000 | 3 065 MB | 310 MB | Svarer, med lite igjen |
-    /// | 16 000 | – | – | Drept før første token |
-    /// | 41 000 | – | – | Drept før første token |
+    /// | 8 000 | 2 712 MB | 664 MB | Answers |
+    /// | 10 000 | 2 868 MB | 508 MB | Answers |
+    /// | 12 000 | 3 065 MB | 310 MB | Answers, with little left |
+    /// | 16 000 | – | – | Killed before the first token |
+    /// | 41 000 | – | – | Killed before the first token |
     ///
-    /// Rundt 2 090 MB går med før første tegn dokumenttekst, og hver 1 000
-    /// tegn koster omtrent 78 MB til. Kurven er rett, og taket ligger like
-    /// over 14 000 tegn på denne enheten.
+    /// About 2 090 MB go before the first character of document text, and every
+    /// 1 000 characters cost roughly 78 MB more. The curve is straight, and the cap
+    /// sits just above 14 000 characters on this device.
     ///
-    /// Grensen sto på 48 000 i to dager. Det tallet kom fra kontekstvinduet
-    /// og var aldri målt: NSM-veilederen på 41 191 tegn drepte appen før
-    /// første ord, hver gang. 8 000 er verdien den hadde før, og den gir mest
-    /// margin til enheter med mindre minne enn denne.
+    /// The limit stood at 48 000 for two days. That number came from the context
+    /// window and was never measured: the NSM guide of 41 191 characters killed the
+    /// app before the first word, every time. 8 000 is the value it had before, and
+    /// it gives the most margin to devices with less memory than this one.
     ///
-    /// Prisen er at et langt dokument avkortes. `DocumentBar` sier fra med
-    /// «bare starten er med», så en avkortet tekst er synlig framfor stille.
-    /// Veien ut er å velge ut de relevante delene med `borealis-embed-212m`,
-    /// ikke å sette grensen opp igjen.
+    /// The price is that a long document is truncated. `DocumentBar` says so with
+    /// «bare starten er med», so a truncated text is visible rather than silent.
+    /// The way out is to select the relevant parts with `borealis-embed-212m`, not
+    /// to raise the limit again.
     ///
-    /// Grensen gjelder alle dokumentene til sammen, ikke hvert enkelt. Var
-    /// den per dokument, ville to opplastinger sprengt vinduet.
+    /// The limit applies to all documents together, not each one. Were it per
+    /// document, two uploads would blow the window.
     nonisolated static let contextCharacterLimit = 8_000
 
-    /// Hvor mange tegn hvert dokument får av budsjettet.
+    /// How many characters of the budget each document gets.
     ///
-    /// Korteste dokument først, og hvert av dem får enten det det trenger
-    /// eller sin andel av det som er igjen. Et kort notat ved siden av en
-    /// lang rapport legger dermed ikke beslag på halve budsjettet uten å
-    /// bruke det.
+    /// Shortest document first, and each gets either what it needs or its share of
+    /// what is left. A short note beside a long report therefore does not claim
+    /// half the budget without using it.
     nonisolated static func allowances(
         for lengths: [Int], within budget: Int = contextCharacterLimit
     ) -> [Int] {
@@ -145,16 +144,16 @@ final class BorealisAssistant: Assistant {
         }
     }
 
-    /// Setter sammen spørsmålet med teksten fra dokumentene du har lastet opp.
+    /// Assembles the question with the text from the documents you have uploaded.
     ///
-    /// Dokumentet står først og spørsmålet sist, fordi modellen er trent på å
-    /// svare på det siste som ble sagt. Står spørsmålet øverst, svarer den
-    /// gjerne på dokumentet i stedet.
+    /// The document comes first and the question last, because the model is trained
+    /// to answer the last thing said. With the question at the top it tends to
+    /// answer the document instead.
     ///
-    /// Dette er ikke gjenfinning. Hele teksten blir med, avkortet mot
-    /// ``contextCharacterLimit``, som deles mellom dokumentene. Når
-    /// `borealis-embed-212m` lar seg konvertere, er det her utvalget skal
-    /// skje i stedet.
+    /// This is not retrieval. The whole text is included, truncated against
+    /// ``contextCharacterLimit``, which is shared between the documents. Once
+    /// `borealis-embed-212m` can be converted, this is where the selection should
+    /// happen instead.
     nonisolated static func prompt(for question: String, given context: [String]) -> String {
         let texts = context.filter { !$0.isEmpty }
         let documents = zip(texts, allowances(for: texts.map(\.count)))
@@ -175,8 +174,8 @@ final class BorealisAssistant: Assistant {
             """
     }
 
-    /// Én økt gjenbrukes på tvers av spørsmål, slik at MLX beholder KV-bufferet
-    /// og ikke leser hele samtalen om igjen for hvert svar.
+    /// One session is reused across questions, so MLX keeps the KV cache and does
+    /// not re-read the whole conversation for every answer.
     private func session() async throws -> ChatSession {
         if let session { return session }
 
@@ -192,8 +191,8 @@ final class BorealisAssistant: Assistant {
         return session
     }
 
-    /// MLX melder tomt minne som en vanlig feil. Skjermen skal si hva du kan
-    /// gjøre med det, ikke gjengi meldingen fra rammeverket.
+    /// MLX reports out-of-memory as an ordinary error. The screen should say what
+    /// you can do about it, not reproduce the framework's message.
     private static func translate(_ error: Error) -> Error {
         if error is AssistantError { return error }
         let text = error.localizedDescription.lowercased()

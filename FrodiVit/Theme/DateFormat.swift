@@ -1,11 +1,11 @@
 import Foundation
 
 extension Date {
-    /// Datoen slik den vises på en samtale: 07.09.26, 00:53
+    /// The date as shown on a conversation: 07.09.26, 00:53
     ///
-    /// Samme format som i Fróði røst. Året er med fordi samtaler blir
-    /// liggende, og «7. sep.» sier ingenting om hvilket år det var når listen
-    /// har vokst.
+    /// Same format as in Fróði røst. The year is included because conversations
+    /// stay around, and «7. sep.» says nothing about which year it was once the
+    /// list has grown.
     var chatStamp: String {
         Self.stampFormatter.string(from: self)
     }

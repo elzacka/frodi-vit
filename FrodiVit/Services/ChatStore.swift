@@ -1,13 +1,13 @@
 import Foundation
 import SwiftData
 
-/// Oppretter, henter og sletter samtaler.
+/// Creates, fetches and deletes conversations.
 ///
-/// Ligger utenfor viewet fordi tre skjermer trenger de samme reglene:
-/// samtalelisten, innstillingene og selve samtalen.
+/// Lives outside the view because three screens need the same rules: the
+/// conversation list, the Info page and the conversation itself.
 @MainActor
 enum ChatStore {
-    /// Samtalene i den rekkefølgen listen viser dem: sist åpnet øverst.
+    /// The conversations in the order the list shows them: last opened first.
     static func all(in context: ModelContext) -> [Chat] {
         let descriptor = FetchDescriptor<Chat>(
             sortBy: [SortDescriptor(\.lastOpenedAt, order: .reverse)]
@@ -15,10 +15,10 @@ enum ChatStore {
         return (try? context.fetch(descriptor)) ?? []
     }
 
-    /// Lager en ny samtale, eller lar deg bli stående i den du er i.
+    /// Makes a new conversation, or lets you stay in the one you are in.
     ///
-    /// En tom samtale er allerede en ny samtale. Uten dette ville «Ny samtale»
-    /// to ganger på rad lagt igjen en tom rad i listen.
+    /// An empty conversation already is a new conversation. Without this, «Ny
+    /// samtale» twice in a row would leave an empty row in the list.
     static func create(orReuse current: Chat?, in context: ModelContext) -> Chat {
         if let current, !current.isDeleted, current.isEmpty {
             current.lastOpenedAt = Date()
@@ -31,28 +31,28 @@ enum ChatStore {
         return chat
     }
 
-    /// Merker samtalen som den du var i sist.
+    /// Marks the conversation as the one you were in last.
     static func open(_ chat: Chat, in context: ModelContext) {
         chat.lastOpenedAt = Date()
         try? context.save()
     }
 
-    /// Sletter samtalene og alt som hører til dem.
+    /// Deletes the conversations and everything that belongs to them.
     ///
-    /// Meldingene og dokumentene følger med gjennom `cascade` på relasjonen,
-    /// så det er nok å slette samtalen selv.
+    /// The messages and documents follow through `cascade` on the relationship, so
+    /// deleting the conversation itself is enough.
     static func delete(_ chats: [Chat], in context: ModelContext) {
         for chat in chats { context.delete(chat) }
         try? context.save()
     }
 
-    /// Samler meldinger og dokumenter fra før appen fikk flere samtaler.
+    /// Collects messages and documents from before the app had several conversations.
     ///
-    /// Den gamle versjonen hadde én tråd og ingen `Chat`. Uten dette ville alt
-    /// du hadde spurt om blitt liggende usynlig i basen: SwiftData beholder
-    /// radene, men ingen skjerm ville funnet dem igjen.
+    /// The old version had one thread and no `Chat`. Without this, everything you
+    /// had asked would sit invisibly in the store: SwiftData keeps the rows, but no
+    /// screen would find them again.
     ///
-    /// Kjøres ved oppstart. Finner den ingenting løst, gjør den ingenting.
+    /// Runs at launch. If it finds nothing loose, it does nothing.
     static func adoptOrphans(in context: ModelContext) {
         let messages = ((try? context.fetch(FetchDescriptor<ChatMessage>())) ?? [])
             .filter { $0.chat == nil }
@@ -68,8 +68,8 @@ enum ChatStore {
         for message in messages { message.chat = chat }
         for document in documents { document.chat = chat }
 
-        // Tittelen hentes fra det første spørsmålet, som ellers ville stått
-        // som «Ny samtale» for en tråd som kan være lang.
+        // The title is taken from the first question, which would otherwise read
+        // «Ny samtale» for a thread that may be long.
         if let first = messages.first(where: { $0.role == .user }),
            let text = try? first.text() {
             try? chat.nameIfUnnamed(from: text)

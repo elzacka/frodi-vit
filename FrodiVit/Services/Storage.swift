@@ -1,11 +1,11 @@
 import Foundation
 import SwiftData
 
-/// Om basen lot seg åpne, og at den holdes utenfor sikkerhetskopien.
+/// Whether the store could be opened, and keeping it out of the backup.
 ///
-/// Gikk åpningen galt, kjører appen videre på minnet. Den virker da helt som
-/// vanlig fram til du lukker den, og så er samtalen borte. En stille feil er
-/// verre enn en synlig, så skjermen sier fra.
+/// If opening failed, the app carries on in memory. It then works exactly as
+/// usual until you close it, and then the conversation is gone. A silent failure
+/// is worse than a visible one, so the screen says so.
 @MainActor
 enum Storage {
     private(set) static var failed = false
@@ -14,14 +14,13 @@ enum Storage {
         failed = true
     }
 
-    /// Holder databasen utenfor iCloud-sikkerhetskopien.
+    /// Keeps the database out of the iCloud backup.
     ///
-    /// Meldingene og dokumentene i den er forseglet, så det som ellers ville
-    /// fulgt med er metadata: datoer, antall samtaler, antall meldinger. Lite,
-    /// men ingenting av det har noe i en sikkerhetskopi å gjøre. Apple kaller
-    /// flagget veiledning, ikke garanti, og det kan bli nullstilt av
-    /// filoperasjoner, så det settes ved hver oppstart. SQLite skriver til tre
-    /// filer, og alle tre må med.
+    /// The messages and documents in it are sealed, so what would otherwise travel
+    /// is metadata: dates, number of conversations, number of messages. Little, but
+    /// none of it belongs in a backup. Apple calls the flag guidance, not a
+    /// guarantee, and it can be reset by file operations, so it is set at every
+    /// launch. SQLite writes to three files, and all three must be covered.
     static func excludeFromBackup(store container: ModelContainer) {
         for configuration in container.configurations {
             let url = configuration.url

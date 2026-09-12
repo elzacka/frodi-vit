@@ -1,10 +1,10 @@
 import Foundation
 import SwiftData
 
-/// Velger utdragene som gjelder spørsmålet, innenfor tegnbudsjettet.
+/// Picks the passages relevant to the question, within the character budget.
 ///
-/// Rent regnestykke, uten modell og uten base, så det lar seg teste med tall.
-/// `Grounding` under er delen som snakker med begge.
+/// Pure arithmetic, with no model and no store, so it can be tested with numbers.
+/// `Grounding` below is the part that talks to both.
 enum Retrieval {
     struct Candidate {
         let vector: [Float]
@@ -15,12 +15,12 @@ enum Retrieval {
         zip(a, b).reduce(0) { $0 + $1.0 * $1.1 }
     }
 
-    /// Plassene til de valgte kandidatene, i den rekkefølgen de kom inn.
+    /// The positions of the chosen candidates, in the order they came in.
     ///
-    /// Beste først, så lenge det er plass, og det som ikke får plass hoppes
-    /// over til fordel for et kortere utdrag lenger ned. Rekkefølgen ut er
-    /// den opprinnelige, ikke etter poeng: modellen skal lese dokumentet slik
-    /// det står, ikke stokket etter hvor mye hvert stykke ligner spørsmålet.
+    /// Best first, as long as there is room, and what does not fit is skipped in
+    /// favour of a shorter passage further down. The order out is the original one,
+    /// not by score: the model should read the document as it stands, not shuffled
+    /// by how much each piece resembles the question.
     nonisolated static func select(
         query: [Float], from candidates: [Candidate], budget: Int
     ) -> [Int] {
@@ -37,23 +37,23 @@ enum Retrieval {
     }
 }
 
-/// Det et svar bygger på: utdragene, og navnene på dokumentene de kom fra.
+/// What an answer builds on: the passages, and the names of the documents they came from.
 struct GroundingContext {
     var texts: [String] = []
     var sources: [String] = []
 }
 
-/// Binder gjenfinningen til basen og modellen.
+/// Binds retrieval to the store and the model.
 ///
-/// Et dokument uten utdrag — lastet opp før gjenfinningen fantes, eller mens
-/// appen ble lukket midt i — deles og innebygges her først. Én vei inn, uansett
-/// hvordan dokumentet kom dit.
+/// A document without passages — uploaded before retrieval existed, or while the
+/// app was closed midway — is split and embedded here first. One way in, however
+/// the document got there.
 @MainActor
 enum Grounding {
     private static let embedder = BorealisEmbedder()
 
-    /// Deler dokumentet og lagrer én vektor per utdrag. Gjør ingenting om det
-    /// alt er gjort.
+    /// Splits the document and stores one vector per passage. Does nothing if it
+    /// is already done.
     static func index(_ document: Document, in context: ModelContext) async throws {
         guard document.passages.isEmpty, BorealisEmbedder.isBundled else { return }
         let pieces = TextSplitter.split(try document.text())
@@ -66,11 +66,11 @@ enum Grounding {
         try context.save()
     }
 
-    /// Utdragene som gjelder spørsmålet, i dokumentrekkefølge.
+    /// The passages relevant to the question, in document order.
     ///
-    /// Uten gjenfinningsmodell i pakken går hele tekstene videre som før, og
-    /// `BorealisAssistant.prompt` kutter dem mot budsjettet. Da står det ingen
-    /// kilde under svaret — det ville vært å påstå et utvalg som ikke er gjort.
+    /// Without a retrieval model in the bundle the whole texts go on as before, and
+    /// `BorealisAssistant.prompt` cuts them against the budget. Then no source is
+    /// shown under the answer; that would be claiming a selection that was not made.
     static func context(
         for question: String, documents: [Document], in context: ModelContext
     ) async throws -> GroundingContext {

@@ -2,17 +2,16 @@ import Foundation
 import PDFKit
 import UniformTypeIdentifiers
 
-/// Henter teksten ut av en fil du har valgt.
+/// Extracts the text from a file you have chosen.
 ///
-/// Filen leses én gang, teksten forsegles, og originalen røres ikke. Ingenting
-/// kopieres inn i appens mappe: `fileImporter` gir tilgang til akkurat den ene
-/// filen, og den tilgangen slippes med det samme.
+/// The file is read once, the text is sealed, and the original is untouched.
+/// Nothing is copied into the app's folder: `fileImporter` grants access to that
+/// one file, and the access is released right away.
 enum DocumentImport {
-    /// Filtypene knappen tilbyr.
+    /// The file types the button offers.
     ///
-    /// PDF og ren tekst. Ikke `.docx`: iOS har ingen innebygd leser for det,
-    /// og et halvveis uttrekk som taper tabeller og overskrifter er verre enn
-    /// å si nei.
+    /// PDF and plain text. Not `.docx`: iOS has no built-in reader for it, and a
+    /// half-done extraction that loses tables and headings is worse than saying no.
     static let allowedTypes: [UTType] = [.pdf, .plainText, .utf8PlainText]
 
     enum ImportError: LocalizedError {
@@ -31,7 +30,7 @@ enum DocumentImport {
             }
         }
 
-        /// Lengre forklaring, med noe du kan gjøre.
+        /// Longer explanation, with something you can do.
         var guidance: String {
             switch self {
             case .unreadable:
@@ -44,18 +43,18 @@ enum DocumentImport {
         }
     }
 
-    /// Grense på selve filen, før teksten hentes ut.
+    /// A limit on the file itself, before the text is extracted.
     ///
-    /// Ikke det samme som hvor mye som får plass i ledeteksten. Dette er et
-    /// vern mot å låse opp appen på en fil ingen hadde tenkt å laste opp.
+    /// Not the same as how much fits in the prompt. This is a guard against locking
+    /// up the app on a file nobody meant to upload.
     static let maximumFileBytes = 20 * 1024 * 1024
 
-    /// Leser filen og gir teksten tilbake. Kaster med en beskjed du kan vise.
+    /// Reads the file and returns the text. Throws with a message you can show.
     static func text(from url: URL) throws -> String {
         let name = url.lastPathComponent
 
-        // Filen ligger utenfor sandkassen. Uten dette får vi ikke lese den,
-        // og tilgangen skal slippes igjen med én gang vi er ferdige.
+        // The file is outside the sandbox. Without this we cannot read it, and the
+        // access must be released again as soon as we are done.
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
 
@@ -72,8 +71,8 @@ enum DocumentImport {
             guard let data = try? Data(contentsOf: url) else {
                 throw ImportError.unreadable(name)
             }
-            // UTF-8 først, så Latin-1. Eldre norske tekstfiler er ofte det
-            // siste, og da blir «så» til noe annet uten at noe feiler.
+            // UTF-8 first, then Latin-1. Older Norwegian text files are often the latter,
+            // and then «så» becomes something else without anything failing.
             guard let read = String(data: data, encoding: .utf8)
                 ?? String(data: data, encoding: .isoLatin1) else {
                 throw ImportError.unreadable(name)

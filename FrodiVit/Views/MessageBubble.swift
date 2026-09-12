@@ -1,11 +1,11 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// En melding i samtalen.
+/// A message in the conversation.
 ///
-/// Ditt eget spørsmål står på aksentflaten til høyre, svaret på surface til
-/// venstre. Formen alene skiller dem, så fargen er ikke det eneste som bærer
-/// forskjellen — det kravet gjelder også her.
+/// Your own question sits on the accent surface to the right, the answer on
+/// surface to the left. The shape alone tells them apart, so colour is not the
+/// only thing carrying the difference; that requirement applies here too.
 struct MessageBubble: View {
     let message: ChatMessage
 
@@ -29,9 +29,8 @@ struct MessageBubble: View {
                         .foregroundStyle(isFromUser ? Color.Frodi.accentKnowledgeOn : Color.Frodi.textSecondary)
                 }
 
-                // Hvilke dokumenter svaret bygger på. Uten dette kan du ikke
-                // se forskjell på et svar fra teksten din og et modellen fant
-                // på selv.
+                // Which documents the answer builds on. Without this you cannot tell an
+                // answer from your text apart from one the model made up itself.
                 if let sources {
                     Text(sources)
                         .font(.Frodi.meta)
@@ -53,8 +52,8 @@ struct MessageBubble: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(spokenLabel)
-        // Veien ut av appen. Svaret er bundet til denne enheten, så dette er
-        // den eneste måten å ta det med seg på. Hold fingeren på boblen.
+        // The way out of the app. The answer is bound to this device, so this is the
+        // only way to take it with you. Hold your finger on the bubble.
         .contextMenu {
             if !isFromUser {
                 Button("Kopier", systemImage: "doc.on.doc", action: copy)
@@ -80,11 +79,9 @@ struct MessageBubble: View {
         }
     }
 
-    // MARK: - Ut av appen
-
-    /// Bare til denne enheten. Uten `localOnly` følger utklippstavlen med
-    /// til de andre enhetene dine gjennom iCloud, og det er en vei ut som
-    /// appen ellers ikke har.
+    // MARK: - Out of the app
+    /// This device only. Without `localOnly` the pasteboard follows to your other
+    /// devices through iCloud, and that is a way out the app otherwise does not have.
     private func copy() {
         UIPasteboard.general.setItems([[UTType.utf8PlainText.identifier: text]], options: [.localOnly: true])
     }
@@ -101,21 +98,21 @@ struct MessageBubble: View {
         message.role == .user
     }
 
-    /// Teksten ligger forseglet. Får vi den ikke opp, er meldingen kryptert på
-    /// en annen enhet, og da sier vi det i stedet for å vise en tom boble.
+    /// The text is sealed. If we cannot open it, the message was encrypted on
+    /// another device, and then we say so instead of showing an empty bubble.
     private var text: String {
         (try? message.text()) ?? String(localized: "Denne meldingen kan ikke låses opp.")
     }
 
-    /// VoiceOver leser ikke plassering eller farge, så hvem som snakker må stå
-    /// i teksten.
+    /// VoiceOver does not read placement or colour, so who is speaking has to be
+    /// in the text.
     private var sources: String? {
         guard !message.sourceNames.isEmpty else { return nil }
         return String(localized: "Fra \(Self.list(message.sourceNames))")
     }
 
-    /// «a», «a og b», «a, b og c». Ikke `ListFormatter`: den følger språket på
-    /// enheten, og appen er norsk uansett hva enheten er satt til.
+    /// «a», «a og b», «a, b og c». Not `ListFormatter`: it follows the device
+    /// language, and the app is Norwegian whatever the device is set to.
     nonisolated static func list(_ names: [String]) -> String {
         let quoted = names.map { "«\($0)»" }
         guard quoted.count > 1 else { return quoted.joined() }

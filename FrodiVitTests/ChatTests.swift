@@ -5,8 +5,7 @@ import Testing
 
 @Suite("Samtale")
 struct ChatTests {
-    /// En base i minnet, slik at hver test starter tom og ingenting havner på
-    /// disk.
+    /// An in-memory store, so every test starts empty and nothing lands on disk.
     @MainActor
     private func context() throws -> ModelContext {
         let container = try ModelContainer(
@@ -16,8 +15,7 @@ struct ChatTests {
         return ModelContext(container)
     }
 
-    // MARK: - Tittel
-
+    // MARK: - Title
     @Test("Tittelen kommer uendret tilbake")
     func titleRoundTrips() throws {
         let chat = Chat()
@@ -25,8 +23,8 @@ struct ChatTests {
         #expect(try chat.title() == "Hva står det i leiekontrakten?")
     }
 
-    /// Tittelen er hentet fra spørsmålet, og et spørsmål røper ofte mer enn
-    /// svaret. Den skal ikke ligge lesbar i basen.
+    /// The title is taken from the question, and a question often reveals more
+    /// than the answer. It must not sit readable in the store.
     @Test("Tittelen ligger ikke i klartekst")
     func titleIsSealed() throws {
         let secret = "noe jeg ikke vil at andre skal lese"
@@ -41,8 +39,8 @@ struct ChatTests {
         #expect(try Chat().title() == nil)
     }
 
-    /// Tittelen skal peke på hva tråden startet som. Skiftet den for hvert
-    /// spørsmål, ville du ikke kjent den igjen i listen.
+    /// The title should point at what the thread started as. If it changed with
+    /// every question, you would not recognise it in the list.
     @Test("Bare det første spørsmålet navngir samtalen")
     func laterQuestionsKeepTheFirstTitle() throws {
         let chat = Chat()
@@ -63,16 +61,16 @@ struct ChatTests {
         #expect(Chat.title(from: "Hva betyr «fróði»?") == "Hva betyr «fróði»?")
     }
 
-    /// Kutter på ordskille, ikke midt i et ord: «kontrak…» ser ut som en
-    /// skrivefeil, «kontrakten…» gjør ikke det.
+    /// Cuts at a word boundary, not mid-word: «kontrak…» looks like a typo,
+    /// «kontrakten…» does not.
     @Test("Lange spørsmål kuttes på et ordskille")
     func longQuestionsAreCutOnAWordBoundary() {
         let title = Chat.title(from: "Kan du forklare hva som står i punkt fire i leiekontrakten min")
         #expect(title == "Kan du forklare hva som står i punkt fire i…")
     }
 
-    /// Ett ord uten mellomrom har ingen ordskille å kutte på. Da kuttes det på
-    /// tegn framfor å la tittelen sprenge raden.
+    /// One word without spaces has no word boundary to cut on. Then it is cut on
+    /// characters rather than letting the title blow the row.
     @Test("Et enkelt langt ord kuttes likevel")
     func oneLongWordIsStillCut() {
         let title = Chat.title(from: String(repeating: "a", count: 80))
@@ -92,8 +90,7 @@ struct ChatTests {
         #expect(try chat.title() == "Hvorfor så mange å-er i «håndbøkene»?")
     }
 
-    // MARK: - Innhold
-
+    // MARK: - Content
     @Test("En fersk samtale er tom")
     func freshChatIsEmpty() {
         #expect(Chat().isEmpty)
@@ -121,9 +118,8 @@ struct ChatTests {
         #expect(try chat.messagesInOrder.map { try $0.text() } == ["først", "så", "sist"])
     }
 
-    // MARK: - Sletting
-
-    /// Sletter du samtalen, skal ikke meldingene bli liggende igjen i basen.
+    // MARK: - Deletion
+    /// Delete the conversation and the messages must not be left in the store.
     @Test("Sletting tar med meldingene og dokumentene")
     @MainActor
     func deletingTakesTheContent() throws {
@@ -167,9 +163,8 @@ struct ChatTests {
         #expect(try context.fetch(FetchDescriptor<ChatMessage>()).count == 1)
     }
 
-    // MARK: - Ny samtale
-
-    /// «Ny samtale» to ganger på rad skal ikke legge igjen en tom rad.
+    // MARK: - New conversation
+    /// «Ny samtale» twice in a row must not leave an empty row behind.
     @Test("En tom samtale gjenbrukes")
     @MainActor
     func emptyChatIsReused() throws {
@@ -197,10 +192,9 @@ struct ChatTests {
         #expect(try context.fetch(FetchDescriptor<Chat>()).count == 2)
     }
 
-    // MARK: - Meldinger fra en eldre versjon
-
-    /// Basen hadde én tråd og ingen `Chat`. Uten oppsamlingen ville alt du
-    /// hadde spurt om blitt liggende usynlig.
+    // MARK: - Messages from an older version
+    /// The store had one thread and no `Chat`. Without the collection, everything
+    /// you had asked would sit invisibly.
     @Test("Løse meldinger samles i én samtale")
     @MainActor
     func orphansAreAdopted() throws {
@@ -233,7 +227,7 @@ struct ChatTests {
         #expect(try context.fetch(FetchDescriptor<Chat>()).isEmpty)
     }
 
-    /// Kjøres ved hver oppstart. Andre gang skal den ikke finne noe.
+    /// Runs at every launch. The second time it must find nothing.
     @Test("Oppsamlingen kan kjøres flere ganger")
     @MainActor
     func adoptionIsIdempotent() throws {

@@ -1,8 +1,8 @@
 import XCTest
 
 final class FrodiVitUITests: XCTestCase {
-    /// Røyktest. Sjekker det som alltid er der, uansett om appen har en
-    /// samtale fra før.
+    /// Smoke test. Checks what is always there, whether or not the app already
+    /// has a conversation.
     @MainActor
     func test_launch_showsHeaderAndInput() {
         let app = XCUIApplication()
@@ -24,9 +24,9 @@ final class FrodiVitUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Ny samtale"].exists, "Ny samtale-knappen mangler")
     }
 
-    /// Listen skal kunne åpnes, og den skal tilby å velge flere samtaler.
-    /// «Velg» finnes bare når du har minst én samtale, så testen krever den
-    /// ikke — den sjekker at arket åpner og lar seg lukke.
+    /// The list must open, and it must offer selecting several conversations.
+    /// «Velg» exists only once you have at least one conversation, so the test does
+    /// not require it; it checks that the sheet opens and can be closed.
     @MainActor
     func test_chatList_opensAndCloses() {
         let app = XCUIApplication()
@@ -48,8 +48,8 @@ final class FrodiVitUITests: XCTestCase {
         )
     }
 
-    /// Sendeknappen skal være av til du har skrevet noe. Ellers kan du sende
-    /// et tomt spørsmål og få en feilmelding du selv utløste.
+    /// The send button must be off until you have written something. Otherwise you
+    /// can send an empty question and get an error you triggered yourself.
     @MainActor
     func test_sendButton_isDisabledWhileDraftIsEmpty() {
         let app = XCUIApplication()

@@ -1,22 +1,21 @@
 import SwiftData
 import SwiftUI
 
-/// Dokumentene svarene bygger på, som en rad med brikker over skrivefeltet.
+/// The documents the answers build on, as a row of chips above the input field.
 ///
-/// Ligger synlig, ikke bak en skjerm. Har du lastet opp noe, forandrer det hva
-/// du får svar på, og da skal du se det uten å lete.
+/// Kept visible, not behind a screen. If you have uploaded something, it changes
+/// what you get answers about, and you should see that without looking.
 struct DocumentBar: View {
     let documents: [Document]
     let onRemove: (Document) -> Void
 
-    /// Hvilke dokumenter som ikke blir med i sin helhet.
+    /// Which documents are not included in full.
     ///
-    /// Regnes ut over hele raden, ikke per brikke: budsjettet deles mellom
-    /// dokumentene, så om ett av dem avkortes avhenger av hva annet som
-    /// ligger der.
-    /// Med gjenfinningsmodellen i pakken er hele dokumentet med — utvalget
-    /// skjer per spørsmål, ikke ved å kutte fra starten. Uten den gjelder
-    /// budsjettet fortsatt, og da skal chipen si fra.
+    /// Computed over the whole row, not per chip: the budget is shared between the
+    /// documents, so whether one of them is truncated depends on what else is there.
+    /// With the retrieval model in the bundle the whole document is included; the
+    /// selection happens per question, not by cutting from the start. Without it the
+    /// budget still applies, and then the chip must say so.
     private var truncated: [Bool] {
         guard !BorealisEmbedder.isBundled else {
             return Array(repeating: false, count: documents.count)
@@ -48,7 +47,7 @@ struct DocumentBar: View {
                     .lineLimit(1)
 
                 if isTruncated {
-                    // Sier fra framfor å late som hele teksten er med.
+                    // Says so, rather than pretending the whole text is included.
                     Text("bare starten er med")
                         .font(.Frodi.meta)
                         .foregroundStyle(Color.Frodi.textSecondary)

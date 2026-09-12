@@ -10,7 +10,7 @@ struct DocumentTests {
         #expect(try document.text() == "Fristen er 1. oktober.")
     }
 
-    /// Et opplastet dokument er ofte det mest avslørende i appen.
+    /// An uploaded document is often the most revealing thing in the app.
     @Test("Teksten ligger ikke i klartekst")
     func textIsSealed() throws {
         let secret = "kontonummeret står her"
@@ -18,8 +18,8 @@ struct DocumentTests {
         #expect(document.sealedText.range(of: Data(secret.utf8)) == nil)
     }
 
-    /// Tallet lagres ved import, slik at listen slipper å låse opp teksten
-    /// bare for å vise hvor stort dokumentet er.
+    /// The number is stored at import, so the list does not have to unlock the
+    /// text just to show how large the document is.
     @Test("Antall tegn lagres i klartekst")
     func characterCountIsStored() throws {
         #expect(try Document(name: "a.txt", text: "abcde").characterCount == 5)
@@ -27,8 +27,8 @@ struct DocumentTests {
 
 }
 
-/// Budsjettet deles mellom dokumentene, så hvor mye ett av dem får plass til
-/// avhenger av hva annet som er lastet opp.
+/// The budget is shared between the documents, so how much of one fits
+/// depends on what else has been uploaded.
 @Suite("Tegnbudsjett")
 struct AllowanceTests {
     @Test("Ett kort dokument får alt det trenger")
@@ -42,8 +42,8 @@ struct AllowanceTests {
         #expect(BorealisAssistant.allowances(for: [budget + 1]) == [budget])
     }
 
-    /// Uten dette ville tre opplastinger sendt tre ganger budsjettet inn i
-    /// ledeteksten, og sprengt kontekstvinduet.
+    /// Without this, three uploads would send three times the budget into the
+    /// prompt and blow the context window.
     @Test("Flere dokumenter deler på budsjettet")
     func budgetIsSharedAcrossDocuments() {
         let budget = BorealisAssistant.contextCharacterLimit
@@ -51,8 +51,8 @@ struct AllowanceTests {
         #expect(shares.reduce(0, +) <= budget)
     }
 
-    /// Korteste først, slik at et kort notat ikke legger beslag på halve
-    /// budsjettet uten å bruke det.
+    /// Shortest first, so a short note does not claim half the budget without
+    /// using it.
     @Test("Et kort notat tar ikke plass fra en lang rapport")
     func shortDocumentDoesNotStarveTheLongOne() {
         let shares = BorealisAssistant.allowances(for: [10_000, 100], within: 12_000)
@@ -64,13 +64,13 @@ struct AllowanceTests {
         #expect(BorealisAssistant.allowances(for: [9_000, 9_000], within: 10_000) == [5_000, 5_000])
     }
 
-    /// NSM sin veileder i risikostyring er 18 sider og 41 191 tegn hentet ut
-    /// med PDFKit. Den skal avkortes, ikke gå inn hel.
+    /// NSM's guide to risk management is 18 pages and 41 191 characters as
+    /// extracted by PDFKit. It must be truncated, not go in whole.
     ///
-    /// Denne testen påsto det motsatte fra 8. september, da grensen ble satt
-    /// til 48 000 ut fra kontekstvinduet. Målt på iPhone 17 Pro
-    /// 11. september drepte den samme veilederen appen før første ord, hver
-    /// gang. Se `contextCharacterLimit` for tallene.
+    /// This test claimed the opposite from 8 September, when the limit was set to
+    /// 48 000 from the context window. Measured on iPhone 17 Pro on 11 September,
+    /// the same guide killed the app before the first word, every time. See
+    /// `contextCharacterLimit` for the numbers.
     @Test("En veileder på atten sider avkortes")
     func aRealGuideIsCut() {
         let budget = BorealisAssistant.contextCharacterLimit
@@ -78,8 +78,8 @@ struct AllowanceTests {
         #expect(budget < 41_191)
     }
 
-    /// Grensen er målt, ikke resonnert fram. Sett den ikke opp uten å måle
-    /// på enhet igjen med `ContextProbe` — 16 000 tegn drepte appen.
+    /// The limit is measured, not reasoned. Do not raise it without measuring on
+    /// a device again with `ContextProbe`: 16 000 characters killed the app.
     @Test("Budsjettet holder seg under det målte taket")
     func budgetStaysUnderTheMeasuredCeiling() {
         #expect(BorealisAssistant.contextCharacterLimit <= 12_000)
@@ -93,20 +93,20 @@ struct AllowanceTests {
 
 @Suite("Ledetekst")
 struct PromptTests {
-    /// Uten dokumenter skal spørsmålet stå akkurat som du skrev det.
+    /// Without documents the question must stand exactly as you wrote it.
     @Test("Uten dokumenter er ledeteksten bare spørsmålet")
     func questionOnly() {
         #expect(BorealisAssistant.prompt(for: "Hva er klokka?", given: []) == "Hva er klokka?")
     }
 
-    /// Tomme dokumenter skal ikke gi en ledetekst med et tomt avsnitt i.
+    /// Empty documents must not give a prompt with an empty paragraph in it.
     @Test("Tomme dokumenter teller ikke")
     func emptyDocumentsAreIgnored() {
         #expect(BorealisAssistant.prompt(for: "Hva står det?", given: ["", ""]) == "Hva står det?")
     }
 
-    /// Modellen svarer på det siste som ble sagt. Står spørsmålet først,
-    /// svarer den gjerne på dokumentet i stedet.
+    /// The model answers the last thing said. With the question first it tends to
+    /// answer the document instead.
     @Test("Spørsmålet står sist, dokumentet først")
     func questionComesLast() {
         let prompt = BorealisAssistant.prompt(for: "Når er fristen?", given: ["Fristen er 1. oktober."])

@@ -12,7 +12,7 @@ struct VaultTests {
         #expect(try Vault.open(sealed) == original)
     }
 
-    /// Det forseglede innholdet skal ikke inneholde klarteksten.
+    /// The sealed content must not contain the plaintext.
     @Test("Klarteksten finnes ikke i det forseglede")
     func plaintextIsNotPresent() throws {
         let secret = Data("hemmelig setning som ikke skal lekke".utf8)
@@ -21,8 +21,8 @@ struct VaultTests {
         #expect(sealed.count > secret.count)
     }
 
-    /// Hver melding får sin egen datanøkkel, så to like meldinger skal ikke gi
-    /// like chiffer. Ellers lekker vi at innholdet er identisk.
+    /// Every message gets its own data key, so two identical messages must not
+    /// give identical ciphertext. Otherwise we leak that the content is the same.
     @Test("Lik inndata gir ulikt chiffer")
     func sameInputGivesDifferentCipher() throws {
         let text = Data("samme spørsmål to ganger".utf8)
@@ -42,16 +42,15 @@ struct VaultTests {
         #expect(throws: (any Error).self) { try Vault.open(Data()) }
     }
 
-    // MARK: - Tekst
-
+    // MARK: - Text
     @Test("Tekst kan forsegles og åpnes igjen")
     func textRoundTrip() throws {
         let text = "Dette er et spørsmål jeg stilte."
         #expect(try Vault.openText(Vault.seal(text)) == text)
     }
 
-    /// æ, ø og å skal komme uendret tilbake. Går de gjennom feil tegnsett,
-    /// oppdages det først når noen leser svaret sitt.
+    /// æ, ø and å must come back unchanged. If they go through the wrong
+    /// character set, it is noticed only when someone reads their answer.
     @Test("Norske tegn overlever forseglingen")
     func norwegianCharactersSurvive() throws {
         let text = "Særlig øvelse gjør mester på Sørlandet – æ, ø og å."

@@ -1,22 +1,21 @@
 import Foundation
 
-/// Porten mot språkmodellen. Alt som lager tekst går gjennom denne, slik at
-/// modellen kan byttes uten at viewene merker det.
+/// The gateway to the language model. Everything that produces text goes through
+/// this, so the model can be swapped without the views noticing.
 ///
-/// Samme grep som `Transcriber` i Fróði røst, og av samme grunn:
-/// den modellen ble byttet én gang allerede, fra Apples motor til nb-whisper,
-/// uten at et eneste view ble rørt.
+/// The same move as `Transcriber` in Fróði røst, and for the same reason: that
+/// model was already swapped once, from Apple's engine to nb-whisper, without a
+/// single view being touched.
 ///
-/// Bundet til hovedaktøren fordi kjøretidene for språkmodeller sjelden er
-/// `Sendable`. Selve regnearbeidet skjer på GPU-en uansett.
+/// Bound to the main actor because language-model runtimes are rarely
+/// `Sendable`. The actual computation happens on the GPU regardless.
 @MainActor
 protocol Assistant {
-    /// Svarer på spørsmålet, ett tekststykke om gangen.
+    /// Answers the question, one piece of text at a time.
     ///
-    /// Strømming er ikke pynt. Målt avkoding for en liten Gemma-modell på
-    /// iPhone 17 er tregere med MLX enn med de fleste alternativene, og et
-    /// svar som kommer ord for ord er til å holde ut. Det samme svaret bak en
-    /// snurrende sirkel er det ikke.
+    /// Streaming is not decoration. Measured decoding for a small Gemma model on
+    /// iPhone 17 is slower with MLX than with most alternatives, and an answer that
+    /// arrives word by word is bearable. The same answer behind a spinner is not.
     func answer(to question: String, given context: [String]) -> AsyncThrowingStream<String, Error>
 }
 
@@ -36,8 +35,8 @@ enum AssistantError: LocalizedError {
         }
     }
 
-    /// Lengre forklaring til skjermen. Sier hva du kan gjøre, ikke bare hva
-    /// som gikk galt.
+    /// Longer explanation for the screen. Says what you can do, not only what
+    /// went wrong.
     var guidance: String {
         switch self {
         case .modelMissing:
@@ -50,11 +49,11 @@ enum AssistantError: LocalizedError {
     }
 }
 
-/// Står inne for modellen fram til MLX er koblet på.
+/// Stands in for the model until MLX is wired up.
 ///
-/// Den svarer ikke, den forklarer hvorfor den ikke svarer. Poenget er at
-/// resten av appen — samtalen, forseglingen, skjermen — kan bygges og testes
-/// ferdig før modellen på nesten en gigabyte kommer inn i bildet.
+/// It does not answer, it explains why it does not answer. The point is that
+/// the rest of the app — the conversation, the sealing, the screen — can be
+/// built and tested before the model of nearly a gigabyte enters the picture.
 struct MissingModelAssistant: Assistant {
     func answer(to question: String, given context: [String]) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in

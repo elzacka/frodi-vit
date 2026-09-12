@@ -2,34 +2,33 @@ import CryptoKit
 import Foundation
 import Security
 
-/// Krypterer det du skriver, limer inn og laster opp, med en nøkkel som aldri
-/// forlater denne enheten.
+/// Encrypts what you write, paste and upload, with a key that never leaves
+/// this device.
 ///
-/// Hvorfor dette i tillegg til iOS' egen filbeskyttelse: Apple beskriver
-/// `isExcludedFromBackup` som veiledning til systemet, ikke en garanti. Slipper
-/// en kopi likevel ut, er den uleselig uten nøkkelen — og nøkkelen finnes bare
-/// inne i Secure Enclave på denne enheten.
+/// Why this on top of iOS' own file protection: Apple describes
+/// `isExcludedFromBackup` as guidance to the system, not a guarantee. If a copy
+/// gets out anyway, it is unreadable without the key, and the key exists only
+/// inside the Secure Enclave on this device.
 ///
-/// Oppbygging:
-/// - En P-256-nøkkel lages i Secure Enclave og forlater den aldri.
-/// - Hvert dokument og hver melding får sin egen tilfeldige AES-256-nøkkel.
-/// - Innholdet forsegles med AES-GCM, og AES-nøkkelen pakkes inn av
-///   Enclave-nøkkelen.
+/// Structure:
+/// - A P-256 key is created in the Secure Enclave and never leaves it.
+/// - Every document and every message gets its own random AES-256 key.
+/// - The content is sealed with AES-GCM, and the AES key is wrapped by the
+/// Enclave key.
 ///
-/// Dokumentene du laster opp er mer avslørende enn en lydfil: de er søkbare
-/// og lesbare på et blikk. Derfor ligger både dem og samtalen forseglet, ikke
-/// bare bak sandkassen.
+/// The documents you upload are more revealing than an audio file: they are
+/// searchable and readable at a glance. So both they and the conversation are
+/// sealed, not only behind the sandbox.
 ///
-/// Prisen er at innholdet ikke kan leses av en annen enhet. Det er meningen,
-/// men det gjør uthenting nødvendig: et svar du vil ta vare på må kunne låses
-/// opp og deles mens du har enheten. Den delen er ikke bygd ennå.
+/// The price is that the content cannot be read by another device. That is the
+/// intent, but it makes export necessary: an answer you want to keep must be
+/// unlockable and shareable while you have the device. That part is not built yet.
 enum Vault {
-    // Navnet er fra før appen het Fróði vit, og prefikset er `no.` mens
-    // bundle-ID-en er `com.Tazk.FrodiVit`. Begge deler blir stående:
-    // merkelappen er adressen til nøkkelen i Secure Enclave, ikke en
-    // identifikator iOS bryr seg om. Endrer vi den, finner appen ikke igjen
-    // nøkkelen, og alt som allerede er forseglet på enheten blir uleselig.
-    // Den er privat og vises ingen steder.
+    // The name predates the app being called Fróði vit, and the prefix is `no.`
+    // while the bundle ID is `com.Tazk.FrodiVit`. Both stay: the tag is the
+    // address of the key in the Secure Enclave, not an identifier iOS cares about.
+    // Change it and the app cannot find the key again, and everything already
+    // sealed on the device becomes unreadable. It is private and shown nowhere.
     private static let keyTag = "no.Tazk.FrodiKunnskap.vault.v1".data(using: .utf8)!
 
     enum VaultError: LocalizedError {
@@ -49,14 +48,13 @@ enum Vault {
         }
     }
 
-    // MARK: - Kryptering
-
+    // MARK: - Encryption
     static func seal(fileAt url: URL) throws -> Data {
         try seal(try Data(contentsOf: url))
     }
 
-    /// Forsegler tekst. Brukes til transkripsjoner, som ofte er mer
-    /// eksponerende enn lydfilen: teksten er søkbar og lesbar på et blikk.
+    /// Seals text. Used for content that is often more exposing than an audio
+    /// file: the text is searchable and readable at a glance.
     static func seal(_ text: String) throws -> Data {
         try seal(Data(text.utf8))
     }
@@ -75,7 +73,7 @@ enum Vault {
         guard let combined = sealed.combined else { throw VaultError.decryptionFailed }
         let wrappedKey = try wrap(dataKey)
 
-        // Format: 2 byte lengde på innpakket nøkkel, nøkkelen, deretter chiffer.
+        // Format: 2 bytes of wrapped-key length, the key, then the ciphertext.
         var out = Data()
         var length = UInt16(wrappedKey.count).bigEndian
         withUnsafeBytes(of: &length) { out.append(contentsOf: $0) }
@@ -97,8 +95,7 @@ enum Vault {
         return try AES.GCM.open(box, using: dataKey)
     }
 
-    // MARK: - Nøkkel i Secure Enclave
-
+    // MARK: - Key in the Secure Enclave
     private static func wrap(_ key: SymmetricKey) throws -> Data {
         let privateKey = try enclaveKey()
         guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
@@ -125,7 +122,7 @@ enum Vault {
         return SymmetricKey(data: raw as Data)
     }
 
-    /// Henter nøkkelen, eller lager den første gang.
+    /// Fetches the key, or creates it the first time.
     private static func enclaveKey() throws -> SecKey {
         if let existing = loadKey() { return existing }
         return try createKey()
@@ -145,15 +142,14 @@ enum Vault {
     }
 
     private static func createKey() throws -> SecKey {
-        // whenUnlockedThisDeviceOnly, som er strengere enn i tale til tekst-
-        // appen. Der måtte nøkkelen være tilgjengelig med skjermen låst, fordi
-        // handlingsknappen kan stoppe et opptak i bakgrunnen. Denne appen gjør
-        // ingenting i bakgrunnen: du skriver, laster opp og leser, alt med
-        // enheten i hånden og skjermen på. Da skal nøkkelen heller ikke være
-        // tilgjengelig når den er låst.
+        // whenUnlockedThisDeviceOnly, which is stricter than in the speech-to-text
+        // app. There the key had to be available with the screen locked, because the
+        // Action Button can stop a recording in the background. This app does nothing
+        // in the background: you write, upload and read, all with the device in hand
+        // and the screen on. Then the key should not be available while it is locked.
         //
-        // Får appen senere arbeid som skal gå i bakgrunnen, er det denne linjen
-        // som må vurderes på nytt.
+        // If the app later gets work that must run in the background, this is the
+        // line to reconsider.
         var accessError: Unmanaged<CFError>?
         guard let access = SecAccessControlCreateWithFlags(
             nil,
@@ -174,8 +170,8 @@ enum Vault {
             ]
         ]
 
-        // Simulatoren har ingen Secure Enclave. Da lages nøkkelen i nøkkelringen
-        // i stedet, slik at tester og utvikling virker. På enhet er den i Enclave.
+        // The simulator has no Secure Enclave. The key is then created in the keychain
+        // instead, so tests and development work. On a device it is in the Enclave.
         #if !targetEnvironment(simulator)
         attributes[kSecAttrTokenID as String] = kSecAttrTokenIDSecureEnclave
         #endif

@@ -1,15 +1,16 @@
 import SwiftUI
 
-/// Skjuler innhold mens skjermen tas opp eller speiles.
+/// Hides content while the screen is being recorded or mirrored.
 ///
-/// iOS gir ingen måte å hindre et skjermbilde på. `userDidTakeScreenshot`
-/// kommer først etter at bildet er tatt, og trikset med et skjult
-/// `isSecureTextEntry`-felt er udokumentert og kan slutte å virke uten varsel.
-/// Vi later derfor ikke som om vi stopper skjermbilder.
+/// iOS offers no way to prevent a screenshot. `userDidTakeScreenshot` arrives
+/// only after the picture is taken, and the trick with a hidden
+/// `isSecureTextEntry` field is undocumented and can stop working without
+/// notice. So we do not pretend to stop screenshots.
 ///
-/// Skjermopptak og speiling er noe annet: `isCaptured` er et støttet API, og
-/// den varer over tid. Er den på, kan et opptak som går i bakgrunnen fange
-/// teksten uten at du tenker over det. Da skjuler vi den heller.
+/// Screen recording and mirroring are different: `isCaptured` is a supported
+/// API, and it lasts over time. While it is on, a recording running in the
+/// background can capture the text without you thinking about it. So we hide
+/// it instead.
 struct CaptureGuard: ViewModifier {
     @State private var isCaptured = false
 
@@ -40,12 +41,12 @@ struct CaptureGuard: ViewModifier {
         }
     }
 
-    /// Skjermen appen faktisk vises på.
+    /// The screen the app is actually shown on.
     ///
-    /// `UIScreen.main` er utfaset i iOS 26 fordi en app kan vises på flere
-    /// skjermer. Vi henter derfor skjermen fra scenen appen står i.
-    /// Finner vi ingen scene, er appen ikke synlig, og da er det ingenting
-    /// å skjule.
+    /// `UIScreen.main` is deprecated in iOS 26 because an app can be shown on
+    /// several screens. So we take the screen from the scene the app is in. If
+    /// there is no scene, the app is not visible, and then there is nothing to
+    /// hide.
     @MainActor
     private static var screenIsCaptured: Bool {
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
@@ -55,7 +56,7 @@ struct CaptureGuard: ViewModifier {
 }
 
 extension View {
-    /// Skjuler innholdet mens skjermen tas opp eller speiles.
+    /// Hides the content while the screen is being recorded or mirrored.
     func hiddenWhileScreenCaptured() -> some View {
         modifier(CaptureGuard())
     }

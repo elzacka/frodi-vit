@@ -1,22 +1,22 @@
 import SwiftData
 import SwiftUI
 
-/// Kunnskapsassistenten. Skriv, lim inn eller last opp, få svar.
+/// The knowledge assistant. Write, paste or upload, get an answer.
 ///
-/// Skjermen følger skissen: svarene øverst, skrivefeltet nederst, last opp til
-/// venstre for det, og innstillinger øverst til høyre.
+/// The screen follows the sketch: answers at the top, the input field at the
+/// bottom, upload to the left of it, and the Info button at the top right.
 struct ChatView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \Chat.lastOpenedAt, order: .reverse) private var chats: [Chat]
 
-    // Er modellen ikke i pakken, sier stubben fra om nettopp det, i stedet for
-    // at MLX feiler med noe uleselig langt inne i lastingen.
+    // If the model is not in the bundle, the stub says exactly that, instead of
+    // MLX failing with something unreadable deep inside loading.
     @State private var conversation = Conversation(
         assistant: BorealisAssistant.isBundled ? BorealisAssistant() : MissingModelAssistant()
     )
     @State private var draft = ""
 
-    /// Samtalen skjermen står i. `nil` til den første er laget.
+    /// The conversation the screen is in. `nil` until the first one is made.
     @State private var chat: Chat?
     @State private var showingChats = false
     @State private var showingSettings = false
@@ -53,8 +53,8 @@ struct ChatView: View {
             .background(Color.Frodi.background.ignoresSafeArea())
             .navigationBarHidden(true)
             .task {
-                // Meldinger fra før appen fikk flere samtaler har ingen tråd.
-                // De samles opp her, ellers blir de liggende usynlig i basen.
+                // Messages from before the app had several conversations have no thread.
+                // They are collected here, or they sit invisibly in the store.
                 ChatStore.adoptOrphans(in: context)
                 if chat == nil { chat = ChatStore.all(in: context).first }
             }
@@ -83,10 +83,9 @@ struct ChatView: View {
         }
     }
 
-    // MARK: - Samtalen skjermen står i
-
-    /// Samtalen som vises. Faller tilbake til den sist åpnede om den vi sto i
-    /// ble slettet fra listen.
+    // MARK: - The conversation the screen is in
+    /// The conversation shown. Falls back to the last opened one if the one we
+    /// were in was deleted from the list.
     private var activeChat: Chat? {
         if let chat, !chat.isDeleted { return chat }
         return chats.first
@@ -96,8 +95,8 @@ struct ChatView: View {
         activeChat?.messagesInOrder ?? []
     }
 
-    /// Meldingene skjermen tegner. Den tomme svarboblen som venter på første
-    /// token hører ikke hjemme her — «Tenker …» dekker den tilstanden.
+    /// The messages the screen draws. The empty answer bubble waiting for the first
+    /// token does not belong here; «Tenker …» covers that state.
     private var visibleMessages: [ChatMessage] {
         messages.filter { !$0.isAwaitingFirstToken }
     }
@@ -106,9 +105,9 @@ struct ChatView: View {
         activeChat?.documentsInOrder ?? []
     }
 
-    /// Samtalen du skriver i, laget først når du faktisk skriver eller laster
-    /// opp noe. En tom samtale per oppstart ville fylt listen med rader du
-    /// aldri brukte.
+    /// The conversation you write in, created only once you actually write or
+    /// upload something. An empty conversation per launch would fill the list with
+    /// rows you never used.
     private func ensureChat() -> Chat {
         if let activeChat { return activeChat }
         let created = ChatStore.create(orReuse: nil, in: context)
@@ -116,10 +115,9 @@ struct ChatView: View {
         return created
     }
 
-    // MARK: - Dokumenter
-
-    /// Teksten som blir med i ledeteksten. Et dokument som ikke lar seg låse
-    /// opp hoppes over i stedet for å stoppe spørsmålet.
+    // MARK: - Documents
+    /// The text that goes into the prompt. A document that cannot be unlocked is
+    /// skipped rather than stopping the question.
     private func importDocument(_ result: Result<URL, Error>) {
         do {
             let url = try result.get()
@@ -128,8 +126,8 @@ struct ChatView: View {
             document.chat = ensureChat()
             context.insert(document)
             try context.save()
-            // Deles og innebygges med én gang, så spørsmålet slipper å vente
-            // på det. Feiler det her, gjøres det om igjen ved første spørsmål.
+            // Split and embedded right away, so the question does not have to wait for
+            // it. If it fails here, it is redone at the first question.
             Task { try? await Grounding.index(document, in: context) }
         } catch let error as DocumentImport.ImportError {
             importError = "\(error.localizedDescription) \(error.guidance)"
@@ -143,8 +141,7 @@ struct ChatView: View {
         try? context.save()
     }
 
-    // MARK: - Hode
-
+    // MARK: - Header
     private var header: some View {
         ZStack {
             VStack(spacing: Space.s1) {
@@ -152,8 +149,8 @@ struct ChatView: View {
                     .font(.Frodi.display)
                     .foregroundStyle(Color.Frodi.textPrimary)
 
-                // Andre halvdel av appnavnet, ikke en undertittel. Sammen
-                // leser hodet «fróði vit», som er navnet på appen.
+                // The second half of the app name, not a subtitle. Together the header
+                // reads «fróði vit», which is the name of the app.
                 Text("vit")
                     .font(.Frodi.eyebrow)
                     .eyebrowTracking()
@@ -161,14 +158,14 @@ struct ChatView: View {
             }
             .frame(maxWidth: .infinity)
             .accessibilityElement(children: .combine)
-            // Navnet uttalt, ikke ordmerket. Små bokstaver er en grafisk form,
-            // ikke måten navnet sies på.
+            // The name as spoken, not the wordmark. Lowercase is a graphic form, not
+            // how the name is said.
             .accessibilityLabel("Fróði vit")
             .accessibilityAddTraits(.isHeader)
 
-            // Samtalene til venstre, ny samtale og innstillinger til høyre.
-            // Ordmerket blir stående i midten fordi det ligger i sitt eget lag
-            // i stacken, ikke i raden med knapper.
+            // Conversations on the left, new conversation and Info on the right. The
+            // wordmark stays centred because it sits in its own layer of the stack, not
+            // in the row of buttons.
             HStack(spacing: 0) {
                 headerButton("list.bullet", label: "Samtaler") {
                     showingChats = true
@@ -176,9 +173,8 @@ struct ChatView: View {
 
                 Spacer()
 
-                // Av når samtalen du står i allerede er tom. Da er det
-                // ingenting å starte på nytt fra, og knappen ville sett ut
-                // som om den var i stykker.
+                // Off when the conversation you are in is already empty. Then there is
+                // nothing to start afresh from, and the button would look broken.
                 headerButton(
                     "square.and.pencil",
                     label: "Ny samtale",
@@ -202,7 +198,7 @@ struct ChatView: View {
         }
     }
 
-    /// Det er noe å forlate: samtalen du står i har innhold.
+    /// There is something to leave: the conversation you are in has content.
     private var canStartNewChat: Bool {
         activeChat.map { !$0.isEmpty } ?? false
     }
@@ -223,10 +219,10 @@ struct ChatView: View {
         .accessibilityLabel(label)
     }
 
-    /// Basen lot seg ikke åpne, så appen kjører på minnet.
+    /// The store could not be opened, so the app runs on memory.
     ///
-    /// Uten denne beskjeden ville samtalen forsvunnet ved omstart uten at noe
-    /// tydet på hvorfor.
+    /// Without this message the conversation would vanish on restart with nothing
+    /// to say why.
     private var storageWarning: some View {
         VStack(alignment: .leading, spacing: Space.s2) {
             Text("Samtalen lagres ikke")
@@ -251,8 +247,7 @@ struct ChatView: View {
         .accessibilityElement(children: .combine)
     }
 
-    // MARK: - Samtalen
-
+    // MARK: - The conversation
     private var emptyState: some View {
         VStack(spacing: Space.s3) {
             Text("Spør om noe")
@@ -310,8 +305,7 @@ struct ChatView: View {
         .accessibilityElement(children: .combine)
     }
 
-    // MARK: - Skrivefeltet
-
+    // MARK: - The input field
     private var inputBar: some View {
         HStack(alignment: .bottom, spacing: Space.s2) {
             Button {
@@ -329,11 +323,10 @@ struct ChatView: View {
                 .foregroundStyle(Color.Frodi.textPrimary)
                 .lineLimit(1...5)
                 .focused($writing)
-                // Skriveverktøy er den ene veien systemet kan sende det du
-                // skriver ut av enheten fra innsiden av appen: er teksten for
-                // stor for modellen på enheten, går den til Private Cloud
-                // Compute. Feltet er et spørsmål, ikke et dokument, så det
-                // taper ingenting på å være uten.
+                // Writing Tools is the one way the system can send what you write off the
+                // device from inside the app: if the text is too large for the on-device
+                // model, it goes to Private Cloud Compute. The field is a question, not a
+                // document, so it loses nothing by going without.
                 .writingToolsBehavior(.disabled)
                 .padding(.horizontal, Space.s4)
                 .padding(.vertical, Space.s3)

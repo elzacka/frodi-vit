@@ -2,10 +2,10 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-/// Driver samtalen: tar imot spørsmålet, henter svaret, lagrer begge deler.
+/// Drives the conversation: takes the question, fetches the answer, saves both.
 ///
-/// Ligger utenfor viewet fordi svaret strømmer inn over tid, og fordi et svar
-/// som er halvferdig når du bytter skjerm skal fortsette å komme.
+/// Lives outside the view because the answer streams in over time, and because
+/// an answer that is half done when you switch screens should keep coming.
 @MainActor
 @Observable
 final class Conversation {
@@ -19,14 +19,14 @@ final class Conversation {
         self.assistant = assistant
     }
 
-    /// Sender spørsmålet og lagrer svaret etter hvert som det kommer.
+    /// Sends the question and saves the answer as it arrives.
     ///
-    /// Både spørsmålet og svaret legges i `chat`. Uten den ville meldingene
-    /// blitt liggende løst i basen, uten en tråd som kan slettes samlet.
+    /// Both the question and the answer go into `chat`. Without it the messages
+    /// would sit loose in the store, with no thread that can be deleted as one.
     ///
-    /// Lagrer på hver oppdatering, ikke bare til slutt. Blir appen avbrutt
-    /// midt i et svar, står det som kom fram igjen neste gang — avkortet, men
-    /// merket som avkortet, i stedet for at hele svaret er borte.
+    /// Saves on every update, not only at the end. If the app is interrupted in the
+    /// middle of an answer, what came through is there next time: truncated, but
+    /// marked as truncated, instead of the whole answer being gone.
     func send(_ question: String, in chat: Chat, documents: [Document] = [], context: ModelContext) {
         let trimmed = question.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isAnswering else { return }
@@ -47,8 +47,8 @@ final class Conversation {
                 reply.chat = chat
                 context.insert(reply)
 
-                // Samtalen navngis etter det første spørsmålet, og flyttes
-                // øverst i listen fordi du nettopp brukte den.
+                // The conversation is named after the first question, and moved to the top
+                // of the list because you just used it.
                 try chat.nameIfUnnamed(from: trimmed)
                 chat.lastOpenedAt = Date()
 
@@ -75,8 +75,8 @@ final class Conversation {
                 return
             } catch let error as AssistantError {
                 errorMessage = error.guidance
-                // Et tomt svar er ikke et svar. Da er beskjeden det eneste
-                // som skal stå igjen.
+                // An empty answer is not an answer. Then the message is the only thing
+                // that should remain.
                 if text.isEmpty { context.delete(reply) }
                 try? context.save()
                 return
@@ -89,7 +89,7 @@ final class Conversation {
         }
     }
 
-    /// Stopper et svar som er i gang. Det som kom fram blir stående.
+    /// Stops an answer in progress. What came through stays.
     func stop() {
         task?.cancel()
     }

@@ -14,7 +14,7 @@ struct TextSplitterTests {
         #expect(TextSplitter.split("  \n\n ").isEmpty)
     }
 
-    /// En liste med korte punkter skal ikke bli ett utdrag per linje.
+    /// A list of short items must not become one passage per line.
     @Test("Små avsnitt slås sammen til de fyller et utdrag")
     func smallParagraphsAreMerged() {
         let text = (1 ... 20).map { "Punkt \($0) i listen." }.joined(separator: "\n\n")
@@ -35,7 +35,7 @@ struct TextSplitterTests {
         #expect(passages.allSatisfy { $0.hasSuffix("noe.") })
     }
 
-    /// Tekst uten punktum og uten avsnitt — en tabell limt inn som én linje.
+    /// Text without full stops and without paragraphs: a table pasted as one line.
     @Test("Tekst uten noe å kutte på deles ved mellomrom")
     func textWithoutBoundariesIsHardCut() {
         let text = (1 ... 300).map { "ord\($0)" }.joined(separator: " ")
@@ -71,7 +71,7 @@ struct RetrievalTests {
         #expect(Retrieval.select(query: [1, 0], from: candidates, budget: 200) == [1, 2])
     }
 
-    /// Modellen skal lese dokumentet i rekkefølge, ikke stokket etter poeng.
+    /// The model should read the document in order, not shuffled by score.
     @Test("Utvalget kommer i dokumentrekkefølge")
     func chosenAreInOriginalOrder() {
         let candidates = [candidate(0.9, 0.1), candidate(0, 1), candidate(1, 0)]

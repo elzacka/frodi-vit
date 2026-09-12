@@ -1,11 +1,11 @@
 import Foundation
 
-/// Skriver et svar til en tekstfil du kan dele, og rydder opp etterpå.
+/// Writes an answer to a text file you can share, and cleans up afterwards.
 ///
-/// Svaret ligger kryptert i basen og kan ikke leses av en annen enhet. Dette
-/// er veien ut: klartekst skrives til en midlertidig mappe, iOS' delingsmeny
-/// får filen, og mappen slettes når menyen lukkes. Samme mønster som
-/// `RecordingExport` i Fróði røst.
+/// The answer is encrypted in the store and cannot be read by another device.
+/// This is the way out: plaintext is written to a temporary folder, iOS' share
+/// sheet gets the file, and the folder is deleted when the sheet closes. Same
+/// pattern as `RecordingExport` in Fróði røst.
 enum AnswerExport {
     static func prepare(_ text: String, createdAt: Date) throws -> [URL] {
         let folder = FileManager.default.temporaryDirectory
@@ -17,7 +17,7 @@ enum AnswerExport {
         return [file]
     }
 
-    /// BOM foran, så Windows og eldre programmer leser æ, ø og å riktig.
+    /// BOM in front, so Windows and older programs read æ, ø and å correctly.
     static func utf8WithBOM(_ text: String) -> Data {
         Data([0xEF, 0xBB, 0xBF]) + Data(text.utf8)
     }

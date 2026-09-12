@@ -18,7 +18,7 @@ struct AnswerExportTests {
         #expect(String(data: data.dropFirst(3), encoding: .utf8) == "Fristen er 1. oktober.")
     }
 
-    /// Klarteksten skal ikke bli liggende i den midlertidige mappen.
+    /// The plaintext must not be left in the temporary folder.
     @Test("Opprydding fjerner mappen")
     func cleanUpRemovesFolder() throws {
         let urls = try AnswerExport.prepare("noe", createdAt: Date())

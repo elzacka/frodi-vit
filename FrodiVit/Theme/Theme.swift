@@ -1,17 +1,15 @@
 import SwiftUI
 
-/// Designsystemet i kode. Verdiene her er de eneste som skal brukes —
-/// ingen egendefinerte farger, avstander eller radiuser ute i viewene.
+/// The design system in code. The values here are the only ones to use: no
+/// custom colours, spacings or radii out in the views.
 ///
-/// Kilde: `~/dev/frodi/dev_only/designsystem/frodi-designsystem.html`.
-/// Designsystemet er delt med Fróði røst og ligger i det repoet.
+/// Source: `~/dev/frodi/dev_only/designsystem/frodi-designsystem.html`.
+/// The design system is shared with Fróði røst and lives in that repo.
 ///
-/// Delt, men ikke identisk: opptaksfargene finnes ikke her, og
-/// `accentKnowledge` er tatt i bruk i stedet. Det er den samme merkevaren,
-/// ikke den samme appen.
+/// Shared, but not identical: the recording colours do not exist here, and
+/// `accentKnowledge` is in use instead. It is the same brand, not the same app.
 
-// MARK: - Farger
-
+// MARK: - Colours
 extension Color {
     enum Frodi {
         static let background = Color("Background")
@@ -20,26 +18,25 @@ extension Color {
         static let textSecondary = Color("TextSecondary")
         static let border = Color("BorderNeutral")
 
-        /// Aksentfargen til kunnskapsdelen. Reservert i designsystemet fra
-        /// starten, og tatt i bruk her for første gang.
+        /// The accent colour of the knowledge feature. Reserved in the design system
+        /// from the start, and taken into use here for the first time.
         static let accentKnowledge = Color("AccentKnowledge")
-        /// Tekst og ikoner oppå `accentKnowledge`. Aldri ren svart eller hvit.
+        /// Text and icons on top of `accentKnowledge`. Never pure black or white.
         static let accentKnowledgeOn = Color("AccentKnowledgeOn")
     }
 }
 
-// MARK: - Typografi
-
+// MARK: - Typography
 extension Font {
     enum Frodi {
-        /// Skranji Bold. Logo og appnavn. Samme skrift som i app-ikonet.
+        /// Skranji Bold. Logo and app name. The same face as in the app icon.
         static let display = custom("Skranji-Bold", size: 26, relativeTo: .largeTitle)
-        /// Inter 600. Skjermtitler.
+        /// Inter 600. Screen titles.
         ///
-        /// Skranji er en pyntefont og holdes til logoen. Titler må kunne leses
-        /// raskt, også med stor tekst, og WCAG 2.2 AA gjelder.
+        /// Skranji is a display face and is kept to the logo. Titles must be readable
+        /// quickly, also with large text, and WCAG 2.2 AA applies.
         static let title = custom("Inter-SemiBold", size: 20, relativeTo: .title2)
-        /// Inter 500, sporet. Små etiketter over en seksjon.
+        /// Inter 500, tracked. Small labels above a section.
         static let eyebrow = custom("Inter-Medium", size: 11, relativeTo: .caption2)
         static let body = custom("Inter-Regular", size: 15, relativeTo: .body)
         static let bodyMedium = custom("Inter-Medium", size: 15, relativeTo: .body)
@@ -48,9 +45,8 @@ extension Font {
     }
 }
 
-// MARK: - Avstand
-
-/// 8px-grid. Ingen egendefinerte tall utenfor denne skalaen.
+// MARK: - Spacing
+/// 8 px grid. No custom numbers outside this scale.
 enum Space {
     static let s1: CGFloat = 4
     static let s2: CGFloat = 8
@@ -62,28 +58,25 @@ enum Space {
     static let s8: CGFloat = 40
 }
 
-// MARK: - Hjørneradius
-
+// MARK: - Corner radius
 enum Radius {
     static let control: CGFloat = 12
     static let card: CGFloat = 16
-    /// Meldingsbobler og pilleknapper.
+    /// Message bubbles and pill buttons.
     static let pill: CGFloat = 24
 }
 
-// MARK: - Knapper i samtalen
-
-/// Designsystem v1.0 beskriver ingen samtale. Målene er avledet fra
-/// treffområdekravet: ingenting under 44 pt.
+// MARK: - Buttons in the conversation
+/// Design system v1.0 describes no conversation. The measures are derived from
+/// the hit-area requirement: nothing under 44 pt.
 enum ChatControl {
     static let action: CGFloat = 44
     static let actionIcon: CGFloat = 20
 }
 
-// MARK: - Sporing
-
+// MARK: - Tracking
 extension Text {
-    /// Eyebrow-etiketter er sporet 0.06em i designsystemet.
+    /// Eyebrow labels are tracked 0.06 em in the design system.
     func eyebrowTracking() -> some View {
         tracking(11 * 0.06)
     }

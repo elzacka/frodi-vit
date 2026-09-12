@@ -2,16 +2,16 @@ import Foundation
 import Testing
 @testable import FrodiVit
 
-/// Holder Swift-ryggraden opp mot vektorer regnet i Python fra fp32-vektene,
-/// tosidig og med silu. Avviker de, er det ryggraden som er feil — ikke
-/// modellen.
+/// Holds the Swift backbone against vectors computed in Python from the fp32
+/// weights, bidirectional and with silu. If they deviate, the backbone is wrong,
+/// not the model.
 ///
-/// Fasiten ligger i `Fixtures/embedder-reference.json`, laget 12. september
-/// 2026 med `mlx_lm` og de originale vektene fra Nasjonalbiblioteket. Åtte
-/// avsnitt, sju spørsmål med hvert sitt riktige avsnitt.
+/// The reference lives in `Fixtures/embedder-reference.json`, made on
+/// 12 September 2026 with `mlx_lm` and the original weights from the National
+/// Library. Eight paragraphs, seven questions each with its correct paragraph.
 ///
-/// Kan ikke kjøres i simulatoren: MLX får ikke laget en Metal-enhet der og
-/// avbryter før første token. Derfor kompileres den bare for enhet.
+/// Cannot run in the simulator: MLX cannot create a Metal device there and
+/// aborts before the first token. So it is compiled for device only.
 #if !targetEnvironment(simulator)
 @Suite("Innebygging", .enabled(if: BorealisEmbedder.isBundled))
 struct EmbedderTests {
@@ -43,8 +43,8 @@ struct EmbedderTests {
         #expect(vectors.count == reference.vectors.count)
         for (ours, theirs) in zip(vectors, reference.vectors) {
             #expect(ours.count == 768)
-            // 8-bit vekter og float16-aktiveringer mot fp32. Målt 0,9997 i
-            // Python; 0,99 er der en feil i ryggraden ville vist seg.
+            // 8-bit weights and float16 activations against fp32. Measured 0.9997 in
+            // Python; 0.99 is where a fault in the backbone would show.
             #expect(Retrieval.cosine(ours, theirs) > 0.99)
         }
     }

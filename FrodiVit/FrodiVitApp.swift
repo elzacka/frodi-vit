@@ -6,9 +6,9 @@ struct FrodiVitApp: App {
     private let container: ModelContainer
 
     init() {
-        // Feiler disken, faller vi tilbake til minnet slik at appen fortsatt
-        // svarer. Samtalen overlever da ikke omstart, og skjermen sier fra om
-        // det, i stedet for at appen kræsjer ved oppstart.
+        // If the disk fails, fall back to memory so the app still answers. The
+        // conversation then does not survive a restart, and the screen says so,
+        // instead of the app crashing at launch.
         var resolved: ModelContainer
         do {
             resolved = try ModelContainer(for: Chat.self, ChatMessage.self, Document.self, Passage.self)
@@ -16,7 +16,7 @@ struct FrodiVitApp: App {
         } catch {
             Storage.markFailed()
             let memoryOnly = ModelConfiguration(isStoredInMemoryOnly: true)
-            // Klarer vi ikke engang dette, er det ingenting igjen å redde.
+            // If even this fails, there is nothing left to save.
             resolved = try! ModelContainer(for: Chat.self, ChatMessage.self, Document.self, Passage.self, configurations: memoryOnly)
         }
         container = resolved
@@ -25,7 +25,7 @@ struct FrodiVitApp: App {
     var body: some Scene {
         WindowGroup {
             ChatView()
-                // Designsystemet definerer kun lys modus.
+                // The design system defines light mode only.
                 .preferredColorScheme(.light)
                 .tint(Color.Frodi.accentKnowledge)
         }

@@ -1,38 +1,38 @@
 import Foundation
 import SwiftData
 
-/// En melding i samtalen. Teksten ligger forseglet, aldri i klartekst.
+/// A message in the conversation. The text is sealed, never in plaintext.
 ///
-/// SwiftData-basen er beskyttet av sandkassen og filbeskyttelsen, men det er
-/// ikke nok her: det du spør om avslører ofte mer enn svaret gjør, og en base
-/// som kan leses er en base som kan leses. Derfor går teksten gjennom `Vault`
-/// på vei inn og ut, på samme måte som dokumentene du laster opp.
+/// The SwiftData store is protected by the sandbox and file protection, but that
+/// is not enough here: what you ask often reveals more than the answer does, and
+/// a store that can be read is a store that can be read. So the text goes
+/// through `Vault` on the way in and out, the same as the documents you upload.
 @Model
 final class ChatMessage {
-    /// Hvem som skrev meldingen. Lagres som tekst fordi SwiftData ikke kan
-    /// sortere eller filtrere på en enum uten videre.
+    /// Who wrote the message. Stored as text because SwiftData cannot sort or
+    /// filter on an enum without extra work.
     var roleValue: String = Role.user.rawValue
 
-    /// Forseglet UTF-8. Les den gjennom `text()`, ikke direkte.
+    /// Sealed UTF-8. Read it through `text()`, not directly.
     var sealedText: Data = Data()
 
     var createdAt: Date = Date()
 
-    /// Samtalen meldingen hører til.
+    /// The conversation the message belongs to.
     ///
-    /// Valgfri fordi meldinger lagret før appen fikk flere samtaler ikke har
-    /// noen. `ChatStore.adoptOrphans` samler dem opp ved oppstart.
+    /// Optional because messages saved before the app had several conversations
+    /// have none. `ChatStore.adoptOrphans` collects them at launch.
     var chat: Chat?
 
-    /// Modellen rakk ikke å svare ferdig. Da er teksten det den fikk sagt,
-    /// og skjermen sier fra i stedet for å la et avkuttet svar se ferdig ut.
+    /// The model did not finish answering. The text is then what it got said, and
+    /// the screen says so instead of letting a cut-off answer look complete.
     var wasInterrupted: Bool = false
 
-    /// Navnene på dokumentene svaret bygger på, i den rekkefølgen utdragene
-    /// sto. Tomt når svaret ikke bygger på noe.
+    /// The names of the documents the answer builds on, in the order the passages
+    /// appeared. Empty when the answer builds on nothing.
     ///
-    /// Ikke forseglet: navnet ligger alt i klartekst på `Document`, og et navn
-    /// til på et svar avslører ikke mer enn det.
+    /// Not sealed: the name already sits in plaintext on `Document`, and one more
+    /// name on an answer reveals no more than that.
     var sourceNames: [String] = []
 
     init(role: Role, text: String, createdAt: Date = Date()) throws {
@@ -50,28 +50,28 @@ final class ChatMessage {
         Role(rawValue: roleValue) ?? .user
     }
 
-    /// Åpner teksten. Kaster om meldingen ble forseglet på en annen enhet.
+    /// Opens the text. Throws if the message was sealed on another device.
     func text() throws -> String {
         guard !sealedText.isEmpty else { return "" }
         return try Vault.openText(sealedText)
     }
 
-    /// Brukes mens svaret strømmer inn, der teksten vokser for hvert token.
+    /// Used while the answer streams in, where the text grows with every token.
     func replaceText(_ text: String) throws {
         sealedText = try Vault.seal(text)
     }
 
-    /// En tom svarboble som venter på det første ordet.
+    /// An empty answer bubble waiting for the first word.
     ///
-    /// Svaret opprettes i det spørsmålet sendes, slik at det som strømmer inn
-    /// har et sted å lagres underveis. Fram til første token er meldingen tom,
-    /// og skjermen har alt en «Tenker …» som sier det samme. To varsler om det
-    /// samme, der det ene er en tom form, sier mindre enn ett.
+    /// The answer is created the moment the question is sent, so what streams in
+    /// has somewhere to be saved along the way. Until the first token the message
+    /// is empty, and the screen already has a «Tenker …» saying the same. Two
+    /// signals for the same thing, one of them an empty shape, say less than one.
     ///
-    /// Gjelder også etter en omstart: krasjer appen før første token, blir den
-    /// tomme meldingen liggende, og uten dette ville den stått som en tom
-    /// boble i samtalen for alltid. Et avbrutt svar er noe annet — det viser
-    /// «Svaret ble avbrutt», og skal bli stående.
+    /// Also applies after a restart: if the app crashes before the first token, the
+    /// empty message stays, and without this it would sit as an empty bubble in the
+    /// conversation forever. An interrupted answer is different: it shows «Svaret
+    /// ble avbrutt», and should stay.
     var isAwaitingFirstToken: Bool {
         guard role == .assistant, !wasInterrupted else { return false }
         return ((try? text()) ?? "").isEmpty

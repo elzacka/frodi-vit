@@ -1,12 +1,12 @@
 import SwiftData
 import SwiftUI
 
-/// Info-siden, bak i-en øverst til høyre.
+/// The Info page, behind the i at the top right.
 ///
-/// Skissen la Om fróði, Personvern og Versjonsinfo i en egen meny på
-/// startskjermen. Denne appen har ingen startskjerm — den åpner rett i
-/// samtalen — så de tre hører hjemme her i stedet for på en skjerm som bare
-/// ville eksistert for å holde dem.
+/// The sketch put Om fróði, Personvern and Versjonsinfo in a menu of their own
+/// on the start screen. This app has no start screen — it opens straight into
+/// the conversation — so the three belong here rather than on a screen that
+/// would exist only to hold them.
 struct InfoView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
@@ -33,10 +33,9 @@ struct InfoView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    // Kryss, ikke «Ferdig»: her er det ingenting å bekrefte,
-                    // arket bare lukkes. Ikonet har heller ingen skrift, så
-                    // spørsmålet om Inter ved siden av systemtittelen faller
-                    // bort. VoiceOver trenger navnet knappen ikke skriver.
+                    // A cross, not «Ferdig»: there is nothing to confirm here, the sheet just
+                    // closes. The icon also carries no type, so the question of Inter beside the
+                    // system title goes away. VoiceOver needs the name the button does not write.
                     Button { dismiss() } label: { Image(systemName: "xmark") }
                         .accessibilityLabel("Lukk")
                 }
@@ -44,8 +43,7 @@ struct InfoView: View {
         }
     }
 
-    // MARK: - Kort
-
+    // MARK: - Cards
     private var about: some View {
         card("Fróði vit") {
             paragraph("Fróði er norrønt og betyr «den kunnskapsrike».")
@@ -90,7 +88,7 @@ struct InfoView: View {
         }
     }
 
-    /// «1 samtaler» er den feilen ingen leser forbi. Entall skrives ut.
+    /// «1 samtaler» is the mistake nobody reads past. The singular is spelled out.
     private var chatCount: String {
         switch chats.count {
         case 0: String(localized: "Du har ingen samtaler.")
@@ -140,12 +138,12 @@ struct InfoView: View {
         }
     }
 
-    // Lenkene åpner i Safari. Appen henter ingenting selv; det er nettleseren
-    // som går på nett, og bare når du trykker.
+    // The links open in Safari. The app fetches nothing itself; it is the browser
+    // that goes online, and only when you tap.
     private static let privacyPolicy = URL(string: "https://github.com/elzacka/frodi-vit/blob/main/PERSONVERN.md")!
     private static let securityPolicy = URL(string: "https://github.com/elzacka/frodi-vit/blob/main/SECURITY.md")!
 
-    /// Versjon og byggenummer, slik de står i pakken.
+    /// Version and build number, as they stand in the bundle.
     static var versionText: String {
         let info = Bundle.main.infoDictionary
         let short = info?["CFBundleShortVersionString"] as? String ?? "–"
@@ -153,10 +151,9 @@ struct InfoView: View {
         return "\(short) (\(build))"
     }
 
-    // MARK: - Byggeklosser
-
-    /// Innstillingskortet fra designsystemet: eyebrow-etikett i versaler over
-    /// brødtekst i caption, på surface med 1px kant.
+    // MARK: - Building blocks
+    /// The settings card from the design system: eyebrow label in capitals over
+    /// body text in caption, on surface with a 1 px border.
     @ViewBuilder
     private func card(_ label: String, opensScreen: Bool = false, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Space.s3) {
@@ -198,8 +195,8 @@ struct InfoView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// Lenke ut av appen, i samme størrelse som brødteksten. Understreket og i
-    /// text-primary, så den skiller seg fra teksten rundt på mer enn farge.
+    /// A link out of the app, at the same size as the body text. Underlined and in
+    /// text-primary, so it differs from the text around it by more than colour.
     private func link(_ title: String, to url: URL) -> some View {
         Link(title, destination: url)
             .font(.Frodi.caption)
@@ -208,19 +205,19 @@ struct InfoView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// Sletter alt. Meldingene og dokumentene følger med samtalene gjennom
-    /// `cascade`, så det er samtalene som slettes her.
+    /// Deletes everything. The messages and documents follow the conversations
+    /// through `cascade`, so it is the conversations that are deleted here.
     private func deleteAll() {
-        // Løse meldinger fra en eldre versjon hører ikke til noen samtale, og
-        // ville blitt stående igjen etter «slett alt».
+        // Loose messages from an older version belong to no conversation, and
+        // would be left behind after «slett alt».
         for message in messages where message.chat == nil { context.delete(message) }
         ChatStore.delete(chats, in: context)
     }
 }
 
-/// Attribusjonen lisensene krever, i appen og ikke bare i repoet.
+/// The attribution the licences require, in the app and not only in the repo.
 ///
-/// Samme innhold som TREDJEPART.md. Endres den ene, endres den andre.
+/// Same content as TREDJEPART.md. Change one, change the other.
 struct LicensesView: View {
     private struct Component: Identifiable {
         let name: String

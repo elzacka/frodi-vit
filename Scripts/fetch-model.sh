@@ -1,26 +1,26 @@
 #!/bin/bash
-# Henter og konverterer språkmodellene Fróði vit svarer med.
+# Fetches and converts the language models Fróði vit answers with.
 #
-# Modellene ligger ikke i git — de er over en halv gigabyte til sammen. Kjør
-# dette skriptet én gang etter kloning, før du bygger.
+# The models are not in git; together they are over half a gigabyte. Run this
+# script once after cloning, before you build.
 #
-# Nasjonalbiblioteket publiserer den åpne serien som safetensors og GGUF, men
-# ikke som MLX. Konverteringen gjøres derfor her, én gang, på en Mac. Den er
-# ikke eksperimentell: NB har selv kjørt samme konvertering på samme arkitektur
-# for forhåndsversjonene sine.
+# The National Library publishes the open series as safetensors and GGUF, but
+# not as MLX. So the conversion is done here, once, on a Mac. It is not
+# experimental: NB has run the same conversion on the same architecture for
+# its own preview releases.
 #
-# Kilder:
-#   svar:        https://huggingface.co/NbAiLab/borealis-open-1b (Gemma-lisens)
-#   gjenfinning: https://huggingface.co/NbAiLab/borealis-embed-212m (NB-lisens 1.0)
+# Sources:
+# answers:    https://huggingface.co/NbAiLab/borealis-open-1b (Gemma licence)
+# retrieval:  https://huggingface.co/NbAiLab/borealis-embed-212m (NB licence 1.0)
 #
-# Krever: mlx-lm i et virtuelt miljø under .venv/. Skriptet lager det selv
-# første gang. Et eget miljø, ikke den globale python-installasjonen: mlx-lm
-# drar med seg huggingface_hub, som igjen drar med seg httpx og trio, og de
-# krangler lett med det som allerede ligger globalt.
+# Requires: mlx-lm in a virtual environment under .venv/. The script creates it
+# the first time. A separate environment, not the global Python install: mlx-lm
+# pulls in huggingface_hub, which pulls in httpx and trio, and they clash
+# easily with what is already installed globally.
 set -euo pipefail
 
-# Pinnet med vilje. En modell som endrer seg under føttene på deg gir svar som
-# endrer seg uten at noe i repoet er rørt.
+# Pinned on purpose. A model that changes under your feet gives answers that
+# change without anything in the repo being touched.
 GENERATOR="NbAiLab/borealis-open-1b"
 GENERATOR_REVISION="acebb4d8ae77098a05fc83061e7d0148bfd6027c"
 EMBEDDER="NbAiLab/borealis-embed-212m"
@@ -47,9 +47,9 @@ fi
 
 mkdir -p "$DEST"
 
-# mlx_lm convert har ingen --revision. Den henter alltid siste versjon av et
-# repo-navn, og da er «pinnet» bare noe skriptet påstår. Vi laster derfor ned
-# den navngitte revisjonen først, og konverterer fra mappen på disk.
+# mlx_lm convert has no --revision. It always fetches the latest version of a
+# repo name, and then «pinned» is only something the script claims. So we
+# download the named revision first, and convert from the folder on disk.
 convert() { # $1 = modell-id, $2 = revisjon, $3 = målmappe, $4 = kvantisering i bit
   local target="$DEST/$3"
   if [ -f "$target/config.json" ]; then
@@ -74,24 +74,24 @@ PYEOF
 }
 
 echo "Språkmodell:"
-# 4-bit på svarmodellen. Arbeidssettet lander da rundt 1,2 GB, som er innenfor
-# den vanlige minnegrensen for en app. 8-bit ville krevd et rettighetstillegg
-# for økt minne, og det er en søknad vi slipper å skrive.
+# 4-bit for the answer model. The working set then lands around 1.2 GB, which
+# is within the usual memory limit for an app. 8-bit would need an entitlement
+# for increased memory, and that is an application we can skip writing.
 convert "$GENERATOR" "$GENERATOR_REVISION" "borealis-open-1b" 4
-# Gjenfinningsmodellen går ikke rett gjennom `mlx_lm convert`. Den er en
-# Gemma3TextModel — ryggraden alene, uten lm_head — og vektene i safetensors
-# mangler prefikset `model.` som konverteringen venter. Det var hele feilen
-# «Received 158 parameters not in model», målt 8. september 2026: 158 er
-# nettopp antall tensorer i filen.
+# The retrieval model does not go straight through `mlx_lm convert`. It is a
+# Gemma3TextModel — the backbone alone, without lm_head — and the weights in
+# safetensors lack the `model.` prefix the conversion expects. That was the
+# whole error «Received 158 parameters not in model», measured 8 September
+# 2026: 158 is exactly the number of tensors in the file.
 #
-# Så vi legger et mellomsteg foran: kopier vektene med prefikset på plass, og
-# skriv om config.json fra transformers 5 sine nøkler (`rope_parameters`,
-# `_sliding_window_pattern`) til de flate nøklene både mlx_lm og Swift-koden
-# leser. Deretter er det en vanlig konvertering. 8-bit: målt 12. september
-# 2026 ligger cosinus mot fp32 på 0,9997, og modellen er 236 MB.
+# So we put a step in front: copy the weights with the prefix in place, and
+# rewrite config.json from transformers 5's keys (`rope_parameters`,
+# `_sliding_window_pattern`) to the flat keys both mlx_lm and the Swift code
+# read. After that it is an ordinary conversion. 8-bit: measured 12 September
+# 2026, cosine against fp32 is 0.9997, and the model is 236 MB.
 #
-# Selve kjøringen i appen er ikke MLXEmbedders' `EmbeddingGemma` — den regner
-# kausalt, mens denne modellen er trent tosidig og med silu. Se
+# The run inside the app is not MLXEmbedders' `EmbeddingGemma`; that computes
+# causally, while this model is trained bidirectionally and with silu. See
 # `BorealisEmbedder.swift`.
 stage_embedder() { # $1 = snapshot, $2 = mellommappe
   "$PY" - "$1" "$2" <<'PYEOF'

@@ -1,19 +1,18 @@
 import Foundation
 
-/// Deler et dokument i utdrag på rundt tusen tegn.
+/// Splits a document into passages of about a thousand characters.
 ///
-/// Avsnittsskift først, så setningsslutt, og et hardt kutt bare der en tekst
-/// verken har det ene eller det andre. Små avsnitt slås sammen til de fyller
-/// et utdrag, så en liste med korte punkter ikke blir førti utdrag på én linje
-/// hver.
+/// Paragraph breaks first, then sentence ends, and a hard cut only where a text
+/// has neither. Small paragraphs are merged until they fill a passage, so a list
+/// of short items does not become forty passages of one line each.
 ///
-/// Tusen tegn er et par hundre tokens: kort nok til at ett utdrag handler om
-/// én ting, langt nok til at det bærer sammenhengen sin selv. Med budsjettet
-/// på 8 000 tegn blir det sju–åtte utdrag per spørsmål.
+/// A thousand characters is a couple of hundred tokens: short enough that one
+/// passage is about one thing, long enough that it carries its own context.
+/// With the 8 000 character budget that is seven or eight passages per question.
 enum TextSplitter {
     nonisolated static let targetLength = 1_000
 
-    /// Lengste utdrag som lages. Bare tekst uten noe å kutte på når hit.
+    /// The longest passage made. Only text with nothing to cut on reaches this.
     nonisolated static let maximumLength = 2 * targetLength
 
     nonisolated static func split(_ text: String, target: Int = targetLength) -> [String] {
@@ -45,8 +44,8 @@ enum TextSplitter {
             .filter { !$0.isEmpty }
     }
 
-    /// Et avsnitt som er lengre enn taket, delt ved setningsslutt, og ved et
-    /// mellomrom der en «setning» alene er over taket.
+    /// A paragraph longer than the cap, split at sentence ends, and at a space
+    /// where a single «sentence» is itself over the cap.
     private static func pieces(of paragraph: String, limit: Int) -> [String] {
         guard paragraph.count > limit else { return [paragraph] }
 

@@ -3,46 +3,46 @@ import SwiftData
 import Testing
 @testable import FrodiVit
 
-/// Appens løfte er at ingenting forlater enheten. Disse testene vokter det
-/// løftet i koden, ikke i dokumentasjonen.
+/// The app's promise is that nothing leaves the device. These tests guard that
+/// promise in the code, not in the documentation.
 ///
-/// Løftet er strengere her enn i Fróði røst: den har lyd i
-/// bakgrunnen fordi et opptak må overleve at skjermen låses. Denne appen gjør
-/// ingenting i bakgrunnen i det hele tatt.
+/// The promise is stricter here than in Fróði røst: that app has background
+/// audio because a recording must survive the screen locking. This app does
+/// nothing in the background at all.
 @Suite("Isolasjon")
 struct IsolationTests {
-    /// Ingen nettverksnøkler i Info.plist betyr ingen unntak fra ATS.
+    /// No network keys in Info.plist means no ATS exceptions.
     @Test("Ingen unntak fra transportsikkerhet")
     func noAppTransportSecurityExceptions() {
         let ats = Bundle.main.object(forInfoDictionaryKey: "NSAppTransportSecurity")
         #expect(ats == nil, "NSAppTransportSecurity er lagt inn — appen skal ikke snakke med nett i det hele tatt")
     }
 
-    /// Ingen bakgrunnsmodus overhodet. `fetch` eller `processing` ville åpnet
-    /// for arbeid som kan nå nettet mens ingen ser på.
+    /// No background mode whatsoever. `fetch` or `processing` would open the door
+    /// to work that can reach the network while nobody is watching.
     @Test("Ingenting kjører i bakgrunnen")
     func nothingRunsInBackground() {
         let modes = Bundle.main.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String]
         #expect(modes == nil, "Uventede bakgrunnsmoduser: \(modes ?? [])")
     }
 
-    /// Denne appen har ingen mikrofon, og skal ikke be om en. Dukker nøkkelen
-    /// opp, har noen dratt inn opptak fra den andre appen.
+    /// This app has no microphone, and must not ask for one. If the key shows up,
+    /// someone has pulled recording in from the other app.
     @Test("Appen ber ikke om mikrofon")
     func doesNotRequestMicrophone() {
         let value = Bundle.main.object(forInfoDictionaryKey: "NSMicrophoneUsageDescription")
         #expect(value == nil, "NSMicrophoneUsageDescription hører til Fróði røst")
     }
 
-    /// Talegjenkjenning hører heller ikke hjemme her. Nøkkelen tvinger fram
-    /// Apples dialog om at taledata sendes til dem.
+    /// Speech recognition does not belong here either. The key forces Apple's
+    /// dialog about speech data being sent to them.
     @Test("Appen ber ikke om tilgang til talegjenkjenning")
     func doesNotRequestSpeechRecognition() {
         let value = Bundle.main.object(forInfoDictionaryKey: "NSSpeechRecognitionUsageDescription")
         #expect(value == nil)
     }
 
-    /// Personvernmanifestet skal si at appen ikke samler inn noe og ikke sporer.
+    /// The privacy manifest must say the app collects nothing and does not track.
     @Test("Personvernmanifestet erklærer ingen innsamling")
     func privacyManifestDeclaresNothing() throws {
         let url = try #require(Bundle.main.url(forResource: "PrivacyInfo", withExtension: "xcprivacy"))
@@ -55,16 +55,16 @@ struct IsolationTests {
         #expect((plist["NSPrivacyTrackingDomains"] as? [Any])?.isEmpty == true)
     }
 
-    /// Appen er norsk, og bare norsk. Kommer det flere språk inn, er det en
-    /// beslutning som skal tas bevisst, ikke noe som siger inn.
+    /// The app is Norwegian, and Norwegian only. If more languages come in, that is
+    /// a decision to be taken deliberately, not something that seeps in.
     @Test("Bare bokmål er med")
     func onlyBokmaal() {
         let locales = Bundle.main.object(forInfoDictionaryKey: "CFBundleLocalizations") as? [String]
         #expect(locales == ["nb"])
     }
 
-    /// Databasen skal ikke havne i iCloud-sikkerhetskopien. Innholdet er
-    /// forseglet, men datoer og antall er ikke det.
+    /// The database must not end up in the iCloud backup. The content is sealed,
+    /// but dates and counts are not.
     @Test("Databasen er holdt utenfor sikkerhetskopi")
     @MainActor
     func storeIsExcludedFromBackup() throws {

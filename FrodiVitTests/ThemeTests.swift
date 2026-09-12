@@ -4,8 +4,8 @@ import UIKit
 
 @Suite("Designsystem")
 struct ThemeTests {
-    /// En font som ikke blir registrert faller stille tilbake til systemfonten.
-    /// Da ser appen nesten riktig ut, og feilen oppdages aldri.
+    /// A font that is not registered silently falls back to the system font. The
+    /// app then looks almost right, and the fault is never noticed.
     @Test("Alle bundlede fonter lar seg laste", arguments: [
         "Inter-Regular", "Inter-Medium", "Inter-SemiBold", "Skranji-Bold"
     ])
@@ -21,8 +21,8 @@ struct ThemeTests {
         #expect(UIColor(named: name) != nil, "Fant ikke fargen \(name)")
     }
 
-    /// Opptaksfargene hører til den andre appen. Dukker de opp her, har noen
-    /// kopiert inn mer av designsystemet enn denne appen skal ha.
+    /// The recording colours belong to the other app. If they show up here,
+    /// someone has copied in more of the design system than this app should have.
     @Test("Opptaksfargene er ikke med", arguments: [
         "AccentRecord", "AccentRecordOn", "RecordingActive"
     ])
@@ -30,8 +30,8 @@ struct ThemeTests {
         #expect(UIColor(named: name) == nil, "\(name) hører til Fróði røst")
     }
 
-    /// accent-knowledge er #2E9C82 i designsystemet. En farge som er nesten
-    /// riktig er vanskeligere å oppdage enn en som mangler.
+    /// accent-knowledge is #2E9C82 in the design system. A colour that is almost
+    /// right is harder to spot than one that is missing.
     @Test("Kunnskapsfargen har verdien fra designsystemet")
     func knowledgeAccentMatchesDesignSystem() throws {
         let color = try #require(UIColor(named: "AccentKnowledge"))

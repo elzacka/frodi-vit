@@ -1,20 +1,20 @@
 import SwiftData
 import SwiftUI
 
-/// Samtalene du har hatt, med det du trenger for å rydde i dem.
+/// The conversations you have had, with what you need to tidy them.
 ///
-/// Listen har to tilstander. Til vanlig åpner et trykk samtalen, og et sveip
-/// sletter den ene du sveiper på. Trykker du «Velg», får hver rad en sirkel,
-/// og da kan du ta flere om gangen eller alle på én gang. Det er den samme
-/// delingen iOS bruker i Mail og Notater, og den er verdt å følge: det er
-/// slik folk allerede vet at det virker.
+/// The list has two states. Normally a tap opens the conversation and a swipe
+/// deletes the one you swipe on. Tap «Velg» and every row gets a circle, and
+/// then you can take several at once or all in one go. It is the same split iOS
+/// uses in Mail and Notes, and worth following: that is how people already know
+/// it works.
 struct ChatListView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query(sort: \Chat.lastOpenedAt, order: .reverse) private var chats: [Chat]
 
-    /// Samtalen appen står i. Slettes den, peker bindingen videre til den
-    /// neste, eller til ingen.
+    /// The conversation the app is in. If it is deleted, the binding moves on to
+    /// the next one, or to none.
     @Binding var chat: Chat?
 
     @State private var selection = Set<PersistentIdentifier>()
@@ -49,8 +49,7 @@ struct ChatListView: View {
         }
     }
 
-    // MARK: - Listen
-
+    // MARK: - The list
     private var list: some View {
         List(selection: $selection) {
             ForEach(chats) { chat in
@@ -84,7 +83,7 @@ struct ChatListView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        // I velgemodus er raden en avkrysning, ikke en snarvei inn i samtalen.
+        // In select mode the row is a checkbox, not a shortcut into the conversation.
         .disabled(isSelecting)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title(of: chat)), \(meta(of: chat))")
@@ -106,8 +105,7 @@ struct ChatListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - Knapper
-
+    // MARK: - Buttons
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
@@ -120,7 +118,7 @@ struct ChatListView: View {
         }
 
         ToolbarItem(placement: .topBarTrailing) {
-            // Kryss, som i innstillingene: arket bare lukkes.
+            // A cross, as on the Info page: the sheet just closes.
             Button { dismiss() } label: { Image(systemName: "xmark") }
                 .accessibilityLabel("Lukk")
         }
@@ -174,16 +172,15 @@ struct ChatListView: View {
             .frame(height: 1)
     }
 
-    // MARK: - Tekst
-
+    // MARK: - Text
     private func title(of chat: Chat) -> String {
-        // `try?` flater ut String?? til String?, så en tittel som ikke lar seg
-        // åpne og en samtale uten tittel havner begge her.
+        // `try?` flattens String?? to String?, so a title that cannot be opened and a
+        // conversation without a title both end up here.
         if let title = try? chat.title(), !title.isEmpty { return title }
         return String(localized: "Ny samtale")
     }
 
-    /// «1 meldinger» er den feilen ingen leser forbi. Entall skrives ut.
+    /// «1 meldinger» is the mistake nobody reads past. The singular is spelled out.
     private func meta(of chat: Chat) -> String {
         let count = chat.messages.count
         let stamp = chat.lastOpenedAt.chatStamp
@@ -212,8 +209,7 @@ struct ChatListView: View {
         }
     }
 
-    // MARK: - Handlinger
-
+    // MARK: - Actions
     private func open(_ opened: Chat) {
         ChatStore.open(opened, in: context)
         chat = opened
@@ -226,9 +222,9 @@ struct ChatListView: View {
         isSelecting = false
     }
 
-    /// Sletter, og sørger for at appen ikke blir stående i en samtale som er
-    /// borte. Uten dette viser skjermen bak arket en tom tråd du ikke kan
-    /// skrive i.
+    /// Deletes, and makes sure the app is not left in a conversation that is gone.
+    /// Without this the screen behind the sheet shows an empty thread you cannot
+    /// write in.
     private func delete(_ doomed: [Chat]) {
         let losingCurrent = chat.map { current in doomed.contains { $0.id == current.id } } ?? false
         ChatStore.delete(doomed, in: context)

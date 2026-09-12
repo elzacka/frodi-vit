@@ -4,31 +4,31 @@ import MLXLMCommon
 import MLXNN
 import Tokenizers
 
-/// Gjør tekst om til vektorer med borealis-embed-212m, kjørt i appen med MLX.
+/// Turns text into vectors with borealis-embed-212m, run in the app with MLX.
 ///
-/// Dette er gjenfinningen: et spørsmål og et avsnitt som handler om det samme
-/// får vektorer som peker samme vei, og cosinus mellom dem sier hvor likt. Se
-/// `Retrieval` for utvalget; her lages bare vektorene.
+/// This is the retrieval: a question and a paragraph about the same thing get
+/// vectors pointing the same way, and the cosine between them says how alike.
+/// See `Retrieval` for the selection; only the vectors are made here.
 ///
-/// **Modellen kjøres ikke gjennom `MLXEmbedders.EmbeddingGemma`, med vilje.**
-/// Den klassen regner kausalt og med GELU, som den vanlige Gemma 3. Denne
-/// modellen er trent tosidig (`use_bidirectional_attention: true`) og med silu
-/// (`hidden_activation: "silu"`), og de to skiller seg fra hverandre. Målt
-/// 12. september 2026 på åtte norske avsnitt og sju spørsmål:
+/// **The model is deliberately not run through `MLXEmbedders.EmbeddingGemma`.**
+/// That class computes causally and with GELU, like ordinary Gemma 3. This model
+/// is trained bidirectionally (`use_bidirectional_attention: true`) and with silu
+/// (`hidden_activation: "silu"`), and the two differ. Measured 12 September 2026
+/// on eight Norwegian paragraphs and seven questions:
 ///
-/// | Oppmerksomhet | Riktig av 7 | Margin til nest beste |
+/// | Attention | Correct of 7 | Margin to runner-up |
 /// |---|---|---|
-/// | Kausal, GELU | 6 | 0,106 |
-/// | Tosidig, silu | 7 | 0,210 |
+/// | Causal, GELU | 6 | 0.106 |
+/// | Bidirectional, silu | 7 | 0.210 |
 ///
-/// Vektorene fra de to leseratene er heller ikke de samme — cosinus rundt 0,7
-/// for samme tekst. Ryggraden under er derfor skrevet ut her, med de to
-/// forskjellene på plass, og `EmbedderTests` holder den opp mot vektorer regnet
-/// i Python fra fp32-vektene.
+/// Nor are the vectors from the two readings the same: cosine around 0.7 for
+/// the same text. So the backbone below is written out here, with the two
+/// differences in place, and `EmbedderTests` holds it against vectors computed
+/// in Python from the fp32 weights.
 ///
-/// Vektene lastes ved hvert kall og slippes etterpå. 236 MB skal ikke ligge
-/// ved siden av svarmodellens to gigabyte mens du leser et svar; det er der
-/// marginen mot jetsam er minst.
+/// The weights are loaded on every call and released afterwards. 236 MB should
+/// not sit beside the answer model's two gigabytes while you read an answer;
+/// that is where the margin against jetsam is smallest.
 actor BorealisEmbedder {
     nonisolated static let modelDirectoryName = "borealis-embed-212m"
 
@@ -47,42 +47,41 @@ actor BorealisEmbedder {
         ) ? url : nil
     }
 
-    /// Lengste tekst som går gjennom i ett stykke, i tokens.
+    /// The longest text that goes through in one piece, in tokens.
     ///
-    /// Lik glidevinduet i modellen. Under den grensen ser hvert lag hele
-    /// teksten, og det trengs ingen maske i det hele tatt. `TextSplitter`
-    /// lager avsnitt på rundt tusen tegn, altså et par hundre tokens, så
-    /// grensen treffes ikke i praksis — den er et gulv under fotavtrykket,
-    /// ikke en regel du merker.
+    /// Equal to the model's sliding window. Below that limit every layer sees the
+    /// whole text, and no mask is needed at all. `TextSplitter` makes passages of
+    /// about a thousand characters, a couple of hundred tokens, so the limit is not
+    /// hit in practice; it is a floor under the footprint, not a rule you notice.
     nonisolated static let maximumTokens = 1_024
 
-    /// Tekstene fylles opp til nærmeste multiplum av dette før de går inn,
-    /// så modellen ser få ulike lengder.
+    /// Texts are padded to the nearest multiple of this before they go in, so the
+    /// model sees few distinct lengths.
     ///
-    /// Metal legger igjen minne for hver ny form den regner på, og slipper
-    /// det først når modellen er borte. Målt på enhet 12. september 2026 med
-    /// 46 utdrag i 46 lengder: 1 100 MB over vektene mens innebyggingen
-    /// pågikk, og 2 MB når de samme 46 lengdene kom igjen. Med svarmodellen
-    /// alt i minnet er 1 100 MB mer enn enheten har igjen. Seksten former
-    /// i stedet for hundrevis holder det nede.
+    /// Metal keeps memory for every new shape it computes on, and releases it only
+    /// when the model is gone. Measured on a device on 12 September 2026 with 46
+    /// passages in 46 lengths: 1 100 MB above the weights while embedding ran, and
+    /// 2 MB when the same 46 lengths came again. With the answer model already in
+    /// memory, 1 100 MB is more than the device has left. Sixteen shapes instead of
+    /// hundreds keeps it down.
     nonisolated static let lengthStep = 64
 
-    /// `pad_token_id` i config.json. Fylltokenene maskeres bort i
-    /// oppmerksomheten og telles ikke i middelverdien, så resultatet er det
-    /// samme som uten fyll.
+    /// `pad_token_id` in config.json. The padding tokens are masked out of the
+    /// attention and not counted in the mean, so the result is the same as
+    /// without padding.
     nonisolated static let padToken: Int32 = 3
 
-    /// Én vektor per tekst, normalisert til lengde 1, så prikkproduktet mellom
-    /// to av dem er cosinus.
+    /// One vector per text, normalised to length 1, so the dot product between
+    /// two of them is the cosine.
     func embed(_ texts: [String]) async throws -> [[Float]] {
         guard let directory = Self.modelDirectory else {
             throw AssistantError.modelMissing
         }
         let vectors = try await Self.run(texts, from: directory)
-        // Vektene er sluppet når `run` har returnert. Bufferne de lå i har MLX
-        // da lagt i sin egen kø for gjenbruk, og de forsvinner ikke uten at
-        // noen sier fra. Målt på enhet 12. september 2026: 290 MB ble liggende
-        // når dette sto i en `defer`, som kjører før modellen er borte.
+        // The weights are released once `run` has returned. MLX has then put the
+        // buffers they lived in into its own queue for reuse, and they do not go away
+        // unless told. Measured on a device on 12 September 2026: 290 MB stayed behind
+        // when this sat in a `defer`, which runs before the model is gone.
         MLX.GPU.clearCache()
         return vectors
     }
@@ -111,11 +110,10 @@ actor BorealisEmbedder {
     }
 }
 
-// MARK: - Modellen
-
-/// Nøklene slik `Scripts/fetch-model.sh` flater dem ut. Kildens `config.json`
-/// har `rope_parameters` og `_sliding_window_pattern`, som verken mlx_lm eller
-/// dette leser.
+// MARK: - The model
+/// The keys as `Scripts/fetch-model.sh` flattens them. The source `config.json`
+/// has `rope_parameters` and `_sliding_window_pattern`, which neither mlx_lm nor
+/// this reads.
 struct EmbedderConfiguration: Codable {
     let hiddenSize: Int
     let hiddenLayers: Int
@@ -144,8 +142,8 @@ struct EmbedderConfiguration: Codable {
     }
 }
 
-/// Gemma 3-ryggraden med middelverdi over tokens på toppen. Vektnavnene
-/// følger sjekkpunktet, så `loadWeights` finner dem uten omskriving.
+/// The Gemma 3 backbone with mean pooling over tokens on top. The weight names
+/// follow the checkpoint, so `loadWeights` finds them without rewriting.
 private final class EmbedderModel: Module, BaseLanguageModel {
     @ModuleInfo(key: "model") var backbone: Backbone
 
@@ -154,9 +152,8 @@ private final class EmbedderModel: Module, BaseLanguageModel {
         super.init()
     }
 
-    /// Én sekvens inn, én normalisert vektor ut. `length` er antall ekte
-    /// tokens; resten er fyll som holdes utenfor både oppmerksomheten og
-    /// middelverdien.
+    /// One sequence in, one normalised vector out. `length` is the number of real
+    /// tokens; the rest is padding kept out of both the attention and the mean.
     func callAsFunction(_ tokens: MLXArray, length: Int) -> MLXArray {
         let total = tokens.dim(0)
         let mask: MLXArray? = length < total
@@ -194,8 +191,8 @@ private final class Backbone: Module {
 
     func callAsFunction(_ tokens: MLXArray, mask: MLXArray?) -> MLXArray {
         var hidden = embedTokens(tokens)
-        // Gemma skalerer i bfloat16 og runder dermed 27,71 til 27,75. Samme
-        // avrunding her, ellers avviker vektorene fra referansen.
+        // Gemma scales in bfloat16 and thereby rounds 27.71 to 27.75. The same
+        // rounding here, or the vectors deviate from the reference.
         hidden = hidden * MLXArray(scale, dtype: .bfloat16).asType(hidden.dtype)
         let typedMask = mask?.asType(hidden.dtype)
         for layer in layers {
@@ -274,9 +271,9 @@ private final class Attention: Module {
         queries = rope(queryNorm(queries))
         keys = rope(keyNorm(keys))
 
-        // Ingen kausal maske: hvert token ser hele teksten, begge veier. Det
-        // er dette som skiller en innebygging fra en språkmodell. Masken som
-        // kommer inn skjuler bare fylltokens.
+        // No causal mask: every token sees the whole text, both ways. That is what
+        // separates an embedding from a language model. The mask coming in hides only
+        // padding tokens.
         let output = MLXFast.scaledDotProductAttention(
             queries: queries, keys: keys, values: values, scale: scale, mask: mask
         )
@@ -300,7 +297,7 @@ private final class MLP: Module {
     }
 
     func callAsFunction(_ x: MLXArray) -> MLXArray {
-        // silu, ikke GELU. Sjekkpunktet sier det selv i `hidden_activation`.
+        // silu, not GELU. The checkpoint says so itself in `hidden_activation`.
         downProj(silu(gateProj(x)) * upProj(x))
     }
 }

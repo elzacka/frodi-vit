@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import FrodiVit
 
-/// Modellen legges inn som mappereferanse. Går den referansen tapt, bygger
-/// appen fint og feiler først når noen stiller et spørsmål — og feilen ser da
-/// ut som en modellfeil, ikke som en byggefeil. Disse testene fanger det i
-/// stedet.
+/// The model goes in as a folder reference. Lose that reference and the app
+/// builds fine and fails only when someone asks a question — and the error then
+/// looks like a model error, not a build error. These tests catch it instead.
 @Suite("Bundlet modell")
 struct BundledModelTests {
     @Test("Modellmappen ligger i app-pakken")
@@ -17,8 +16,9 @@ struct BundledModelTests {
         #expect(FileManager.default.fileExists(atPath: directory.path))
     }
 
-    /// Vektene, tokenizeren og malen. Mangler malen, sendes meldingene som løs
-    /// tekst og svarene blir merkbart dårligere uten at noe feiler.
+    /// The weights, the tokenizer and the template. Without the template the
+    /// messages are sent as loose text and the answers get noticeably worse
+    /// without anything failing.
     @Test("Filene modellen trenger er med", arguments: [
         "config.json", "model.safetensors", "tokenizer.json",
         "tokenizer_config.json", "chat_template.jinja"
@@ -29,9 +29,9 @@ struct BundledModelTests {
         #expect(FileManager.default.fileExists(atPath: file.path), "Mangler \(name)")
     }
 
-    /// 4-bit er valgt for å holde arbeidssettet innenfor den vanlige
-    /// minnegrensen. Blir modellen konvertert på nytt med flere bit, vokser
-    /// den forbi det, og appen blir drept av systemet i stedet for å svare.
+    /// 4-bit is chosen to keep the working set within the usual memory limit. If
+    /// the model is reconverted with more bits it grows past that, and the app is
+    /// killed by the system instead of answering.
     @Test("Modellen er kvantisert til 4 bit")
     func modelIsFourBit() throws {
         let directory = try #require(BorealisAssistant.modelDirectory)
@@ -48,8 +48,7 @@ struct BundledModelTests {
         #expect(BorealisAssistant.isBundled)
     }
 
-    // MARK: - Gjenfinningsmodellen
-
+    // MARK: - The retrieval model
     @Test("Gjenfinningsmodellen ligger i app-pakken")
     func embedderDirectoryExists() throws {
         let directory = try #require(
@@ -69,9 +68,9 @@ struct BundledModelTests {
         #expect(FileManager.default.fileExists(atPath: file.path), "Mangler \(name)")
     }
 
-    /// `fetch-model.sh` flater ut nøklene Swift-koden leser. Mangler de, er
-    /// modellen konvertert utenom skriptet, og ryggraden får feil RoPE-base
-    /// uten at noe feiler høylytt.
+    /// `fetch-model.sh` flattens the keys the Swift code reads. If they are
+    /// missing, the model was converted outside the script, and the backbone gets
+    /// the wrong RoPE base without anything failing loudly.
     @Test("Gjenfinningsmodellen har de flate nøklene, og er 8 bit")
     func embedderConfigIsFlattened() throws {
         let directory = try #require(BorealisEmbedder.modelDirectory)

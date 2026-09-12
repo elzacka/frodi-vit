@@ -1,36 +1,36 @@
 import Foundation
 import SwiftData
 
-/// En samtale. Holder meldingene og dokumentene som hører til den ene tråden.
+/// A conversation. Holds the messages and documents that belong to the one thread.
 ///
-/// Appen hadde én samtale til å begynne med, og alt lå flatt. Det holder bare
-/// så lenge du spør om én ting: to emner i samme tråd gir modellen dokumenter
-/// den ikke skulle sett, og deg en historikk du ikke finner fram i.
+/// The app had one conversation at first, and everything lay flat. That holds
+/// only as long as you ask about one thing: two topics in one thread give the
+/// model documents it should not have seen, and you a history you cannot find
+/// your way around.
 ///
-/// Tittelen er forseglet, som meldingene. Den er hentet fra det første
-/// spørsmålet ditt, og et spørsmål røper ofte mer enn svaret gjør. En liste
-/// over titler i klartekst ville vært en lesbar oppsummering av alt du har
-/// spurt om.
+/// The title is sealed, like the messages. It is taken from your first question,
+/// and a question often reveals more than the answer does. A list of titles in
+/// plaintext would be a readable summary of everything you have asked.
 @Model
 final class Chat {
     var createdAt: Date = Date()
 
-    /// Sist du åpnet samtalen. Styrer rekkefølgen i listen, og hvilken samtale
-    /// appen åpner i.
+    /// When you last opened the conversation. Governs the order in the list, and
+    /// which conversation the app opens in.
     var lastOpenedAt: Date = Date()
 
-    /// Forseglet UTF-8, eller `nil` før du har spurt om noe. Les den gjennom
+    /// Sealed UTF-8, or `nil` before you have asked anything. Read it through
     /// `title()`.
     var sealedTitle: Data?
 
-    /// Sletter du samtalen, følger meldingene med. De hører ikke til noe annet.
+    /// Delete the conversation and the messages go with it. They belong to nothing else.
     @Relationship(deleteRule: .cascade, inverse: \ChatMessage.chat)
     var messages: [ChatMessage] = []
 
-    /// Dokumentene hører til den ene samtalen, ikke til appen.
+    /// The documents belong to the one conversation, not to the app.
     ///
-    /// Laster du opp lønnsslippen din i én tråd, skal den ikke ligge i
-    /// ledeteksten neste gang du spør om noe helt annet.
+    /// Upload your payslip in one thread and it must not sit in the prompt the next
+    /// time you ask about something else entirely.
     @Relationship(deleteRule: .cascade, inverse: \Document.chat)
     var documents: [Document] = []
 
@@ -39,8 +39,7 @@ final class Chat {
         self.lastOpenedAt = createdAt
     }
 
-    // MARK: - Innhold
-
+    // MARK: - Content
     var messagesInOrder: [ChatMessage] {
         messages.sorted { $0.createdAt < $1.createdAt }
     }
@@ -49,25 +48,24 @@ final class Chat {
         documents.sorted { $0.createdAt < $1.createdAt }
     }
 
-    /// Ingen meldinger og ingen dokumenter. Da er det ingenting å ta vare på,
-    /// og «Ny samtale» kan bli stående i den du alt er i.
+    /// No messages and no documents. Then there is nothing to keep, and «Ny
+    /// samtale» can stay in the one you are already in.
     var isEmpty: Bool {
         messages.isEmpty && documents.isEmpty
     }
 
-    // MARK: - Tittel
-
-    /// Åpner tittelen. Kaster om samtalen ble forseglet på en annen enhet.
+    // MARK: - Title
+    /// Opens the title. Throws if the conversation was sealed on another device.
     func title() throws -> String? {
         guard let sealedTitle else { return nil }
         return try Vault.openText(sealedTitle)
     }
 
-    /// Navngir samtalen etter det første spørsmålet, én gang.
+    /// Names the conversation after the first question, once.
     ///
-    /// Senere spørsmål lar tittelen stå. Den skal peke på hva tråden startet
-    /// som, og en tittel som skifter mens du skriver er en tittel du ikke
-    /// kjenner igjen i listen.
+    /// Later questions leave the title alone. It should point at what the thread
+    /// started as, and a title that changes while you type is a title you do not
+    /// recognise in the list.
     func nameIfUnnamed(from question: String) throws {
         guard sealedTitle == nil else { return }
         let name = Self.title(from: question)
@@ -75,10 +73,10 @@ final class Chat {
         sealedTitle = try Vault.seal(name)
     }
 
-    /// Første linje, kuttet på et ordskille.
+    /// The first line, cut at a word boundary.
     ///
-    /// Kutter på ord framfor på tegn: «Hva står det i kontrak…» er til å lese,
-    /// «Hva står det i kontrakt» er en tittel som ser feilstavet ut.
+    /// Cuts on words rather than characters: «Hva står det i kontrak…» is readable,
+    /// «Hva står det i kontrakt» is a title that looks misspelled.
     static func title(from question: String, limit: Int = 48) -> String {
         let firstLine = question
             .split(separator: "\n", omittingEmptySubsequences: true)

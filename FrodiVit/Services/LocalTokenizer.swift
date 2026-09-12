@@ -2,26 +2,26 @@ import Foundation
 import MLXLMCommon
 import Tokenizers
 
-/// Leser tokenizeren fra en mappe i app-pakken.
+/// Reads the tokenizer from a folder in the app bundle.
 ///
-/// MLX leverer ingen tokenizer. `MLXLMCommon` definerer bare protokollen, og
-/// den eneste implementasjonen i pakken er en no-op til ytelsestesting. Veien
-/// pakken selv anbefaler går gjennom `MLXHuggingFace`, som er makroer som
-/// utvider seg til hub-klienten — altså nett, i en app som ikke skal ha noe.
+/// MLX ships no tokenizer. `MLXLMCommon` only defines the protocol, and the only
+/// implementation in the package is a no-op for performance testing. The route
+/// the package itself recommends goes through `MLXHuggingFace`, which is macros
+/// that expand to the hub client: the network, in an app that must have none.
 ///
-/// Derfor denne broen: `swift-transformers` leser `tokenizer.json` og
-/// `tokenizer_config.json` rett fra disk, og `LocalTokenizer` kler den om til
-/// protokollen MLX venter. Ingen hub-kode kommer inn i bygget.
+/// Hence this bridge: `swift-transformers` reads `tokenizer.json` and
+/// `tokenizer_config.json` straight from disk, and `LocalTokenizer` dresses it up
+/// as the protocol MLX expects. No hub code enters the build.
 struct LocalTokenizerLoader: MLXLMCommon.TokenizerLoader {
     func load(from directory: URL) async throws -> any MLXLMCommon.Tokenizer {
         LocalTokenizer(upstream: try await AutoTokenizer.from(modelFolder: directory))
     }
 }
 
-/// `Tokenizers.Tokenizer` sett gjennom `MLXLMCommon.Tokenizer`.
+/// `Tokenizers.Tokenizer` seen through `MLXLMCommon.Tokenizer`.
 ///
-/// De to protokollene beskriver det samme, med litt ulike navn: MLX sier
-/// `tokenIds`, Hugging Face sier `tokens`. Alt her er navnebytte, ingen logikk.
+/// The two protocols describe the same thing with slightly different names: MLX
+/// says `tokenIds`, Hugging Face says `tokens`. Everything here is renaming, no logic.
 struct LocalTokenizer: MLXLMCommon.Tokenizer {
     let upstream: any Tokenizers.Tokenizer
 
@@ -45,11 +45,11 @@ struct LocalTokenizer: MLXLMCommon.Tokenizer {
     var eosToken: String? { upstream.eosToken }
     var unknownToken: String? { upstream.unknownToken }
 
-    /// Setter sammen ledeteksten slik modellen er trent til å få den.
+    /// Assembles the prompt the way the model was trained to receive it.
     ///
-    /// Malen ligger i `chat_template.jinja` ved siden av vektene. Uten den blir
-    /// meldingene sendt som løs tekst, og en instruksjonstrent modell svarer da
-    /// merkbart dårligere — den ser ikke hvor spørsmålet ditt begynner.
+    /// The template lives in `chat_template.jinja` next to the weights. Without it
+    /// the messages are sent as loose text, and an instruction-tuned model then
+    /// answers noticeably worse: it cannot see where your question begins.
     func applyChatTemplate(
         messages: [[String: any Sendable]],
         tools: [[String: any Sendable]]?,

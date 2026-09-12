@@ -10,7 +10,7 @@ struct ChatMessageTests {
         #expect(try message.text() == "Hva betyr «fróði»?")
     }
 
-    /// Teksten skal aldri ligge lesbar i basen.
+    /// The text must never sit readable in the store.
     @Test("Teksten ligger ikke i klartekst")
     func textIsSealed() throws {
         let secret = "noe jeg ikke vil at andre skal lese"
@@ -18,8 +18,8 @@ struct ChatMessageTests {
         #expect(message.sealedText.range(of: Data(secret.utf8)) == nil)
     }
 
-    /// Svaret vokser mens det strømmer inn, og hver oppdatering forsegles på
-    /// nytt. Den forrige teksten skal ikke bli liggende igjen.
+    /// The answer grows while it streams in, and every update is sealed anew. The
+    /// previous text must not be left behind.
     @Test("Teksten kan byttes ut mens svaret kommer")
     func textCanBeReplaced() throws {
         let message = try ChatMessage(role: .assistant, text: "Fróði")
@@ -35,16 +35,14 @@ struct ChatMessageTests {
         #expect(try ChatMessage(role: .assistant, text: "b").role == .assistant)
     }
 
-    /// En tom melding lages i det svaret starter, før første token kommer.
+    /// An empty message is created the moment the answer starts, before the first token.
     @Test("En tom melding gir tom tekst, ikke en feil")
     func emptyMessageIsNotAnError() throws {
         #expect(try ChatMessage(role: .assistant, text: "").text() == "")
     }
 
-    // MARK: - Den tomme svarboblen
-
-    /// Skjermen har alt en «Tenker …». En tom boble ved siden av den sier
-    /// ingenting.
+    // MARK: - The empty answer bubble
+    /// The screen already has a «Tenker …». An empty bubble beside it says nothing.
     @Test("Et svar uten tekst venter på første token")
     func emptyAnswerIsWaiting() throws {
         #expect(try ChatMessage(role: .assistant, text: "").isAwaitingFirstToken)
@@ -55,8 +53,8 @@ struct ChatMessageTests {
         #expect(try !ChatMessage(role: .assistant, text: "Fróði").isAwaitingFirstToken)
     }
 
-    /// Et avbrutt svar viser «Svaret ble avbrutt», og skal bli stående selv om
-    /// det aldri kom noe tekst.
+    /// An interrupted answer shows «Svaret ble avbrutt», and must stay even if no
+    /// text ever came.
     @Test("Et avbrutt svar blir stående")
     func interruptedAnswerStays() throws {
         let message = try ChatMessage(role: .assistant, text: "")
@@ -64,7 +62,7 @@ struct ChatMessageTests {
         #expect(!message.isAwaitingFirstToken)
     }
 
-    /// Gjelder bare svar. Et tomt spørsmål kan uansett ikke sendes.
+    /// Applies only to answers. An empty question cannot be sent anyway.
     @Test("Et spørsmål venter aldri")
     func questionsNeverWait() throws {
         #expect(try !ChatMessage(role: .user, text: "").isAwaitingFirstToken)

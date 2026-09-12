@@ -3,14 +3,14 @@ import MLX
 import Testing
 @testable import FrodiVit
 
-/// Måler hva en lang ledetekst koster i tid og minne på enhet. Ikke en test —
-/// den påstår ingenting. Kjøres med TEST_RUNNER_FRODI_PROBE=1.
+/// Measures what a long prompt costs in time and memory on a device. Not a
+/// test — it asserts nothing. Runs with TEST_RUNNER_FRODI_PROBE=1.
 ///
-/// Kan ikke kjøres i simulatoren: MLX klarer ikke å lage en Metal-enhet der, og
-/// avbryter i `mlx::core::metal::Device::Device()` før første token.
+/// Cannot run in the simulator: MLX cannot create a Metal device there, and
+/// aborts in `mlx::core::metal::Device::Device()` before the first token.
 @Suite("Kontekstmåling", .enabled(if: ProcessInfo.processInfo.environment["FRODI_PROBE"] != nil))
 struct ContextProbe {
-    /// Fotavtrykket jetsam måler, ikke residente sider.
+    /// The footprint jetsam measures, not resident pages.
     static func footprintMB() -> Double {
         var info = task_vm_info_data_t()
         var count = mach_msg_type_number_t(
@@ -25,13 +25,13 @@ struct ContextProbe {
         return Double(info.phys_footprint) / 1_048_576
     }
 
-    /// Hvor mye appen kan bruke før jetsam tar den.
+    /// How much the app can use before jetsam takes it.
     static func headroomMB() -> Double {
         Double(os_proc_available_memory()) / 1_048_576
     }
 
-    /// Norsk prosa i omtrent samme sjanger som en veileder, gjentatt til
-    /// ønsket lengde. Tokenantallet er det som koster, ikke innholdet.
+    /// Norwegian prose in roughly the genre of a guide, repeated to the wanted
+    /// length. The token count is what costs, not the content.
     static func text(ofLength length: Int) -> String {
         let paragraph = """
             Virksomheten skal identifisere verdier, trusler og sårbarheter, og \

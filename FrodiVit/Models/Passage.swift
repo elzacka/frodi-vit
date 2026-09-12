@@ -1,28 +1,28 @@
 import Foundation
 import SwiftData
 
-/// Et utdrag av et dokument, med vektoren gjenfinningen sammenligner mot.
+/// A passage of a document, with the vector retrieval compares against.
 ///
-/// Dokumentet deles opp ved import, og hvert stykke får sin vektor da. Et
-/// spørsmål koster dermed én vektor, ikke én per avsnitt i alt du har lastet
-/// opp.
+/// The document is split at import, and every piece gets its vector then. A
+/// question therefore costs one vector, not one per paragraph in everything you
+/// have uploaded.
 ///
-/// Teksten er forseglet som dokumentet den kommer fra. Vektoren er det ikke:
-/// 768 tall fra en modell er ikke en tekst du kan lese tilbake, og å låse opp
-/// hvert av dem for hvert spørsmål ville kostet mer enn det vernet.
+/// The text is sealed like the document it comes from. The vector is not: 768
+/// numbers from a model are not a text you can read back, and unlocking each of
+/// them for every question would cost more than it protected.
 @Model
 final class Passage {
-    /// Plassen i dokumentet. Utvalget sorteres etter den, så modellen leser
-    /// utdragene i den rekkefølgen de sto.
+    /// The position in the document. The selection is sorted by it, so the model
+    /// reads the passages in the order they appeared.
     var index: Int = 0
 
     var sealedText: Data = Data()
 
-    /// Antall tegn i klartekst, så utvalget kan telle mot budsjettet uten å
-    /// låse opp noe.
+    /// Number of characters in plaintext, so the selection can count against the
+    /// budget without unlocking anything.
     var characterCount: Int = 0
 
-    /// `Float32` etter hverandre, i enhetens byterekkefølge.
+    /// `Float32` back to back, in the device's byte order.
     var vector: Data = Data()
 
     var document: Document?

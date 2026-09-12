@@ -4,15 +4,17 @@ import SwiftData
 import Testing
 @testable import FrodiVit
 
-/// Kjører hele veien på enhet: et langt dokument deles, innebygges, søkes i,
-/// og svarmodellen får utdragene. Måler tid og minne underveis, og påstår
-/// bare det ene som må holde: at setningen svaret trenger er blant utdragene.
+/// Runs the whole way on a device: a long document is split, embedded, searched,
+/// and the answer model gets the passages. Measures time and memory along the
+/// way, and asserts only the one thing that must hold: that the sentence the
+/// answer needs is among the passages.
 ///
-/// Dokumentet er 40 000 tegn — like langt som NSM-veilederen som drepte appen
-/// 11. september 2026 — satt sammen av tjue avsnitt om hvert sitt tema, med
-/// én setning gjemt midt i som spørsmålet bare kan besvares fra.
+/// The document is 40 000 characters — as long as the NSM guide that killed the
+/// app on 11 September 2026 — assembled from twenty paragraphs on a topic each,
+/// with one sentence hidden in the middle that the question can only be
+/// answered from.
 ///
-/// Kjøres med TEST_RUNNER_FRODI_PROBE=1, og bare på enhet.
+/// Runs with TEST_RUNNER_FRODI_PROBE=1, and only on a device.
 #if !targetEnvironment(simulator)
 @Suite("Gjenfinningsmåling", .enabled(if: ProcessInfo.processInfo.environment["FRODI_PROBE"] != nil))
 struct GroundingProbe {
@@ -42,8 +44,8 @@ struct GroundingProbe {
         "Avvik fra egne krav skal behandles som hendelser, ikke som unntak, og lukkes med en frist og en ansvarlig.",
     ]
 
-    /// Tjue temaer, gjentatt med et nummer i så teksten varierer, til
-    /// lengden er nådd. Nålen legges inn omtrent midt i.
+    /// Twenty topics, repeated with a number in them so the text varies, until the
+    /// length is reached. The needle goes roughly in the middle.
     static func haystack(ofLength length: Int) -> String {
         var paragraphs: [String] = []
         var round = 1
@@ -96,8 +98,8 @@ struct GroundingProbe {
         print("GROUNDING-\(characters) svar: \(out)")
     }
 
-    /// Innebyggeren lastes og slippes ved hvert kall. Legger hvert kall igjen
-    /// noe, dør appen etter noen spørsmål, ikke ved det første.
+    /// The embedder is loaded and released on every call. If every call leaves
+    /// something behind, the app dies after a few questions, not at the first.
     @Test("Gjentatte innebygginger legger ikke igjen minne")
     func repeatedEmbeddingsDoNotAccumulate() async throws {
         let pieces = TextSplitter.split(Self.haystack(ofLength: 40_000))
