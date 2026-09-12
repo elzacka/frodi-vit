@@ -3,8 +3,10 @@
 Norsk kunnskapsassistent for iPhone. Du skriver, limer inn eller laster opp,
 og Fróði vit svarer. Alt skjer på enheten.
 
-«Fróði» er norrønt for «den kunnskapsrike». «Vit» er forstand. Søsterappen
-heter Fróði røst og hører etter i stedet.
+«Fróði» er norrønt for «den kunnskapsrike». «Vit» er forstand.
+
+Fróði er en serie med to apper. Den andre heter [«Fróði røst»](https://github.com/elzacka/frodi-rost)
+og er en diktafonapp med tale til tekst.
 
 ## Hva appen gjør
 
@@ -38,9 +40,9 @@ ikke kode.
 
 ## Modeller
 
-| Rolle | Modell | Lisens |
-|---|---|---|
-| Svar | `NbAiLab/borealis-open-1b` | Gemma |
+| Rolle       | Modell                        | Lisens        |
+| ----------- | ----------------------------- | ------------- |
+| Svar        | `NbAiLab/borealis-open-1b`    | Gemma         |
 | Gjenfinning | `NbAiLab/borealis-embed-212m` | NB-lisens 1.0 |
 
 Begge er åpne modeller fra Nasjonalbiblioteket. Se `TREDJEPART.md`.
