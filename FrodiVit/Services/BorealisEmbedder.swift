@@ -56,26 +56,47 @@ actor BorealisEmbedder {
     /// ikke en regel du merker.
     nonisolated static let maximumTokens = 1_024
 
+    /// Tekstene fylles opp til nærmeste multiplum av dette før de går inn,
+    /// så modellen ser få ulike lengder.
+    ///
+    /// Metal legger igjen minne for hver ny form den regner på, og slipper
+    /// det først når modellen er borte. Målt på enhet 12. september 2026 med
+    /// 46 utdrag i 46 lengder: 1 100 MB over vektene mens innebyggingen
+    /// pågikk, og 2 MB når de samme 46 lengdene kom igjen. Med svarmodellen
+    /// alt i minnet er 1 100 MB mer enn enheten har igjen. Seksten former
+    /// i stedet for hundrevis holder det nede.
+    nonisolated static let lengthStep = 64
+
+    /// `pad_token_id` i config.json. Fylltokenene maskeres bort i
+    /// oppmerksomheten og telles ikke i middelverdien, så resultatet er det
+    /// samme som uten fyll.
+    nonisolated static let padToken: Int32 = 3
+
     /// Én vektor per tekst, normalisert til lengde 1, så prikkproduktet mellom
     /// to av dem er cosinus.
     func embed(_ texts: [String]) async throws -> [[Float]] {
         guard let directory = Self.modelDirectory else {
             throw AssistantError.modelMissing
         }
-        let tokenizer = try await AutoTokenizer.from(modelFolder: directory)
-        let model = try Self.load(from: directory)
-        defer {
-            // Vektene forsvinner med modellen; bufferen MLX holder på GPU-en
-            // gjør det ikke uten at noen sier fra.
-            MLX.GPU.clearCache()
-        }
+        let vectors = try await Self.run(texts, from: directory)
+        // Vektene er sluppet når `run` har returnert. Bufferne de lå i har MLX
+        // da lagt i sin egen kø for gjenbruk, og de forsvinner ikke uten at
+        // noen sier fra. Målt på enhet 12. september 2026: 290 MB ble liggende
+        // når dette sto i en `defer`, som kjører før modellen er borte.
+        MLX.GPU.clearCache()
+        return vectors
+    }
 
+    private static func run(_ texts: [String], from directory: URL) async throws -> [[Float]] {
+        let tokenizer = try await AutoTokenizer.from(modelFolder: directory)
+        let model = try load(from: directory)
         return texts.map { text in
-            let ids = Array(
-                tokenizer.encode(text: text, addSpecialTokens: true).prefix(Self.maximumTokens)
-            )
-            let vector = model(MLXArray(ids.map(Int32.init)))
-            return vector.asArray(Float.self)
+            let ids = tokenizer.encode(text: text, addSpecialTokens: true)
+                .prefix(maximumTokens)
+                .map(Int32.init)
+            let padded = (ids.count + lengthStep - 1) / lengthStep * lengthStep
+            let filled = ids + Array(repeating: padToken, count: padded - ids.count)
+            return model(MLXArray(filled), length: ids.count).asArray(Float.self)
         }
     }
 
@@ -133,10 +154,18 @@ private final class EmbedderModel: Module, BaseLanguageModel {
         super.init()
     }
 
-    /// Én sekvens inn, én normalisert vektor ut.
-    func callAsFunction(_ tokens: MLXArray) -> MLXArray {
-        let hidden = backbone(tokens.reshaped(1, -1))
-        let pooled = hidden.mean(axis: 1)[0]
+    /// Én sekvens inn, én normalisert vektor ut. `length` er antall ekte
+    /// tokens; resten er fyll som holdes utenfor både oppmerksomheten og
+    /// middelverdien.
+    func callAsFunction(_ tokens: MLXArray, length: Int) -> MLXArray {
+        let total = tokens.dim(0)
+        let mask: MLXArray? = length < total
+            ? MLXArray(
+                (0 ..< total).map { $0 < length ? Float(0) : -Float.infinity }
+            ).reshaped(1, 1, 1, total)
+            : nil
+        let hidden = backbone(tokens.reshaped(1, -1), mask: mask)
+        let pooled = hidden[0, 0 ..< length].mean(axis: 0)
         let normalized = pooled.asType(.float32)
         return normalized / sqrt((normalized * normalized).sum())
     }
@@ -163,13 +192,14 @@ private final class Backbone: Module {
         super.init()
     }
 
-    func callAsFunction(_ tokens: MLXArray) -> MLXArray {
+    func callAsFunction(_ tokens: MLXArray, mask: MLXArray?) -> MLXArray {
         var hidden = embedTokens(tokens)
         // Gemma skalerer i bfloat16 og runder dermed 27,71 til 27,75. Samme
         // avrunding her, ellers avviker vektorene fra referansen.
         hidden = hidden * MLXArray(scale, dtype: .bfloat16).asType(hidden.dtype)
+        let typedMask = mask?.asType(hidden.dtype)
         for layer in layers {
-            hidden = layer(hidden)
+            hidden = layer(hidden, mask: typedMask)
         }
         return norm(hidden)
     }
@@ -195,8 +225,8 @@ private final class Block: Module {
         super.init()
     }
 
-    func callAsFunction(_ x: MLXArray) -> MLXArray {
-        let attended = postAttentionNorm(attention(inputNorm(x)))
+    func callAsFunction(_ x: MLXArray, mask: MLXArray?) -> MLXArray {
+        let attended = postAttentionNorm(attention(inputNorm(x), mask: mask))
         let h = Gemma.clipResidual(x, attended)
         let fed = postFeedforwardNorm(mlp(preFeedforwardNorm(h)))
         return Gemma.clipResidual(h, fed)
@@ -234,7 +264,7 @@ private final class Attention: Module {
         super.init()
     }
 
-    func callAsFunction(_ x: MLXArray) -> MLXArray {
+    func callAsFunction(_ x: MLXArray, mask: MLXArray?) -> MLXArray {
         let (batch, length) = (x.dim(0), x.dim(1))
 
         var queries = queryProj(x).reshaped(batch, length, heads, -1).transposed(0, 2, 1, 3)
@@ -244,10 +274,11 @@ private final class Attention: Module {
         queries = rope(queryNorm(queries))
         keys = rope(keyNorm(keys))
 
-        // Ingen maske: hvert token ser hele teksten, begge veier. Det er
-        // dette som skiller en innebygging fra en språkmodell.
+        // Ingen kausal maske: hvert token ser hele teksten, begge veier. Det
+        // er dette som skiller en innebygging fra en språkmodell. Masken som
+        // kommer inn skjuler bare fylltokens.
         let output = MLXFast.scaledDotProductAttention(
-            queries: queries, keys: keys, values: values, scale: scale, mask: nil
+            queries: queries, keys: keys, values: values, scale: scale, mask: mask
         )
         .transposed(0, 2, 1, 3)
         .reshaped(batch, length, -1)
