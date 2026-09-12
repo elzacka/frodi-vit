@@ -1,6 +1,6 @@
 # Tredjepartslisenser
 
-Sist gjennomgått 8. september 2026.
+Oppdatert: 8. september 2026.
 
 ## Modeller
 
@@ -71,7 +71,7 @@ leser filer fra disk. Se `SECURITY.md` for hva løftet da presist er.
 
 ## Fonter
 
-| Skrift | Opphav | Lisens |
+| Font | Opphav | Lisens |
 |---|---|---|
-| Inter | Rasmus Andersson | SIL Open Font License 1.1 |
 | Skranji | Font Diner | SIL Open Font License 1.1 |
+| Inter | Rasmus Andersson | SIL Open Font License 1.1 |

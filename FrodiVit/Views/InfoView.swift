@@ -249,8 +249,8 @@ struct LicensesView: View {
     ]
 
     private let fonts = [
-        Component(name: "Inter", origin: "Rasmus Andersson", license: "SIL Open Font License 1.1"),
-        Component(name: "Skranji", origin: "Font Diner", license: "SIL Open Font License 1.1")
+        Component(name: "Skranji", origin: "Font Diner", license: "SIL Open Font License 1.1"),
+        Component(name: "Inter", origin: "Rasmus Andersson", license: "SIL Open Font License 1.1")
     ]
 
     var body: some View {
