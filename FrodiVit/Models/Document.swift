@@ -28,6 +28,11 @@ final class Document {
     /// Samtalen dokumentet hører til. Se `ChatMessage.chat`.
     var chat: Chat?
 
+    /// Utdragene gjenfinningen velger blant. Tomt til dokumentet er delt opp
+    /// og innebygget, se `Grounding.index`.
+    @Relationship(deleteRule: .cascade, inverse: \Passage.document)
+    var passages: [Passage] = []
+
     init(name: String, text: String, createdAt: Date = Date()) throws {
         self.name = name
         self.sealedText = try Vault.seal(text)

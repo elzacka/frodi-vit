@@ -14,7 +14,13 @@ struct DocumentBar: View {
     /// Regnes ut over hele raden, ikke per brikke: budsjettet deles mellom
     /// dokumentene, så om ett av dem avkortes avhenger av hva annet som
     /// ligger der.
+    /// Med gjenfinningsmodellen i pakken er hele dokumentet med — utvalget
+    /// skjer per spørsmål, ikke ved å kutte fra starten. Uten den gjelder
+    /// budsjettet fortsatt, og da skal chipen si fra.
     private var truncated: [Bool] {
+        guard !BorealisEmbedder.isBundled else {
+            return Array(repeating: false, count: documents.count)
+        }
         let lengths = documents.map(\.characterCount)
         return zip(lengths, BorealisAssistant.allowances(for: lengths)).map { $1 < $0 }
     }

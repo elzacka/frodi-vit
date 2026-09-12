@@ -27,7 +27,7 @@ final class Conversation {
     /// Lagrer på hver oppdatering, ikke bare til slutt. Blir appen avbrutt
     /// midt i et svar, står det som kom fram igjen neste gang — avkortet, men
     /// merket som avkortet, i stedet for at hele svaret er borte.
-    func send(_ question: String, in chat: Chat, documents: [String] = [], context: ModelContext) {
+    func send(_ question: String, in chat: Chat, documents: [Document] = [], context: ModelContext) {
         let trimmed = question.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isAnswering else { return }
 
@@ -60,7 +60,11 @@ final class Conversation {
 
             var text = ""
             do {
-                for try await piece in assistant.answer(to: trimmed, given: documents) {
+                let grounding = try await Grounding.context(
+                    for: trimmed, documents: documents, in: context
+                )
+                reply.sourceNames = grounding.sources
+                for try await piece in assistant.answer(to: trimmed, given: grounding.texts) {
                     text += piece
                     try reply.replaceText(text)
                     try? context.save()

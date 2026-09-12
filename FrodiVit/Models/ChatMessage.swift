@@ -28,6 +28,13 @@ final class ChatMessage {
     /// og skjermen sier fra i stedet for å la et avkuttet svar se ferdig ut.
     var wasInterrupted: Bool = false
 
+    /// Navnene på dokumentene svaret bygger på, i den rekkefølgen utdragene
+    /// sto. Tomt når svaret ikke bygger på noe.
+    ///
+    /// Ikke forseglet: navnet ligger alt i klartekst på `Document`, og et navn
+    /// til på et svar avslører ikke mer enn det.
+    var sourceNames: [String] = []
+
     init(role: Role, text: String, createdAt: Date = Date()) throws {
         self.roleValue = role.rawValue
         self.sealedText = try Vault.seal(text)

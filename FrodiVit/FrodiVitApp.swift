@@ -11,13 +11,13 @@ struct FrodiVitApp: App {
         // det, i stedet for at appen kræsjer ved oppstart.
         var resolved: ModelContainer
         do {
-            resolved = try ModelContainer(for: Chat.self, ChatMessage.self, Document.self)
+            resolved = try ModelContainer(for: Chat.self, ChatMessage.self, Document.self, Passage.self)
             Storage.excludeFromBackup(store: resolved)
         } catch {
             Storage.markFailed()
             let memoryOnly = ModelConfiguration(isStoredInMemoryOnly: true)
             // Klarer vi ikke engang dette, er det ingenting igjen å redde.
-            resolved = try! ModelContainer(for: Chat.self, ChatMessage.self, Document.self, configurations: memoryOnly)
+            resolved = try! ModelContainer(for: Chat.self, ChatMessage.self, Document.self, Passage.self, configurations: memoryOnly)
         }
         container = resolved
     }

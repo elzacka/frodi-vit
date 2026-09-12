@@ -120,10 +120,6 @@ struct ChatView: View {
 
     /// Teksten som blir med i ledeteksten. Et dokument som ikke lar seg låse
     /// opp hoppes over i stedet for å stoppe spørsmålet.
-    private var documentTexts: [String] {
-        documents.compactMap { try? $0.text() }
-    }
-
     private func importDocument(_ result: Result<URL, Error>) {
         do {
             let url = try result.get()
@@ -132,6 +128,9 @@ struct ChatView: View {
             document.chat = ensureChat()
             context.insert(document)
             try context.save()
+            // Deles og innebygges med én gang, så spørsmålet slipper å vente
+            // på det. Feiler det her, gjøres det om igjen ved første spørsmål.
+            Task { try? await Grounding.index(document, in: context) }
         } catch let error as DocumentImport.ImportError {
             importError = "\(error.localizedDescription) \(error.guidance)"
         } catch {
@@ -351,7 +350,7 @@ struct ChatView: View {
                 if conversation.isAnswering {
                     conversation.stop()
                 } else {
-                    conversation.send(draft, in: ensureChat(), documents: documentTexts, context: context)
+                    conversation.send(draft, in: ensureChat(), documents: documents, context: context)
                     draft = ""
                     writing = false
                 }

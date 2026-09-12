@@ -24,6 +24,15 @@ struct MessageBubble: View {
                         .font(.Frodi.meta)
                         .foregroundStyle(isFromUser ? Color.Frodi.accentKnowledgeOn : Color.Frodi.textSecondary)
                 }
+
+                // Hvilke dokumenter svaret bygger på. Uten dette kan du ikke
+                // se forskjell på et svar fra teksten din og et modellen fant
+                // på selv.
+                if let sources {
+                    Text(sources)
+                        .font(.Frodi.meta)
+                        .foregroundStyle(Color.Frodi.textSecondary)
+                }
             }
             .padding(.horizontal, Space.s4)
             .padding(.vertical, Space.s3)
@@ -54,12 +63,26 @@ struct MessageBubble: View {
 
     /// VoiceOver leser ikke plassering eller farge, så hvem som snakker må stå
     /// i teksten.
+    private var sources: String? {
+        guard !message.sourceNames.isEmpty else { return nil }
+        return String(localized: "Fra \(Self.list(message.sourceNames))")
+    }
+
+    /// «a», «a og b», «a, b og c». Ikke `ListFormatter`: den følger språket på
+    /// enheten, og appen er norsk uansett hva enheten er satt til.
+    nonisolated static func list(_ names: [String]) -> String {
+        let quoted = names.map { "«\($0)»" }
+        guard quoted.count > 1 else { return quoted.joined() }
+        return quoted.dropLast().joined(separator: ", ") + " og " + quoted.last!
+    }
+
     private var spokenLabel: String {
         let who = isFromUser
             ? String(localized: "Du skrev")
             : String(localized: "Fróði svarte")
-        return message.wasInterrupted
-            ? "\(who): \(text). \(String(localized: "Svaret ble avbrutt"))"
-            : "\(who): \(text)"
+        var parts = ["\(who): \(text)"]
+        if message.wasInterrupted { parts.append(String(localized: "Svaret ble avbrutt")) }
+        if let sources { parts.append(sources) }
+        return parts.joined(separator: ". ")
     }
 }
