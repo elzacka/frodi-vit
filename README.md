@@ -40,10 +40,10 @@ ikke kode.
 
 ## Modeller
 
-**borealis-open-1b** fra Nasjonalbiblioteket lager svarene. Modellen bygger på
-Googles Gemma 3 med én milliard parametere, og er videretrent av biblioteket på
+**borealis-open-1b** fra Nasjonalbiblioteket (NB) lager svarene. Modellen bygger på
+Googles Gemma 3 med én milliard parametere, og er videretrent av NB på
 norske instruksjonsdata, bokmål og nynorsk, for å svare, skrive og oppsummere på
-norsk. «Open» betyr at den er trent uten pressestoffet fra bibliotekets
+norsk. «Open» betyr at den er trent uten pressestoffet fra NBs
 rettighetsavtale, og derfor slipper bruksbegrensningene som følger resten av
 serien.
 
@@ -52,7 +52,7 @@ kjører på enheten gjennom MLX. Den koster ingenting å bruke, og appen kontakt
 ingen tjeneste for å lage svaret. En modell på én milliard parametere kan ta
 feil, og appen sier det selv.
 
-**borealis-embed-212m**, også fra Nasjonalbiblioteket, finner de delene av et
+**borealis-embed-212m**, også fra NB, finner de delene av et
 dokument som gjelder spørsmålet. Et opplastet dokument deles i utdrag på rundt
 tusen tegn, og hvert utdrag får en tallvektor. Når du spør, får spørsmålet sin
 vektor, og utdragene som ligner mest går til svarmodellen — i den rekkefølgen
