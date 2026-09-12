@@ -12,6 +12,9 @@ spørre.
 Språkmodellen som lager svarene ligger inne i appen. Den snakker ikke med en
 server, og det finnes ingen server å snakke med.
 
+Skriveverktøy fra Apple Intelligence er slått av i skrivefeltet. Ellers kunne
+iOS sendt det du skriver til Apple for å skrive det om.
+
 ## Hvordan innholdet er beskyttet
 
 | Lag | Hva det gjør |
@@ -19,7 +22,8 @@ server, og det finnes ingen server å snakke med.
 | Sandkassen | Ingen andre apper på enheten kan lese mappen |
 | Kryptering per melding og dokument | AES-GCM, med en nøkkel som pakkes inn av en nøkkel i Secure Enclave |
 | Nøkkelen er låst mens enheten er låst | Innholdet kan ikke åpnes før du har låst opp |
-| Nøkkelen blir igjen her | En sikkerhetskopi kan inneholde innholdet, men det er uleselig uten nøkkelen |
+| Utenfor sikkerhetskopien | Databasen følger ikke med i sikkerhetskopien til iCloud |
+| Nøkkelen blir igjen her | Skulle en kopi likevel finnes, er den uleselig uten nøkkelen |
 
 Nøkkelen i Secure Enclave lages på enheten og forlater den aldri. Den er
 merket `whenUnlockedThisDeviceOnly`: den er bare tilgjengelig mens enheten er

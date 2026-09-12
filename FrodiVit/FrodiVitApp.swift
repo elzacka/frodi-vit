@@ -12,6 +12,7 @@ struct FrodiVitApp: App {
         var resolved: ModelContainer
         do {
             resolved = try ModelContainer(for: Chat.self, ChatMessage.self, Document.self)
+            Storage.excludeFromBackup(store: resolved)
         } catch {
             Storage.markFailed()
             let memoryOnly = ModelConfiguration(isStoredInMemoryOnly: true)

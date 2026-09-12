@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 import Testing
 @testable import FrodiVit
 
@@ -60,5 +61,23 @@ struct IsolationTests {
     func onlyBokmaal() {
         let locales = Bundle.main.object(forInfoDictionaryKey: "CFBundleLocalizations") as? [String]
         #expect(locales == ["nb"])
+    }
+
+    /// Databasen skal ikke havne i iCloud-sikkerhetskopien. Innholdet er
+    /// forseglet, men datoer og antall er ikke det.
+    @Test("Databasen er holdt utenfor sikkerhetskopi")
+    @MainActor
+    func storeIsExcludedFromBackup() throws {
+        let url = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString + ".store")
+        let container = try ModelContainer(
+            for: Chat.self, ChatMessage.self, Document.self,
+            configurations: ModelConfiguration(url: url)
+        )
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        Storage.excludeFromBackup(store: container)
+
+        let values = try url.resourceValues(forKeys: [.isExcludedFromBackupKey])
+        #expect(values.isExcludedFromBackup == true)
     }
 }

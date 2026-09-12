@@ -330,6 +330,12 @@ struct ChatView: View {
                 .foregroundStyle(Color.Frodi.textPrimary)
                 .lineLimit(1...5)
                 .focused($writing)
+                // Skriveverktøy er den ene veien systemet kan sende det du
+                // skriver ut av enheten fra innsiden av appen: er teksten for
+                // stor for modellen på enheten, går den til Private Cloud
+                // Compute. Feltet er et spørsmål, ikke et dokument, så det
+                // taper ingenting på å være uten.
+                .writingToolsBehavior(.disabled)
                 .padding(.horizontal, Space.s4)
                 .padding(.vertical, Space.s3)
                 .background(

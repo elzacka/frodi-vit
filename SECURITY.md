@@ -2,7 +2,7 @@
 
 Fróði vit answers questions on the device. Nothing is transmitted.
 
-Last reviewed 08.09.26.
+Last reviewed 12.09.26.
 
 ## Reporting a vulnerability
 
@@ -21,6 +21,30 @@ assessment within 7 days. Do not open public GitHub issues.
 | Screen recording or mirroring while the conversation is open | Conversation hidden until capture stops |
 | Screenshot | Captured. iOS offers no supported way to prevent one |
 | Device unlocked, app open, in someone else's hands | Readable, as with any app |
+
+## What is in use
+
+Every security technology and setting the app relies on, and where it lives.
+The sections below explain the choices.
+
+| Area | Technology or setting | Where |
+|---|---|---|
+| Isolation | iOS app sandbox. No app group, no shared container | System |
+| Encryption at rest | AES-GCM, one random 256-bit key per message, per chat title and per document | `Vault` |
+| Key wrapping | P-256 key created in the Secure Enclave, `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` | `Vault` |
+| File protection | The system default for the container, `NSFileProtectionCompleteUntilFirstUserAuthentication`. Nothing stricter is set, because the sealed fields do not depend on it | System |
+| Backup | `isExcludedFromBackup` on the SwiftData store (`.store`, `-wal`, `-shm`), re-applied on every launch | `Storage` |
+| Writing Tools | `.writingToolsBehavior(.disabled)` on the input field, so the system cannot send a draft to Private Cloud Compute or an external model from inside the app | `ChatView` |
+| Transport | None. No `URLSession`, no `NSAppTransportSecurity` exceptions | `Info.plist`, `IsolationTests` |
+| Background | No `UIBackgroundModes` at all, tested absent | `Info.plist`, `IsolationTests` |
+| Permissions | None. No usage-description keys; microphone and speech keys are tested absent | `Info.plist`, `IsolationTests` |
+| Document upload | The system file picker, which grants access to the one file chosen. The text is sealed on import and the file is not kept | `DocumentImport` |
+| Language model | Bundled and loaded from a local directory. `MLXHuggingFace` is not linked, so no code path reaches the Hugging Face hub | `project.yml`, `BorealisAssistant` |
+| Privacy manifest | No tracking, no tracking domains, no collected data. One accessed API: file timestamps, C617.1 | `PrivacyInfo.xcprivacy`, `IsolationTests` |
+| Screen capture | Conversation hidden while `UIScreen.isCaptured` is true | `CaptureGuard` |
+| Export compliance | `ITSAppUsesNonExemptEncryption` is `false`. The only cryptography is Apple's CryptoKit and the Secure Enclave | `project.yml` |
+| Compiler | `SWIFT_STRICT_CONCURRENCY: complete`, `SWIFT_VERSION: 6`, `ENABLE_USER_SCRIPT_SANDBOXING: true` | `project.yml` |
+| Attack surface kept closed | No URL schemes, no document types, no `NSUserActivity` (Handoff), no Spotlight indexing, no extensions, no app group | `Info.plist` |
 
 ## Encryption
 
@@ -41,6 +65,20 @@ on the same terms as the answer.
 
 Plaintext exists only while a job runs: while a reply is being generated, while
 a document is being read, and while the conversation is on screen.
+
+The SwiftData store is marked `isExcludedFromBackup` at every launch. Apple
+documents the flag as resettable guidance, so it is re-applied rather than set
+once. The messages in the store are ciphertext, but the dates and the number of
+chats and messages are not, and none of that belongs in a backup. Encryption is
+what carries the guarantee.
+
+## Apple Intelligence
+
+Writing Tools is disabled on the input field. It is the one place the system
+itself could send what you typed off the device from inside the app: a request
+the on-device model cannot handle goes to Private Cloud Compute, and with an
+external integration switched on, further. The field holds a question, not a
+document, so nothing is lost by switching it off.
 
 ## No network
 
