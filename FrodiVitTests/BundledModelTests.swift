@@ -47,4 +47,45 @@ struct BundledModelTests {
     func assistantSeesTheModel() {
         #expect(BorealisAssistant.isBundled)
     }
+
+    // MARK: - Gjenfinningsmodellen
+
+    @Test("Gjenfinningsmodellen ligger i app-pakken")
+    func embedderDirectoryExists() throws {
+        let directory = try #require(
+            BorealisEmbedder.modelDirectory,
+            "borealis-embed-212m mangler. Kjør Scripts/fetch-model.sh."
+        )
+        #expect(FileManager.default.fileExists(atPath: directory.path))
+        #expect(BorealisEmbedder.isBundled)
+    }
+
+    @Test("Filene gjenfinningsmodellen trenger er med", arguments: [
+        "config.json", "model.safetensors", "tokenizer.json", "tokenizer_config.json"
+    ])
+    func embedderFilesArePresent(name: String) throws {
+        let directory = try #require(BorealisEmbedder.modelDirectory)
+        let file = directory.appendingPathComponent(name)
+        #expect(FileManager.default.fileExists(atPath: file.path), "Mangler \(name)")
+    }
+
+    /// `fetch-model.sh` flater ut nøklene Swift-koden leser. Mangler de, er
+    /// modellen konvertert utenom skriptet, og ryggraden får feil RoPE-base
+    /// uten at noe feiler høylytt.
+    @Test("Gjenfinningsmodellen har de flate nøklene, og er 8 bit")
+    func embedderConfigIsFlattened() throws {
+        let directory = try #require(BorealisEmbedder.modelDirectory)
+        let data = try Data(contentsOf: directory.appendingPathComponent("config.json"))
+        let config = try #require(
+            try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        )
+        #expect(config["model_type"] as? String == "gemma3_text")
+        #expect(config["rope_theta"] as? Int == 100_000)
+        #expect(config["rope_local_base_freq"] as? Int == 10_000)
+        #expect(config["sliding_window_pattern"] as? Int == 4)
+        #expect(config["hidden_activation"] as? String == "silu")
+        #expect(config["use_bidirectional_attention"] as? Bool == true)
+        let quantization = try #require(config["quantization"] as? [String: Any])
+        #expect(quantization["bits"] as? Int == 8)
+    }
 }

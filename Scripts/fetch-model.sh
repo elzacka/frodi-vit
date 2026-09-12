@@ -78,20 +78,62 @@ echo "Språkmodell:"
 # den vanlige minnegrensen for en app. 8-bit ville krevd et rettighetstillegg
 # for økt minne, og det er en søknad vi slipper å skrive.
 convert "$GENERATOR" "$GENERATOR_REVISION" "borealis-open-1b" 4
-# Gjenfinningsmodellen konverteres IKKE her, og det er ikke en forglemmelse.
+# Gjenfinningsmodellen går ikke rett gjennom `mlx_lm convert`. Den er en
+# Gemma3TextModel — ryggraden alene, uten lm_head — og vektene i safetensors
+# mangler prefikset `model.` som konverteringen venter. Det var hele feilen
+# «Received 158 parameters not in model», målt 8. september 2026: 158 er
+# nettopp antall tensorer i filen.
 #
-# `mlx_lm convert` bygger alltid en causal LM. borealis-embed-212m er en
-# Gemma3TextModel — en ryggrad uten lm_head, med pooling-lag fra
-# SentenceTransformers oppå. Konverteringen stopper med «Received 158
-# parameters not in model», målt 8. september 2026.
+# Så vi legger et mellomsteg foran: kopier vektene med prefikset på plass, og
+# skriv om config.json fra transformers 5 sine nøkler (`rope_parameters`,
+# `_sliding_window_pattern`) til de flate nøklene både mlx_lm og Swift-koden
+# leser. Deretter er det en vanlig konvertering. 8-bit: målt 12. september
+# 2026 ligger cosinus mot fp32 på 0,9997, og modellen er 236 MB.
 #
-# Modellen trengs først når kunnskapsbasen bygges (fase 3). Da må den enten
-# konverteres med et eget skript som skriver vektnavnene om til det
-# MLXEmbedders' Gemma3 forventer, eller byttes mot en BERT-basert modell,
-# som MLXEmbedders støtter rett fram. Ikke bruk tid på det før retrieval
-# faktisk skal bygges.
-#
-# convert "$EMBEDDER" "$EMBEDDER_REVISION" "borealis-embed-212m" 8
+# Selve kjøringen i appen er ikke MLXEmbedders' `EmbeddingGemma` — den regner
+# kausalt, mens denne modellen er trent tosidig og med silu. Se
+# `BorealisEmbedder.swift`.
+stage_embedder() { # $1 = snapshot, $2 = mellommappe
+  "$PY" - "$1" "$2" <<'PYEOF'
+import sys, json, shutil, os
+import mlx.core as mx
+src, dst = sys.argv[1], sys.argv[2]
+os.makedirs(dst, exist_ok=True)
+weights = mx.load(f"{src}/model.safetensors")
+mx.save_safetensors(f"{dst}/model.safetensors", {f"model.{k}": v for k, v in weights.items()})
+config = json.load(open(f"{src}/config.json"))
+config["sliding_window_pattern"] = config.pop("_sliding_window_pattern")
+rope = config.pop("rope_parameters")
+config["rope_theta"] = rope["full_attention"]["rope_theta"]
+config["rope_local_base_freq"] = rope["sliding_attention"]["rope_theta"]
+json.dump(config, open(f"{dst}/config.json", "w"), indent=2)
+for name in ("tokenizer.json", "tokenizer_config.json"):
+    shutil.copy(f"{src}/{name}", dst)
+PYEOF
+}
+
+echo "Gjenfinningsmodell:"
+target="$DEST/borealis-embed-212m"
+if [ -f "$target/config.json" ]; then
+  echo "  har borealis-embed-212m"
+else
+  echo "  henter $EMBEDDER @ ${EMBEDDER_REVISION:0:12}"
+  snapshot="$("$PY" - "$EMBEDDER" "$EMBEDDER_REVISION" <<'PYEOF'
+import sys
+from huggingface_hub import snapshot_download
+print(snapshot_download(repo_id=sys.argv[1], revision=sys.argv[2]))
+PYEOF
+)"
+  staged="$(mktemp -d)"
+  echo "  legger til prefikset model. og flater ut config.json"
+  stage_embedder "$snapshot" "$staged"
+  echo "  konverterer -> borealis-embed-212m (8-bit)"
+  "$PY" -m mlx_lm convert \
+    --hf-path "$staged" \
+    --mlx-path "$target" \
+    --quantize --q-bits 8
+  rm -rf "$staged"
+fi
 
 echo
 echo "Ferdig. Størrelse:"
