@@ -40,12 +40,30 @@ ikke kode.
 
 ## Modeller
 
-| Rolle       | Modell                        | Lisens        |
-| ----------- | ----------------------------- | ------------- |
-| Svar        | `NbAiLab/borealis-open-1b`    | Gemma         |
-| Gjenfinning | `NbAiLab/borealis-embed-212m` | NB-lisens 1.0 |
+**borealis-open-1b** fra Nasjonalbiblioteket lager svarene. Modellen bygger på
+Googles Gemma 3 med én milliard parametere, og er videretrent av biblioteket på
+norske instruksjonsdata, bokmål og nynorsk, for å svare, skrive og oppsummere på
+norsk. «Open» betyr at den er trent uten pressestoffet fra bibliotekets
+rettighetsavtale, og derfor slipper bruksbegrensningene som følger resten av
+serien.
 
-Begge er åpne modeller fra Nasjonalbiblioteket. Se `TREDJEPART.md`.
+Modellen følger med appen, kvantisert til 4 bit så den får plass i minnet, og
+kjører på enheten gjennom MLX. Den koster ingenting å bruke, og appen kontakter
+ingen tjeneste for å lage svaret. En modell på én milliard parametere kan ta
+feil, og appen sier det selv.
+
+**borealis-embed-212m** er tenkt til gjenfinning: å velge de avsnittene i et
+dokument som gjelder spørsmålet, i stedet for å gi modellen hele dokumentet.
+Den er ikke i appen ennå.
+
+| Kilde | Lenke |
+|---|---|
+| Svarmodellen | [NbAiLab/borealis-open-1b](https://huggingface.co/NbAiLab/borealis-open-1b) |
+| Gjenfinningsmodellen, planlagt | [NbAiLab/borealis-embed-212m](https://huggingface.co/NbAiLab/borealis-embed-212m) |
+| Alle modellene fra NB | [huggingface.co/NbAiLab](https://huggingface.co/NbAiLab) |
+| Om AI-laben | [ai.nb.no](https://ai.nb.no/) |
+
+Lisensene står i `TREDJEPART.md`.
 
 ## Krav
 
