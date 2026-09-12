@@ -109,6 +109,9 @@ struct SettingsView: View {
             if BorealisAssistant.isBundled {
                 paragraph("borealis-open-1b fra Nasjonalbiblioteket lager svarene. Modellen følger med appen og kjører inne i den.")
                 paragraph("Den er trent på norsk, og liten nok til å kjøre på en enhet. Til gjengjeld svarer den kortere enn en modell på nett, og den kan ta feil. Sjekk viktige svar mot kilden.")
+                if BorealisEmbedder.isBundled {
+                    paragraph("borealis-embed-212m, også fra Nasjonalbiblioteket, finner de delene av et dokument som gjelder spørsmålet. Svaret sier hvilke dokumenter det bygger på.")
+                }
             } else {
                 paragraph("Språkmodellen er ikke med i dette bygget, så Fróði kan ikke svare. Installer appen på nytt.")
             }
@@ -120,12 +123,12 @@ struct SettingsView: View {
             LicensesView()
         } label: {
             card("Lisenser", opensScreen: true) {
-                paragraph("Modellen, koden og skriftene appen bygger på, med opphav og lisens.")
+                paragraph("Modellene, koden og skriftene appen bygger på, med opphav og lisens.")
             }
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Lisenser")
-        .accessibilityHint("Åpner listen over modell, kode og skrifter")
+        .accessibilityHint("Åpner listen over modeller, kode og skrifter")
     }
 
     private var version: some View {
@@ -210,11 +213,9 @@ struct LicensesView: View {
         var id: String { name }
     }
 
-    // Bare modellen som faktisk følger med bygget står her.
-    // `borealis-embed-212m` er ikke konvertert ennå, og en attribusjon for noe
-    // appen ikke har med seg er feil vei å ta feil på.
-    private let model = [
-        Component(name: "borealis-open-1b", origin: "Nasjonalbiblioteket", license: "Gemma Terms of Use")
+    private let models = [
+        Component(name: "borealis-open-1b", origin: "Nasjonalbiblioteket", license: "Gemma Terms of Use"),
+        Component(name: "borealis-embed-212m", origin: "Nasjonalbiblioteket", license: "NB-lisens 1.0")
     ]
 
     private let code = [
@@ -250,7 +251,7 @@ struct LicensesView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    group("Modell", model)
+                    group("Modeller", models)
                     group("Kode", code)
                     group("Skrifter", fonts)
                 }

@@ -39,7 +39,7 @@ The sections below explain the choices.
 | Background | No `UIBackgroundModes` at all, tested absent | `Info.plist`, `IsolationTests` |
 | Permissions | None. No usage-description keys; microphone and speech keys are tested absent | `Info.plist`, `IsolationTests` |
 | Document upload | The system file picker, which grants access to the one file chosen. The text is sealed on import and the file is not kept | `DocumentImport` |
-| Language model | Bundled and loaded from a local directory. `MLXHuggingFace` is not linked, so no code path reaches the Hugging Face hub | `project.yml`, `BorealisAssistant` |
+| Language models | Both bundled and loaded from local directories. `MLXHuggingFace` is not linked, so no code path reaches the Hugging Face hub | `project.yml`, `BorealisAssistant`, `BorealisEmbedder` |
 | Privacy manifest | No tracking, no tracking domains, no collected data. One accessed API: file timestamps, C617.1 | `PrivacyInfo.xcprivacy`, `IsolationTests` |
 | Screen capture | Conversation hidden while `UIScreen.isCaptured` is true | `CaptureGuard` |
 | Export compliance | `ITSAppUsesNonExemptEncryption` is `false`. The only cryptography is Apple's CryptoKit and the Secure Enclave | `project.yml` |
@@ -62,6 +62,13 @@ Access control is `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`.
 
 What you ask often reveals more than the answer does, so the question is sealed
 on the same terms as the answer.
+
+An uploaded document is split into passages, and each passage is sealed on the
+same terms as the document. The 768-float embedding stored beside each passage
+is not sealed: it is not text and cannot be turned back into text, and opening
+every one of them for every question would cost more than it protects. The
+document names an answer cites are stored in plain, as document names already
+are.
 
 Plaintext exists only while a job runs: while a reply is being generated, while
 a document is being read, and while the conversation is on screen.
@@ -86,8 +93,8 @@ The app makes no network requests. Tests fail if an ATS exception appears, if
 any background mode is declared at all, or if the privacy manifest declares
 collected data.
 
-The language model is bundled and loaded from a local directory. A missing file
-fails rather than fetching. `MLXHuggingFace` — the MLX product whose macros
+Both language models are bundled and loaded from local directories. A missing
+file fails rather than fetching. `MLXHuggingFace` — the MLX product whose macros
 expand into Hugging Face hub calls — is deliberately not linked.
 
 **One honest qualification.** The tokenizer comes from `swift-transformers`,

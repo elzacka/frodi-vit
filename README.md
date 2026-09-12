@@ -52,14 +52,17 @@ kjører på enheten gjennom MLX. Den koster ingenting å bruke, og appen kontakt
 ingen tjeneste for å lage svaret. En modell på én milliard parametere kan ta
 feil, og appen sier det selv.
 
-**borealis-embed-212m** er tenkt til gjenfinning: å velge de avsnittene i et
-dokument som gjelder spørsmålet, i stedet for å gi modellen hele dokumentet.
-Den er ikke i appen ennå.
+**borealis-embed-212m**, også fra Nasjonalbiblioteket, finner de delene av et
+dokument som gjelder spørsmålet. Et opplastet dokument deles i utdrag på rundt
+tusen tegn, og hvert utdrag får en tallvektor. Når du spør, får spørsmålet sin
+vektor, og utdragene som ligner mest går til svarmodellen — i den rekkefølgen
+de sto i dokumentet. Slik kan du spørre om et dokument på hundre sider uten at
+appen leser bare de første fem. Svaret sier hvilke dokumenter det bygger på.
 
 | Kilde | Lenke |
 |---|---|
 | Svarmodellen | [NbAiLab/borealis-open-1b](https://huggingface.co/NbAiLab/borealis-open-1b) |
-| Gjenfinningsmodellen, planlagt | [NbAiLab/borealis-embed-212m](https://huggingface.co/NbAiLab/borealis-embed-212m) |
+| Gjenfinningsmodellen | [NbAiLab/borealis-embed-212m](https://huggingface.co/NbAiLab/borealis-embed-212m) |
 | Alle modellene fra NB | [huggingface.co/NbAiLab](https://huggingface.co/NbAiLab) |
 | Om AI-laben | [ai.nb.no](https://ai.nb.no/) |
 

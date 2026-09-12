@@ -9,8 +9,13 @@ Det du skriver, limer inn og laster opp blir liggende på enheten. Appen
 sender det ingen steder. Den har ingen adresse å sende til, og ingen tjeneste å
 spørre.
 
-Språkmodellen som lager svarene ligger inne i appen. Den snakker ikke med en
+Språkmodellene ligger inne i appen: én som lager svarene, og én som finner de
+delene av et dokument som gjelder spørsmålet. Ingen av dem snakker med en
 server, og det finnes ingen server å snakke med.
+
+Når du laster opp et dokument, deles teksten i utdrag, og hvert utdrag får en
+tallvektor som appen søker med. Utdragene er kryptert som resten. Vektorene er
+ikke: de er ikke tekst, og kan ikke gjøres om til tekst.
 
 Skriveverktøy fra Apple Intelligence er slått av i skrivefeltet. Ellers kunne
 iOS sendt det du skriver til Apple for å skrive det om.
@@ -20,7 +25,7 @@ iOS sendt det du skriver til Apple for å skrive det om.
 | Lag | Hva det gjør |
 |---|---|
 | Sandkassen | Ingen andre apper på enheten kan lese mappen |
-| Kryptering per melding og dokument | AES-GCM, med en nøkkel som pakkes inn av en nøkkel i Secure Enclave |
+| Kryptering per melding, dokument og utdrag | AES-GCM, med en nøkkel som pakkes inn av en nøkkel i Secure Enclave |
 | Nøkkelen er låst mens enheten er låst | Innholdet kan ikke åpnes før du har låst opp |
 | Utenfor sikkerhetskopien | Databasen følger ikke med i sikkerhetskopien til iCloud |
 | Nøkkelen blir igjen her | Skulle en kopi likevel finnes, er den uleselig uten nøkkelen |
