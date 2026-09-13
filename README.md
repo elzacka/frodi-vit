@@ -18,8 +18,8 @@ og er en diktafonapp med tale til tekst.
 ## Hva appen ikke gjør
 
 Fróði vit **sender ingenting og henter ingenting**. Ingen analyse, ingen
-krasjrapportering, ingen tredjepartstjenester. Språkmodellen følger med appen,
-så det finnes ikke engang en nedlasting.
+krasjrapportering, ingen tredjepartstjenester. Språkmodellen følger med appen.
+Appen laster aldri ned noe – ikke engang modellen.
 
 Det du skriver, limer inn og laster opp ligger kryptert på enheten, med en
 nøkkel som lages i maskinvaren og aldri forlater den. Det betyr også at
